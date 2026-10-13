@@ -17,7 +17,7 @@ Description: Reglas de desarrollo Full Stack para la plantilla de 4Geeks con SQL
 ## 🚀 Core Operation Protocol (CRITICAL)
 
 Before proposing any structural change, architecture design, or action steps, the AI MUST strictly open, read, and obey the mandatory planning workflow defined in:
-👉 `.agent/spec/PLANNING_GUIDE.md`
+👉 `.agents/spec/PLANNING_GUIDE.md`
 
 ## 🛠️ Project Stack
 
@@ -49,10 +49,10 @@ Before proposing any structural change, architecture design, or action steps, th
 
 For any interaction, analysis, or code generation, you must mandatorily read the contents of the following modular guidelines before responding:
 
-- Execute and apply rules from: [System Message](.agent/rules/rule-base_system_message.md) → `.agent/rules/rule-base_system_message.md`
-- Execute and apply rules from: [Buenas Prácticas](.agent/rules/rule-buenas_practicas.md) → `.agent/rules/rule-buenas_practicas.md`
-- Execute and apply rules from: [Prompt Inicial](.agent/rules/Prompt_inicial.md) → `.agent/rules/Prompt_inicial.md`
+- Execute and apply rules from: [System Message](.agents/rules/rule-base_system_message.md) → `.agents/rules/rule-base_system_message.md`
+- Execute and apply rules from: [Buenas Prácticas](.agents/rules/rule-buenas_practicas.md) → `.agents/rules/rule-buenas_practicas.md`
+- Execute and apply rules from: [Prompt Inicial](.agents/rules/Prompt_inicial.md) → `.agents/rules/Prompt_inicial.md`
 
 ## 🏗️ Operational Workflows
 
-- Planification protocol standard: [Planning Guide](.agent/spec/PLANNING_GUIDE.md) → `.agent/spec/PLANNING_GUIDE.md`
+- Planification protocol standard: [Planning Guide](.agents/spec/PLANNING_GUIDE.md) → `.agents/spec/PLANNING_GUIDE.md`

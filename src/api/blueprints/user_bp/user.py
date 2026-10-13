@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
-from api.models import db, User
+from api.blueprints.user_bp.models import db, User
 from sqlalchemy import select
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from api.utils import APIException
+from api.blueprints.utils import APIException
 from api.extensions import bcrypt
 
 # 1. Definimos el Blueprint (El componente modular)

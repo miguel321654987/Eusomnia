@@ -1,0 +1,10 @@
+# Planificación Semanal — Desarrollo Fullstack Junior
+
+| Semana       | Actividades                                                                                                                                                                                                                                    |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Semana 1** | Proponer idea y definir problema; Elegir stack tecnológico; Crear repositorio y estructura de ramas; Diseñar modelo de datos inicial; Crear backlog con épicas e historias; Configurar entorno local y dependencias; Crear wireframes básicos. |
+| **Semana 2** | Configurar backend con estructura profesional; Crear y migrar modelos de base de datos; Implementar autenticación; Desarrollar endpoints principales; Escribir pruebas básicas; Añadir validaciones y manejo de errores; Documentar API.       |
+| **Semana 3** | Configurar frontend con routing y componentes; Implementar registro/login con token; Crear vistas conectadas al backend; Implementar estado global; Añadir feedback visual; Diseño responsivo; Integrar vistas con API.                        |
+| **Semana 4** | Corregir issues; Implementar funcionalidad adicional; Mejorar UX; Refactorizar componentes; Actualizar backlog; Configurar variables de entorno; Redactar README.                                                                              |
+| **Semana 5** | Desplegar backend y frontend; Configurar variables de entorno en producción; Pruebas end-to-end; Mejorar detalles visuales; Grabar video demo; Actualizar README.                                                                              |
+| **Semana 6** | Publicar proyecto; Autoevaluación; Presentaciones y feedback; Feedback del mentor; Plan de acción 30 días; Actualizar CV y LinkedIn.                                                                                                           |
