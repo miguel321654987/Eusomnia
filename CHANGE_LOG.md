@@ -1,28 +1,23 @@
 # CHANGE LOG
 
-Here we are tracking the previous and upcoming changes (roadmap), pull request this file or open an issue if you have any suggestions for the next version of the boilerplate.
+### 2026-10-13
 
-### Jan 26, 2021
-- Changed the main branch from `master` to `main` and updated all the docs and files to avoid bugs.
+**Instalación de Qdrant y sentence-transformers**
+(commit f8f7a68 | branch **develop**)
 
-### Sep 14, 2020
-- Added tutorial on [how to reset the migrations](https://github.com/4GeeksAcademy/flask-rest-hello/blob/master/docs/RESET_MIGRATIONS.md).
+### 2026-10-02
 
-### Jul 1st, 2020
-- Added video explanation of the boilerplate
+**Problema/solución y alcance MVP** (commit f8f7a68 | branch **develop**)
 
-### Jun 29th, 2020
-- [x] Added [Flask Admin](https://flask-admin.readthedocs.io/en/latest/) to easy manage the database without any extra code code and automatic CRUD operations for all models.
+**Stack + repo, ramas y estructura** (commit f8f7a68 | branch **develop**)
 
-### Sep 16th, 2019
-- [x] Added debuging functionality
+**Entorno local y dependencias (Qdrant, sentence-transformers)** (commit f8f7a68 | branch **develop**)
 
-### August 9th, 2019
-- [x] Removed eralchemy from the Pipfile because its compatibility with Apply and PC computers its not clear. There is now way to create a database diagra.png anymore.
-- [x] Added this changelog file to keep track of changes on the boilerplate.
-- [x] Added documentation for [data validations](https://github.com/4GeeksAcademy/flask-rest-hello/blob/master/docs/DATA_VALIDATIONS.md)
-- [x] Added documentation for [SQL Alchemy operations](https://github.com/4GeeksAcademy/flask-rest-hello/edit/master/docs/MYSQL.md).
+**Backlog de épicas e historias (MVP v1.0 vs v1.1+)** (commit a8b86b6 | branch **develop**)
 
-## Roadmap v2.0
+**Initial development setup** (commit a8b86b6 | branch **develop**)
 
-- [ ] Update documentation with more examples
+### 2026-10-01
+
+**Initial project setup: React + Flask template with Eusomnia docs**
+(commit f760577 | branch **develop**, also present in **main**)
