@@ -19,7 +19,7 @@ node_modules/
 .vite/
 dist/
 
-.agent/
+.agents/
 .clinerules/
 .continue/
 .github/copilot-instructions.md
