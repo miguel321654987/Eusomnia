@@ -1,28 +1,24 @@
 ---
 type: agent-rules
-project: 4geeks-fullstack-template
+project: Eusomnia
 version: 1.0
 ---
 
-# 📋 4Geeks Academy Full Stack Rules
+# 📋 Full Stack Development Rules
 
 ⚠️ **SINGLE SOURCE OF TRUTH (SSOT):** This file contains the immutable technical constraints and mandatory rules for this repository. No AI tool or autonomous agent is permitted to propose technologies, external dependencies, or architectural patterns that contradict this document.
 
 ---
 
-You are an expert Senior Full Stack Developer and a mentor for a 4Geeks Academy graduate.
-
-Description: Reglas de desarrollo Full Stack para la plantilla de 4Geeks con SQLite (Local development)/ PostgreSQL (Production / GitHub Deploy).
-
 ## 🚀 Core Operation Protocol (CRITICAL)
 
-Before proposing any structural change, architecture design, or action steps, the AI MUST strictly open, read, and obey the mandatory planning workflow defined in:
+Before proposing any structural change, architecture design, or action steps, the AI **MUST** strictly open, read, and obey the mandatory planning workflow defined in:
 👉 `.agents/spec/PLANNING_GUIDE.md`
 
 ## 🛠️ Project Stack
 
 - **Frontend:** React.js (Functional components, Hooks, Context API/Flux).
-- **Backend:** Python with Flask, SQLAlchemy ORM, SQLite (Local development)/ PostgreSQL (Production / GitHub Deploy).
+- **Backend:** Python with Flask, SQLAlchemy ORM, PostgreSQL (Production / GitHub Deploy) with a lightweight file‑based fallback for local development.
 
 ## ⚠️ Critical Rules
 
@@ -33,12 +29,12 @@ Before proposing any structural change, architecture design, or action steps, th
 5. **CODE COMPLETENESS:** Provide complete and functional code blocks so the user doesn't have to guess where to paste them.
 6. **LOCAL OPTIMIZATION:** Since you are running locally via Docker, be concise. Read only the strictly necessary files to answer the user's request.
 
-## 🔒 SQLite & Environment Guardrails
+## 🔒 Database & Environment Guardrails
 
 - **Database Context (Dynamic):** The application uses a hybrid database configuration based on the environment:
   - **Production / GitHub Deploy:** Uses PostgreSQL via `DATABASE_URL`. The code automatically formats the URI string (`postgres://` to `postgresql://`).
-  - **Local Development (Windows/Docker):** Fallback automatically to SQLite. The database file is dynamic and isolated inside `instance/example.db`.
-- **Migrations:** Always remind the user to use Flask-Migrate commands inside the backend environment (e.g., `pipenv run migrate`, `python manage.py db migrate`, or `flask db migrate`) whenever you suggest changes to the models.
+  - **Local Development (Windows/Docker):** Falls back automatically to a lightweight file‑based database (stored in `instance/example.db`).
+- **Migrations:** Always remind the user to use Flask‑Migrate commands inside the backend environment (e.g., `pipenv run migrate`, `python manage.py db migrate`, or `flask db migrate`) whenever you suggest changes to the models.
 - **Environment Variables:** Use the variables defined in `.env` (`DATABASE_URL`, `FLASK_APP_KEY`, `FLASK_APP`, `FLASK_DEBUG`). Never hardcode these values in the code.
 
 # 🤖 Project Agent Rules & Systems
