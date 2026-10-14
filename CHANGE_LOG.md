@@ -5,6 +5,9 @@
 **Instalación de Qdrant y sentence-transformers**
 (commit f8f7a68 | branch **develop**)
 
+**Actualización de documentación AGENTS y guías de planificación**
+(commit db407fb | branch **develop**)
+
 ### 2026-10-02
 
 **Problema/solución y alcance MVP** (commit f8f7a68 | branch **develop**)

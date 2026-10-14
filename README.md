@@ -1,76 +1,286 @@
-<a href="https://www.breatheco.de"><img height="280" align="right" src="https://github.com/4GeeksAcademy/flask-rest-hello/blob/main/docs/assets/badge.png?raw=true"></a>
+<h1 align="center">
+  🌙 Eusomnia
+</h1>
 
-# Flask Boilerplate for Junior Developers
+<p align="center">
+  <em>Interpreta tus sueños. Comprende tus hábitos. Mejora tu descanso.</em>
+</p>
 
-Create flask API's in minutes, [📹 watch the video tutorial](https://youtu.be/ORxQ-K3BzQA).
+<p align="center">
+  <!-- Frontend -->
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React 19"/>
+  <img src="https://img.shields.io/badge/Vite-5-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite"/>
+  <img src="https://img.shields.io/badge/Bootstrap-5-7952B3?style=flat-square&logo=bootstrap&logoColor=white" alt="Bootstrap 5"/>
+  <!-- Backend -->
+  <img src="https://img.shields.io/badge/Python-3.13-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.13"/>
+  <img src="https://img.shields.io/badge/Flask-3.x-000000?style=flat-square&logo=flask&logoColor=white" alt="Flask"/>
+  <img src="https://img.shields.io/badge/SQLAlchemy-ORM-D71F00?style=flat-square&logo=sqlalchemy&logoColor=white" alt="SQLAlchemy"/>
+  <!-- Auth & seguridad -->
+  <img src="https://img.shields.io/badge/JWT-Auth-000000?style=flat-square&logo=jsonwebtokens&logoColor=white" alt="JWT"/>
+  <img src="https://img.shields.io/badge/Bcrypt-Hashing-4A90D9?style=flat-square&logo=letsencrypt&logoColor=white" alt="Bcrypt"/>
+  <!-- Base de datos -->
+  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL 16"/>
+  <img src="https://img.shields.io/badge/SQLite-Dev-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite"/>
+  <!-- IA & vectores -->
+  <img src="https://img.shields.io/badge/OpenRouter-AI-6B46C1?style=flat-square&logo=openai&logoColor=white" alt="OpenRouter"/>
+  <img src="https://img.shields.io/badge/Qdrant-Vector%20DB-DC244C?style=flat-square&logo=qdrant&logoColor=white" alt="Qdrant"/>
+  <img src="https://img.shields.io/badge/sentence--transformers-NLP-FF6F00?style=flat-square&logo=huggingface&logoColor=white" alt="sentence-transformers"/>
+  <!-- Infraestructura -->
+  <img src="https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker"/>
+  <img src="https://img.shields.io/badge/Gunicorn-WSGI-499848?style=flat-square&logo=gunicorn&logoColor=white" alt="Gunicorn"/>
+  <img src="https://img.shields.io/badge/Render-Deploy-46E3B7?style=flat-square&logo=render&logoColor=white" alt="Render"/>
+  <!-- Estado -->
+  <img src="https://img.shields.io/badge/Estado-En%20desarrollo-orange?style=flat-square" alt="Estado"/>
+</p>
 
-- [Extensive documentation here](https://start.4geeksacademy.com).
-- Integrated with Pipenv for package managing.
-- Fast deloyment to render.com or heroku with `$ pipenv run deploy`.
-- Use of `.env` file.
-- SQLAlchemy integration for database abstraction.
+---
 
-## 1) Installation
+## ¿Qué es Eusomnia?
 
-This template installs itself in a few seconds if you open it for free with Codespaces (recommended) or Gitpod.
-Skip this installation steps and jump to step 2 if you decide to use any of those services.
+**Eusomnia** es una aplicación web full-stack de análisis integrado de sueños y hábitos de vida.
+El usuario registra su sueño del día junto con sus hábitos (actividad, alimentación, pantallas, sensaciones) y recibe una interpretación personalizada generada por IA, enriquecida con un motor de búsqueda semántica sobre un diccionario de ~7.000 símbolos oníricos.
 
-> Important: The boiplerplate is made for python 3.10 but you can change the `python_version` on the Pipfile.
+El valor diferencial de Eusomnia es la **integración**: el sueño y los hábitos del día se analizan juntos en una única orquestación de IA, generando recomendaciones siempre justificadas por un dato concreto del registro o del historial.
 
-The following steps are automatically runned withing gitpod, if you are doing a local installation you have to do them manually:
+---
 
-```sh
-pipenv install;
-psql -U root -c 'CREATE DATABASE example;'
-pipenv run init;
-pipenv run migrate;
-pipenv run upgrade;
+## Características principales
+
+| Módulo                      | Descripción                                                                                                    |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| 📖 **Diario de sueños**     | Registro diario de texto libre del sueño + bloque de hábitos del día                                           |
+| 🥗 **Análisis nutricional** | Enriquecimiento automático con calorías, cafeína y azúcar vía CalorieNinjas                                    |
+| 🔍 **Motor RAG**            | Búsqueda semántica de símbolos oníricos con `sentence-transformers` + Qdrant                                   |
+| 🤖 **Interpretación IA**    | Un único JSON de OpenRouter: interpretación, emociones, símbolos, hábitos, patrones, recomendaciones y alertas |
+| 📊 **Historial**            | Consulta de todos los registros diarios con su análisis completo                                               |
+| 👤 **Perfil privado**       | JWT + Bcrypt; el diario es estrictamente privado por usuario autenticado                                       |
+| 🔔 **Alertas**              | Avisos automáticos ante patrones de riesgo (cafeína tardía, hábitos recurrentes...)                            |
+
+---
+
+## Stack tecnológico
+
+### Frontend
+
+- **React 19** con Hooks y Context API / Flux
+- **React Router DOM** para enrutamiento de la SPA
+- **Bootstrap 5 + CSS** para diseño responsivo
+- **Vite** como bundler
+
+### Backend
+
+- **Python 3.13** con **Flask** y arquitectura MVC por **Blueprints**
+- **SQLAlchemy ORM** — nunca SQL crudo
+- **Flask-Migrate** para gestión de migraciones
+- **Flask-JWT-Extended** para autenticación por token
+- **Flask-Bcrypt** para hashing seguro de contraseñas
+- **Gunicorn** como servidor WSGI en producción
+
+### Base de datos
+
+- **SQLite** en desarrollo local (`instance/example.db`)
+- **PostgreSQL 16** en producción vía `DATABASE_URL`
+
+### Inteligencia Artificial & Datos
+
+- **OpenRouter** — orquestación IA (modelo configurable)
+- **sentence-transformers** (`all-MiniLM-L6-v2`) — vectorización semántica
+- **Qdrant** — motor de búsqueda vectorial para el diccionario onírico
+- **CalorieNinjas API** — enriquecimiento nutricional (proxy desde Flask)
+
+### Infraestructura
+
+- **Docker + Docker Compose** — entorno de desarrollo con app + PostgreSQL 16
+- **Dockerfile.render** — imagen de producción basada en `python:3.13-slim` + Gunicorn
+- **Render** — despliegue en producción
+
+---
+
+## Arquitectura del flujo de análisis
+
+```
+Usuario (relato del sueño + hábitos + comida)
+        │
+        ▼
+┌─────────────────────────────────────────────┐
+│          FASE 1 · RETRIEVAL (RAG)           │
+│  sentence-transformers → vector del sueño   │
+│  Qdrant → símbolos oníricos más cercanos    │
+└────────────────────┬────────────────────────┘
+                     │ contexto simbólico
+                     ▼
+┌─────────────────────────────────────────────┐
+│         FASE 2 · AUGMENTATION               │
+│  Prompt: sueño + símbolos + hábitos         │
+│           + nutrición + historial reciente  │
+└────────────────────┬────────────────────────┘
+                     │ prompt enriquecido
+                     ▼
+┌─────────────────────────────────────────────┐
+│         FASE 3 · GENERATION (LLM)           │
+│  OpenRouter → JSON único:                   │
+│  interpretación · emociones · símbolos      │
+│  hábitos · patrones · recomendaciones       │
+└────────────────────┬────────────────────────┘
+                     │ JSON + datos del día
+                     ▼
+┌─────────────────────────────────────────────┐
+│         FASE 4 · PERSISTENCIA               │
+│  SQLAlchemy → DailyEntry (registro único)   │
+│  React → tarjetas · badges · historial      │
+└─────────────────────────────────────────────┘
 ```
 
-> Note: Codespaces users can connect to psql by typing: `psql -h localhost -U gitpod example`
+---
 
-## 2) How to Start coding
+## Instalación y puesta en marcha
 
-There is an example API working with an example database. All your application code should be written inside the `./src/` folder.
+### Requisitos previos
 
-- src/main.py (it's where your endpoints should be coded)
-- src/models.py (your database tables and serialization logic)
-- src/utils.py (some reusable classes and functions)
-- src/admin.py (add your models to the admin and manage your data easily)
+- Python 3.13+
+- Node.js 18+
+- Pipenv
+- Docker + Docker Compose
 
-For a more detailed explanation, look for the tutorial inside the `docs` folder.
-
-## Remember to migrate every time you change your models
-
-You have to migrate and upgrade the migrations for every update you make to your models:
+### 1. Clonar el repositorio
 
 ```bash
-$ pipenv run migrate # (to make the migrations)
-$ pipenv run upgrade  # (to update your databse with the migrations)
+git clone https://github.com/miguel321654987/eusomnia.git
+cd eusomnia
 ```
 
-## Generate a database diagram
+### 2. Variables de entorno
 
-If you want to visualize the structure of your database in the form of a diagram, you can generate it with the following command:
+Crea un fichero `.env` en la raíz del proyecto a partir de `.env.example`:
 
 ```bash
-$ pipenv run diagram
+cp .env.example .env
 ```
 
-This command will generate a file with the database diagram based on the models defined in `src/models.py`.
+Variables necesarias:
 
-## Check your API live
+```env
+DATABASE_URL=          # URL de PostgreSQL (producción). Vacía = SQLite local
+FLASK_APP_KEY=         # Secret key de Flask
+FLASK_APP=src/app
+FLASK_DEBUG=1
 
-1. Once you run the `pipenv run start` command your API will start running live and you can open it by clicking in the "ports" tab and then clicking "open browser".
+OPENROUTER_API_KEY=    # Clave de OpenRouter
+CALORIE_NINJAS_KEY=    # Clave de CalorieNinjas
+QDRANT_URL=http://localhost:6333
+```
 
-> ✋ If you are working on a coding cloud like [Codespaces](https://docs.github.com/en/codespaces/developing-in-codespaces/forwarding-ports-in-your-codespace#sharing-a-port) or [Gitpod](https://www.gitpod.io/docs/configure/workspaces/ports#configure-port-visibility) make sure that your forwared port is public.
+### 3. Levantar el entorno con Docker Compose
 
-## Publish/Deploy your website!
+El devcontainer incluye la **app** y **PostgreSQL 16** preconfigurados:
 
-This boilerplate it's 100% read to deploy with Render.com and Herkou in a matter of minutes. Please read the [official documentation about it](https://start.4geeksacademy.com/deploy).
+```bash
+docker compose up
+```
 
-### Contributors
+> El servicio `db` arranca PostgreSQL 16 con usuario `gitpod`, base de datos `example` y contraseña `postgres`. Configura `DATABASE_URL` en tu `.env` si prefieres conectarte directamente.
 
-This template was built as part of the 4Geeks Academy [Coding Bootcamp](https://4geeksacademy.com/us/coding-bootcamp) by [Alejandro Sanchez](https://twitter.com/alesanchezr) and many other contributors. Find out more about our [Full Stack Developer Course](https://4geeksacademy.com/us/coding-bootcamps/part-time-full-stack-developer), and [Data Science Bootcamp](https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning).
+### 4. Backend (Flask)
 
-You can find other templates and resources like this at the [school github page](https://github.com/4geeksacademy/).
+```bash
+pipenv install
+pipenv run init      # Inicializa la base de datos
+pipenv run migrate   # Genera migraciones
+pipenv run upgrade   # Aplica migraciones
+pipenv run start     # Inicia el servidor en el puerto 3000
+```
+
+### 5. Frontend (React + Vite)
+
+```bash
+npm install
+npm run start
+```
+
+### 6. Qdrant (motor vectorial)
+
+```bash
+docker run -p 6333:6333 qdrant/qdrant
+```
+
+---
+
+## Migraciones de base de datos
+
+Ejecuta estos comandos **siempre que modifiques un modelo** de SQLAlchemy:
+
+```bash
+pipenv run migrate   # Genera el script de migración
+pipenv run upgrade   # Aplica la migración a la base de datos
+```
+
+---
+
+## Estructura del proyecto
+
+```
+eusomnia/
+├── src/
+│   ├── app.py           # Punto de entrada Flask + registro de Blueprints
+│   ├── models.py        # Modelos SQLAlchemy (User, DailyEntry, SleepAnalysis…)
+│   ├── admin.py         # Panel de administración Flask-Admin
+│   ├── utils.py         # Utilidades y funciones reutilizables
+│   └── api/
+│       ├── user.py      # Blueprint: autenticación y perfil
+│       ├── entries.py   # Blueprint: CRUD del diario diario
+│       ├── nutrition.py # Blueprint: proxy CalorieNinjas
+│       └── analysis.py  # Blueprint: orquestación RAG + IA
+├── src/front/
+│   ├── js/
+│   │   ├── pages/       # Vistas principales (Home, Diary, Result, History, Profile)
+│   │   ├── components/  # Componentes reutilizables (Navbar, Footer, Badges…)
+│   │   └── store/       # Estado global (Context / Flux)
+│   └── styles/          # CSS global y overrides de Bootstrap
+├── migrations/          # Migraciones Flask-Migrate
+├── .devcontainer/       # Configuración Docker Compose del entorno de desarrollo
+├── Dockerfile.render    # Imagen Docker para despliegue en producción (Render)
+├── Diagramas/           # Diagramas de arquitectura y modelo de datos
+├── Proyecto-Eusomnia.md/# Documentación interna del proyecto
+├── Pipfile
+├── package.json
+└── .env.example
+```
+
+---
+
+## Roadmap
+
+### v1.0 — MVP _(En desarrollo)_
+
+- [x] Configuración inicial del entorno (Docker, Pipenv, Vite)
+- [ ] Modelos SQLAlchemy y migraciones
+- [ ] Autenticación JWT + hashing de contraseñas con Bcrypt
+- [ ] Blueprints y endpoints del backend
+- [ ] Motor RAG (sentence-transformers + Qdrant)
+- [ ] Orquestación IA con OpenRouter
+- [ ] SPA React (Home, Diario, Resultado, Historial, Perfil)
+- [ ] Despliegue en producción (Render + PostgreSQL)
+
+### v1.1+ — Próximas funcionalidades
+
+- [ ] Entrada de voz con transcripción (Whisper API)
+- [ ] BYOAI Pro: clave y modelo propios del usuario
+- [ ] Panel integral con gráficos de evolución temporal
+- [ ] Mapa de símbolos y emociones sobre el histórico
+- [ ] Motor de correlaciones propio sobre el historial acumulado
+
+---
+
+## Ciclo de uso
+
+```
+Registrar → Analizar → Recomendaciones → Ajustar hábitos → Registrar
+```
+
+Cada vuelta del ciclo enriquece el historial y mejora la precisión del análisis.
+
+---
+
+## Licencia
+
+Este proyecto está bajo la licencia **MIT**. Consulta el fichero `LICENSE` para más detalles.

@@ -8,6 +8,7 @@
 - ✅ Stack + repo, ramas y estructura (1.5 h) (commit f8f7a68)
 - ✅ Entorno local y dependencias (Qdrant, sentence‑transformers) (2 h) (commit f8f7a68)
 - ✅ Backlog de épicas e historias (MVP v1.0 vs v1.1+) (2 h) (commit a8b86b6)
+- ✅ Actualización de documentación AGENTS y guías de planificación (0.5 h) (commit db407fb)
 
 ### ⬜ Pendiente
 
