@@ -59,11 +59,11 @@ Los datos de sueño y los datos de hábitos se convierten en una única matriz d
 
 - **UI (React):** Tras confirmar el registro diario, la interfaz muestra un estado de procesamiento (indicador de carga) mientras el backend ejecuta las cuatro capas de análisis. El usuario no interviene; sólo espera el resultado.
 
-### 2A · Extracción Vectorial de Conceptos Oníricos (Precisión Contextual Local con NumPy)
+### 2A · Extracción Vectorial de Conceptos Oníricos (Precisión Contextual con Qdrant)
 
-- **Backend + Caché de Memoria (Flask + NumPy):** El servidor de Flask toma el texto final del sueño y ejecuta una búsqueda geométrica en bloque:
+- **Backend + Caché de Memoria (Flask + Qdrant):** El servidor de Flask toma el texto final del sueño y ejecuta una búsqueda geométrica en bloque:
   - **Diccionario Base en db:** El diccionario base .csv (~1.000 - 7.000 términos según el escogido) aporta precisión gramatical (Ej: diferenciar si una araña persigue al usuario, o si el usuario la aplasta con una piedra).
-  - **Formato Vectorial Precargado:** El diccionario se procesa para convertirse en un **.npy** (archivo binario de matrices numéricas densas). Al encender el backend, el .npy se monta en la RAM del servidor como caché activa.
+  - **Formato Vectorial Precargado:** El diccionario se procesa para convertirse en un archivo vectorial procesado con Qdrant.
   - **Búsqueda Matricial en Bloque:** Flask usa la librería **sentence-transformers** para convertir textos en vectores matemáticos (embeddings) y los compara con los escenarios del diccionario simultáneamente.
 - **Resultado:** El motor en memoria RAM obtiene los **conceptos oníricos detectados** (slugs y summary), que pasan a formar parte del contexto unificado en el registro diario al que pertenecen.
 
@@ -149,13 +149,13 @@ Estos elementos no pertenecen a un solo paso: atraviesan toda la arquitectura de
 
 ## 🔄 Resumen del Flujo Integral Extremo a Extremo
 
-| Fase                      | Qué entra                                                       | Qué se procesa                                                                                             | Qué sale                                                                                                 |
-| ------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| **Paso 1 · Captura**      | Relato del sueño (texto o voz) + formulario de hábitos + comida | Transcripción con Whisper (si hay voz) y enriquecimiento con CalorieNinjas                                 | Un único registro diario revisado y confirmado                                                           |
-| **Paso 2 · Análisis**     | El registro diario confirmado                                   | Extracción vectorial onírica (.npy), normalización nutricional y motor de correlaciones sobre el histórico | Contexto unificado (sueño + símbolos + hábitos + nutrición + patrones)                                   |
-| **Paso 3 · IA**           | El contexto unificado                                           | Una sola orquestación (clave de app o BYOAI - Pro)                                                         | JSON único: interpretación, emociones, símbolos, lectura de hábitos, patrones, recomendaciones y alertas |
-| **Paso 4 · Persistencia** | El JSON y todos los datos del día                               | Guardado con SQLAlchemy en el registro diario                                                              | Resultado visual: tarjeta de interpretación, badges, tarjetas de recomendaciones e historial             |
-| **Paso 5 · Panel**        | El histórico completo                                           | Agregación de estadísticas, símbolos, patrones e indicadores                                               | Visión integral de la higiene del sueño y recomendaciones acumuladas                                     |
+| Fase                      | Qué entra                                                       | Qué se procesa                                                                                               | Qué sale                                                                                                 |
+| ------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| **Paso 1 · Captura**      | Relato del sueño (texto o voz) + formulario de hábitos + comida | Transcripción con Whisper (si hay voz) y enriquecimiento con CalorieNinjas                                   | Un único registro diario revisado y confirmado                                                           |
+| **Paso 2 · Análisis**     | El registro diario confirmado                                   | Extracción vectorial onírica (Qdrant), normalización nutricional y motor de correlaciones sobre el histórico | Contexto unificado (sueño + símbolos + hábitos + nutrición + patrones)                                   |
+| **Paso 3 · IA**           | El contexto unificado                                           | Una sola orquestación (clave de app o BYOAI - Pro)                                                           | JSON único: interpretación, emociones, símbolos, lectura de hábitos, patrones, recomendaciones y alertas |
+| **Paso 4 · Persistencia** | El JSON y todos los datos del día                               | Guardado con SQLAlchemy en el registro diario                                                                | Resultado visual: tarjeta de interpretación, badges, tarjetas de recomendaciones e historial             |
+| **Paso 5 · Panel**        | El histórico completo                                           | Agregación de estadísticas, símbolos, patrones e indicadores                                                 | Visión integral de la higiene del sueño y recomendaciones acumuladas                                     |
 
 ## ✅ Reglas de Coherencia del Esquema Integral
 

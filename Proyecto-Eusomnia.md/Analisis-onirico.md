@@ -23,7 +23,7 @@ FASE 1: RECUPERACIÓN (Retrieval Semántico con Qdrant)
   ▼
 [ QDRANT (Local / Cloud) ]
   ▼ Envía el vector al motor Qdrant
-  ▼ Compara con los puntos almacenados (no usa NumPy)
+  ▼ Compara con los puntos almacenados
   ▼ Devuelve los puntos más cercanos (ej: id_14, id_89)
   ▼
 [ TU DICCIONARIO (fuente CSV) ]
@@ -58,7 +58,7 @@ FASE 3: GENERACIÓN (Respuesta Final con LLM)
 
 ```python
 # services/qdrant_service.py
-# Implements semantic retrieval using Qdrant instead of NumPy + .npy
+# Implements semantic retrieval using Qdrant
 
 import os
 from sentence_transformers import SentenceTransformer
@@ -110,7 +110,7 @@ class DreamRetrievalService:
 
 ## Notas Técnicas
 
-- No se requiere archivo `.npy` porque Qdrant almacena los vectores de forma nativa.
+- Qdrant almacena los vectores de forma nativa.
 - El archivo `CSV` sigue siendo la fuente original para cargar la colección.
 - Las variables de entorno (`QDRANT_URL`) deben definirse en `.env`.
 - Si existen modelos `SQLAlchemy` en el proyecto, cualquier cambio requiere ejecutar
@@ -124,7 +124,7 @@ class DreamRetrievalService:
 | ------------ | ---------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | Inicio       | 1. Entrada       | El Usuario                       | Introduce su experiencia en la app.                                                                                         | El string: "Soñé que un felino me mordía la mano".                                         |
 | RETRIEVAL    | 2. Vectorización | sentence-transformers            | Traduce el lenguaje humano a coordenadas matemáticas que capturan el significado.                                           | Un Vector (Tensor/Array) de números que representa conceptualmente el sueño.               |
-| RETRIEVAL    | 3. Búsqueda      | Qdrant Client (`search`)         | Envía el vector al motor Qdrant y compara contra los puntos almacenados en la colección (reemplaza NumPy + `.npy`).         | Los puntos (`points`) con mayor similitud y sus IDs internos.                              |
+| RETRIEVAL    | 3. Búsqueda      | Qdrant Client (`search`)         | Envía el vector al motor Qdrant y compara contra los puntos almacenados en la colección.                                    | Los puntos (`points`) con mayor similitud y sus IDs internos.                              |
 | RETRIEVAL    | 4. Recuperación  | Qdrant / Tu código Python        | Extrae los `payload` (`interpretation_text`) de los puntos devueltos por Qdrant (reemplaza la lectura del CSV por índices). | Fragmentos de texto plano con los significados exactos (ej: "Gato: ...", "Mordisco: ..."). |
 | AUGMENTATION | 5. Ensamblaje    | Tu código Python                 | Empaqueta el sueño original y los fragmentos recuperados de los payloads dentro de las instrucciones para la IA final.      | Un Prompt estructurado enriquecido con tus datos (Input para el LLM).                      |
 | GENERATION   | 6. Generación    | El LLM (OpenAI / Claude / Llama) | Lee las instrucciones, combina los símbolos recuperados y redacta la narrativa final.                                       | Un Párrafo fluido, profesional y empático fundamentado en tus datos.                       |

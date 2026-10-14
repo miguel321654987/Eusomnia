@@ -1,7 +1,7 @@
 ---
 # Cronograma de Ejecución — Eusomnia
 Duración: 12-15 h/semana · 6 semanas · 72 - 90 h totales
-Stack: React 19 + Vite + Bootstrap / Flask + Blueprints + SQLAlchemy / SQLite↔PostgreSQL / NumPy + sentence-transformers / CalorieNinjas / OpenRouter
+Stack: React 19 + Vite + Bootstrap / Flask + Blueprints + SQLAlchemy / SQLite↔PostgreSQL / Qdrant + sentence-transformers / CalorieNinjas / OpenRouter
 ---
 
 ## Semana 1 — Fundaciones, alcance y diseño
