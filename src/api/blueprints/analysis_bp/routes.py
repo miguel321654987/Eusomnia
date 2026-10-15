@@ -5,15 +5,15 @@ from sqlalchemy import select
 
 from api.extensions import db
 from api.utils import APIException
-# Importación relativa al blueprint ya creado para evitar ciclo de importación
-from . import analysis_bp
+# Import the Blueprint instance using a relative import to avoid circular dependencies
+from . import analysis_bp as bp
 from api.blueprints.analysis_bp.models import SleepAnalysis
 from api.blueprints.analysis_bp.services import run_unified_ai_analysis
 from api.blueprints.daily_entries_bp.models import DailyEntry
 from api.blueprints.user_bp.models import UserPreferences
 
 
-@analysis_bp.route("/<int:entry_id>", methods=["POST"])
+@bp.route("/<int:entry_id>", methods=["POST"])
 @jwt_required()
 def analyze_daily_entry(entry_id):
     current_user_id = int(get_jwt_identity())
@@ -60,7 +60,7 @@ def analyze_daily_entry(entry_id):
     }), 200
 
 
-@analysis_bp.route("/<int:entry_id>", methods=["GET"])
+@bp.route("/<int:entry_id>", methods=["GET"]) 
 @jwt_required()
 def get_entry_analysis(entry_id):
     current_user_id = int(get_jwt_identity())

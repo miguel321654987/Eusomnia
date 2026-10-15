@@ -2,12 +2,15 @@ from flask import request, jsonify
 from flask_jwt_extended import jwt_required
 
 from api.utils import APIException
-# Importaciones relativas para eliminar el ciclo de importación
-from . import nutrition_bp
+# Import relativo al paquete que ya contiene `nutrition_bp`
+# Import the Blueprint object defined in the package's __init__.py
+# Using a relative import to avoid circular import issues.
+# Import the Blueprint instance defined in __init__.py
+from . import nutrition_bp as bp
 from .services import fetch_nutrition_data
 
 
-@nutrition_bp.route("/analyze", methods=["POST"])
+@bp.route("/analyze", methods=["POST"])
 @jwt_required()
 def analyze_nutrition():
     body = request.get_json()
@@ -21,4 +24,3 @@ def analyze_nutrition():
         "message": "Nutrition analysis retrieved successfully",
         "results": nutrition_results
     }), 200
-

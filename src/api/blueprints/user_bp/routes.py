@@ -4,8 +4,7 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 
 from api.extensions import db, bcrypt
 from api.utils import APIException
-# Importación relativa al blueprint para evitar ciclo de importación
-from . import user_bp
+from api.blueprints.user_bp import user_bp
 from api.blueprints.user_bp.models import User, UserPreferences
 
 
@@ -36,7 +35,8 @@ def handle_signup():
         raise APIException("Email is already registered", status_code=409)
 
     try:
-        hashed_password = bcrypt.generate_password_hash(password.strip()).decode("utf-8")
+        hashed_password = bcrypt.generate_password_hash(
+            password.strip()).decode("utf-8")
 
         new_user = User(
             email=email.strip(),
@@ -60,7 +60,8 @@ def handle_signup():
 
     except Exception as e:
         db.session.rollback()
-        raise APIException(f"Internal server error creating user: {str(e)}", status_code=500)
+        raise APIException(
+            f"Internal server error creating user: {str(e)}", status_code=500)
 
 
 @user_bp.route("/login", methods=["POST"])
@@ -73,16 +74,19 @@ def create_token():
     password = body.get("password")
 
     if not email or not password:
-        raise APIException("Fields 'email' and 'password' are required", status_code=400)
+        raise APIException(
+            "Fields 'email' and 'password' are required", status_code=400)
 
     stmt = select(User).where(User.email == email.strip())
     user = db.session.execute(stmt).scalar_one_or_none()
 
     if user is None or not bcrypt.check_password_hash(user.password, password.strip()):
-        raise APIException("Invalid credentials. Email or password incorrect", status_code=401)
+        raise APIException(
+            "Invalid credentials. Email or password incorrect", status_code=401)
 
     if not user.is_active:
-        raise APIException("Access denied: Your account is deactivated", status_code=403)
+        raise APIException(
+            "Access denied: Your account is deactivated", status_code=403)
 
     access_token = create_access_token(identity=str(user.id))
 
@@ -103,7 +107,8 @@ def protected():
         raise APIException("User not found", status_code=404)
 
     if not user.is_active:
-        raise APIException("Access denied: Your account is deactivated", status_code=403)
+        raise APIException(
+            "Access denied: Your account is deactivated", status_code=403)
 
     return jsonify({
         "message": "Access granted to profile",
@@ -115,7 +120,8 @@ def protected():
 @jwt_required()
 def get_user_preferences():
     current_user_id = int(get_jwt_identity())
-    stmt = select(UserPreferences).where(UserPreferences.user_id == current_user_id)
+    stmt = select(UserPreferences).where(
+        UserPreferences.user_id == current_user_id)
     prefs = db.session.execute(stmt).scalar_one_or_none()
 
     if prefs is None:
@@ -137,7 +143,8 @@ def update_user_preferences():
     if body is None:
         raise APIException("JSON body is required", status_code=400)
 
-    stmt = select(UserPreferences).where(UserPreferences.user_id == current_user_id)
+    stmt = select(UserPreferences).where(
+        UserPreferences.user_id == current_user_id)
     prefs = db.session.execute(stmt).scalar_one_or_none()
 
     if prefs is None:
@@ -161,7 +168,8 @@ def update_user_preferences():
         }), 200
     except Exception as e:
         db.session.rollback()
-        raise APIException(f"Error updating preferences: {str(e)}", status_code=500)
+        raise APIException(
+            f"Error updating preferences: {str(e)}", status_code=500)
 
 
 @user_bp.route('', methods=['GET'])
@@ -189,7 +197,8 @@ def get_user_by_id(user_id):
     user = db.session.get(User, user_id)
 
     if user is None:
-        raise APIException(f"User with ID {user_id} was not found", status_code=404)
+        raise APIException(
+            f"User with ID {user_id} was not found", status_code=404)
 
     return jsonify({
         "message": "User retrieved successfully",
@@ -202,11 +211,13 @@ def get_user_by_id(user_id):
 def delete_user(user_id):
     current_user_id = get_jwt_identity()
     if int(user_id) != int(current_user_id):
-        raise APIException("You are not allowed to delete this account", status_code=403)
+        raise APIException(
+            "You are not allowed to delete this account", status_code=403)
 
     body = request.get_json(silent=True)
     if body is None or 'current_password' not in body:
-        raise APIException("Current password is required to delete account", status_code=400)
+        raise APIException(
+            "Current password is required to delete account", status_code=400)
 
     current_password = body.get('current_password')
     if not isinstance(current_password, str) or current_password.strip() == "":
@@ -214,7 +225,8 @@ def delete_user(user_id):
 
     user = db.session.get(User, user_id)
     if user is None:
-        raise APIException(f"User with ID {user_id} does not exist", status_code=404)
+        raise APIException(
+            f"User with ID {user_id} does not exist", status_code=404)
 
     if not bcrypt.check_password_hash(user.password, current_password.strip()):
         raise APIException("Current password is incorrect", status_code=401)
@@ -230,5 +242,5 @@ def delete_user(user_id):
 
     except Exception as e:
         db.session.rollback()
-        raise APIException(f"Internal error deleting user: {str(e)}", status_code=500)
-
+        raise APIException(
+            f"Internal error deleting user: {str(e)}", status_code=500)

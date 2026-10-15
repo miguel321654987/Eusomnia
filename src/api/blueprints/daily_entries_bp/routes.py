@@ -5,8 +5,7 @@ from datetime import date
 
 from api.extensions import db
 from api.utils import APIException
-# Importación relativa para evitar dependencia circular
-from . import daily_entries_bp
+from api.blueprints.daily_entries_bp import daily_entries_bp
 from api.blueprints.daily_entries_bp.models import DailyEntry, SleepReport, HabitLog
 
 
@@ -14,7 +13,8 @@ from api.blueprints.daily_entries_bp.models import DailyEntry, SleepReport, Habi
 @jwt_required()
 def get_user_entries():
     current_user_id = int(get_jwt_identity())
-    stmt = select(DailyEntry).where(DailyEntry.user_id == current_user_id).order_by(DailyEntry.entry_date.desc())
+    stmt = select(DailyEntry).where(DailyEntry.user_id ==
+                                    current_user_id).order_by(DailyEntry.entry_date.desc())
     entries = db.session.scalars(stmt).all()
 
     return jsonify({
@@ -50,10 +50,12 @@ def create_daily_entry():
     habits_data = body.get("habits", {})
 
     if not sleep_data or not sleep_data.get("raw_text"):
-        raise APIException("Sleep narrative raw_text is required", status_code=400)
+        raise APIException(
+            "Sleep narrative raw_text is required", status_code=400)
 
     entry_date_raw = body.get("date")
-    entry_date = date.fromisoformat(entry_date_raw) if entry_date_raw else date.today()
+    entry_date = date.fromisoformat(
+        entry_date_raw) if entry_date_raw else date.today()
 
     try:
         new_entry = DailyEntry(user_id=current_user_id, entry_date=entry_date)
@@ -63,7 +65,8 @@ def create_daily_entry():
         sleep_report = SleepReport(
             entry_id=new_entry.id,
             raw_text=sleep_data.get("raw_text"),
-            final_text=sleep_data.get("final_text") or sleep_data.get("raw_text"),
+            final_text=sleep_data.get(
+                "final_text") or sleep_data.get("raw_text"),
             audio_url=sleep_data.get("audio_url")
         )
         db.session.add(sleep_report)
@@ -88,5 +91,5 @@ def create_daily_entry():
 
     except Exception as e:
         db.session.rollback()
-        raise APIException(f"Error creating daily entry: {str(e)}", status_code=500)
-
+        raise APIException(
+            f"Error creating daily entry: {str(e)}", status_code=500)
