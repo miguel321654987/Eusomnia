@@ -2,7 +2,7 @@
 
 ### 2026-10-16
 
-**Corrección de errores en import, Pylance y tipado**  
+**fix(api)Corrección de errores en import, Pylance y tipado**  
 (commit dab7c7d | branch **feature/blueprint-structure**, origin/feature/blueprint-structure)
 
 - Añadido modelo `NutritionLog` con su tabla `nutrition_logs` y relación bidireccional con `DailyEntry`.
@@ -11,6 +11,30 @@
 - Tipado de `run_unified_ai_analysis` ajustado a `str | None` (antes `str`).
 - Actualizadas las rutas de los blueprints `nutrition_bp` y `analysis_bp` para importar la instancia del Blueprint con alias `bp` y usar `@bp.route(...)`, eliminando errores de importación y ciclos.
 - Verificada la compilación (`python -m py_compile`) y el arranque de la aplicación Flask sin errores.
+
+**feat(api): Creado src/config/nutrition_sleep_parameters.json y loader**  
+(commit a1407be95b68d9ae4bce8370f5c6c685316badc9)
+
+- Se incluye el archivo de configuración **`src/config/nutrition_sleep_parameters.json`** con los parámetros de referencia nutricional vinculados a la higiene del sueño (metadata, user_profile, nutrients, meals y calculation_rules).
+- Se implementa **`src/api/blueprints/nutrition_bp/loader.py`**, que:
+  - Resuelve la ruta absoluta al JSON de forma robusta.
+  - Carga el contenido una sola vez por proceso mediante caché en módulo.
+  - Exporta la función `load_sleep_params() -> Dict[str, Any]` para que el resto del código acceda al diccionario de parámetros sin preocuparse por I/O.
+- Se añaden pruebas unitarias (`tests/api/test_nutrition_loader.py`) que verifican:
+  - Presencia de las 5 claves principales.
+  - Correcta evaluación de las fórmulas de proteína en función del peso.
+  - Factores de peso por comida (breakfast 0.8, lunch 1.0, snack 1.2, dinner 1.5).
+
+### 2026-10-16
+
+**feat(api): Crear Endpoints de nutrición y Cálculo de parámetros de sueño** \
+(commit ffde1e4 | branch **feature/blueprint-structure**, origin/feature/blueprint-structure)
+
+- Implementados los endpoints REST de nutrición: `analyze`, `analyze-recipe`, `log`, `evaluate` y `parameters`.
+- Añadido el archivo de configuración `src/config/nutrition_sleep_parameters.json` con parámetros por defecto para cálculo de sueño.
+- Creado `api/blueprints/nutrition_bp/loader.py` que carga dicho fichero y lo expone mediante el endpoint `/nutrition/parameters`.
+- Actualizada la documentación del API (ejemplos cURL) en el README.
+- Todas las pruebas continúan pasando (21 passed).
 
 ### 2026-10-15
 
