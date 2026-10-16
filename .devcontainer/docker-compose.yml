@@ -4,6 +4,9 @@ services:
       context: ..
       dockerfile: .devcontainer/Dockerfile
 
+    environment:
+      - TZ=Europe/Madrid
+
     #ports:
     #  - "3000:3000"
 

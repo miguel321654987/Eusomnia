@@ -1,7 +1,7 @@
 ---
 # Cronograma de Ejecución — Eusomnia
 Duración: 12-15 h/semana · 6 semanas · 72 - 90 h totales
-Stack: React 19 + Vite + Bootstrap / Flask + Blueprints + SQLAlchemy / SQLite↔PostgreSQL / Qdrant + sentence-transformers / CalorieNinjas / OpenRouter
+Stack: React 19 + Vite + Bootstrap / Flask + Blueprints + SQLAlchemy / SQLite↔PostgreSQL / Qdrant + sentence-transformers / Edamam / OpenRouter
 ---
 
 ## Semana 1 — Fundaciones, alcance y diseño
@@ -29,7 +29,7 @@ Stack: React 19 + Vite + Bootstrap / Flask + Blueprints + SQLAlchemy / SQLite↔
 | 1   | Blueprints (user, daily_entries, nutrition, analysis) |  1,5 h   |
 | 2   | Modelos SQLAlchemy + migraciones Flask-Migrate        |   2 h    |
 | 3   | Auth JWT + preferencias IA                            |  1,5 h   |
-| 4   | Endpoints (CRUD diario, proxy CalorieNinjas)          |   3 h    |
+| 4   | Endpoints (CRUD diario, proxy Edamam)                 |   3 h    |
 | 5   | Motor RAG (sentence-transformers + Qdrant)            |   3 h    |
 | 6   | Orquestación IA (OpenRouter → JSON único)             |  2,5 h   |
 | 7   | Pruebas básicas, validaciones, errores y doc API      |  1,5 h   |

@@ -26,7 +26,7 @@
 ### ⬜ Pendiente (Próximas funcionalidades)
 
 - [ ] Auth JWT + preferencias IA (1.5 h)
-- [ ] Endpoints (CRUD diario, proxy CalorieNinjas) (3 h)
+- [ ] Endpoints (CRUD diario, proxy Edamam) (3 h)
 - [ ] Motor RAG (sentence-transformers + Qdrant) (3 h)
 - [ ] Orquestación IA (OpenRouter → JSON único) (2.5 h)
 - [ ] Pruebas básicas, validaciones, errores y doc API (1.5 h)
