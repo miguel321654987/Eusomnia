@@ -1,5 +1,16 @@
 # CHANGE LOG
 
+### 2026-10-15
+
+**Creación de directorios para Blueprints**
+(commit ca4f6c2 | branch **feature/blueprint-structure**)
+
+**Implementación de Blueprints modulares (user, daily_entries, nutrition, analysis)**
+(commit <hash> | branch **feature/blueprint-structure**)
+
+**Modelos SQLAlchemy unificados y migraciones con Flask-Migrate**
+(commit <hash> | branch **feature/blueprint-structure**)
+
 ### 2026-10-13
 
 **Instalación de Qdrant y sentence-transformers**
