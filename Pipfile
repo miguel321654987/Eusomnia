@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
 
 [packages]
 flask-swagger = "==0.2.14"
@@ -23,6 +24,7 @@ flask-jwt-extended = "*"
 requests = "*"
 flask-bcrypt = "*"
 flask-migrate = "*"
+deep-translator = "*"
 
 [requires]
 python_version = "3.13"

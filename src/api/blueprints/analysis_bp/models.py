@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy import String, Integer, ForeignKey, Text, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from api.extensions import db
@@ -39,7 +39,8 @@ class SleepAnalysis(db.Model):
     recommendations: Mapped[str | None] = mapped_column(Text, nullable=True)
     alerts: Mapped[str | None] = mapped_column(Text, nullable=True)
     raw_json_response: Mapped[str | None] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+    # Use timezone‑aware UTC datetime to avoid deprecation warning
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
     def __init__(
         self,
