@@ -9,7 +9,7 @@ def search_dream_concepts(sleep_text: str) -> list:
     return []
 
 
-def run_unified_ai_analysis(entry_payload: dict, custom_key: str = None, model: str = None) -> dict:
+def run_unified_ai_analysis(entry_payload: dict, custom_key: str | None = None, model: str | None = None) -> dict:
     """Orchestrate unified AI prompt to OpenRouter and parse JSON response."""
     api_key = custom_key or os.getenv("OPENROUTER_API_KEY")
     if not api_key:

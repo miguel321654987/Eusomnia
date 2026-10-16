@@ -15,9 +15,26 @@
 - [ ] Modelo de datos (diagrama: User+prefs, DailyEntry, SleepReport, HabitLog, NutritionLog, DreamConcept, SleepAnalysis) (3 h)
 - [ ] Wireframes (Home, Registro, Resultado, Historial, Perfil, Navbar, Footer) (3 h)
 
-## Próximas funcionalidades (Semana 2 – primeras 2 tareas)
+## Semana 2 — Backend, motor RAG y orquestación IA
 
-- [ ] Blueprints (user, daily_entries, nutrition, analysis) (1.5 h)
-- [ ] Modelos SQLAlchemy + migraciones Flask‑Migrate (2 h)
+### ✅ Completado
 
-<!-- El resto de la Semana 2 (auth JWT, endpoints, motor RAG, orquestación IA, pruebas) queda para las siguientes iteraciones. -->
+- ✅ Blueprints (user, daily_entries, nutrition, analysis) (1.5 h) (commit ca4f6c2 / <hash>)
+- ✅ Modelos SQLAlchemy + migraciones Flask‑Migrate (2 h) (commit <hash>)
+
+### ⬜ Pendiente (Próximas funcionalidades)
+
+- [ ] Auth JWT + preferencias IA (1.5 h)
+- [ ] Endpoints (CRUD diario, proxy CalorieNinjas) (3 h)
+- [ ] Motor RAG (sentence-transformers + Qdrant) (3 h)
+- [ ] Orquestación IA (OpenRouter → JSON único) (2.5 h)
+- [ ] Pruebas básicas, validaciones, errores y doc API (1.5 h)
+
+<!--
+
+# TRADUCCIÓN AL ESPAÑOL / HISTÓRICO COMENTADO
+
+- ✅ Blueprints modulares y arquitectura base registrados en Flask (rama feature/blueprint-structure).
+- ✅ Modelos unificados (User, DailyEntry, SleepReport, HabitLog, NutritionLog, DreamConcept, SleepAnalysis) migrados en base de datos.
+- Siguiente hito: Autenticación JWT y configuración de preferencias de IA.
+  -->

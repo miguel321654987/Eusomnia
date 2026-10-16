@@ -1,7 +1,12 @@
 from datetime import datetime, date
+from typing import TYPE_CHECKING
+
 from sqlalchemy import String, Integer, ForeignKey, Text, Date, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from api.extensions import db
+
+if TYPE_CHECKING:
+    from api.blueprints.analysis_bp.models import SleepAnalysis
 
 
 class DailyEntry(db.Model):
@@ -99,4 +104,36 @@ class HabitLog(db.Model):
             "screen_time": self.screen_time,
             "incidents": self.incidents,
             "food_notes": self.food_notes
+        }
+
+
+class NutritionLog(db.Model):
+    """Daily nutrition and hydration log"""
+    __tablename__ = "nutrition_logs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    entry_id: Mapped[int] = mapped_column(ForeignKey(
+        "daily_entries.id"), unique=True, nullable=False)
+    breakfast: Mapped[str] = mapped_column(Text, nullable=True)
+    lunch: Mapped[str] = mapped_column(Text, nullable=True)
+    dinner: Mapped[str] = mapped_column(Text, nullable=True)
+    snacks: Mapped[str] = mapped_column(Text, nullable=True)
+    water_intake: Mapped[str] = mapped_column(String(50), nullable=True)
+    caffeine_intake: Mapped[str] = mapped_column(String(50), nullable=True)
+    alcohol_consumption: Mapped[str] = mapped_column(String(50), nullable=True)
+
+    daily_entry: Mapped["DailyEntry"] = relationship(
+        "DailyEntry", back_populates="nutrition_log")
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "entry_id": self.entry_id,
+            "breakfast": self.breakfast,
+            "lunch": self.lunch,
+            "dinner": self.dinner,
+            "snacks": self.snacks,
+            "water_intake": self.water_intake,
+            "caffeine_intake": self.caffeine_intake,
+            "alcohol_consumption": self.alcohol_consumption
         }
