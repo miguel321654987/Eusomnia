@@ -21,6 +21,7 @@
 
 - ✅ Blueprints (user, daily_entries, nutrition, analysis) (1.5 h) (commit ca4f6c2 / <hash>)
 - ✅ Modelos SQLAlchemy + migraciones Flask‑Migrate (2 h) (commit <hash>)
+- ✅ **Corrección de imports, tipado y Pylance** (0.5 h) (commit dab7c7d)
 
 ### ⬜ Pendiente (Próximas funcionalidades)
 
@@ -36,5 +37,6 @@
 
 - ✅ Blueprints modulares y arquitectura base registrados en Flask (rama feature/blueprint-structure).
 - ✅ Modelos unificados (User, DailyEntry, SleepReport, HabitLog, NutritionLog, DreamConcept, SleepAnalysis) migrados en base de datos.
+- ✅ Correcciones de imports y tipado para evitar ciclos y errores de Pylance.
 - Siguiente hito: Autenticación JWT y configuración de preferencias de IA.
   -->

@@ -1,5 +1,17 @@
 # CHANGE LOG
 
+### 2026-10-16
+
+**Corrección de errores en import, Pylance y tipado**  
+(commit dab7c7d | branch **feature/blueprint-structure**, origin/feature/blueprint-structure)
+
+- Añadido modelo `NutritionLog` con su tabla `nutrition_logs` y relación bidireccional con `DailyEntry`.
+- Importación condicional (`TYPE_CHECKING`) de `SleepAnalysis` en `daily_entries_bp/models.py` para evitar ciclos de importación.
+- Importación de `DailyEntry` en `analysis_bp/models.py` para resolver el forward‑reference.
+- Tipado de `run_unified_ai_analysis` ajustado a `str | None` (antes `str`).
+- Actualizadas las rutas de los blueprints `nutrition_bp` y `analysis_bp` para importar la instancia del Blueprint con alias `bp` y usar `@bp.route(...)`, eliminando errores de importación y ciclos.
+- Verificada la compilación (`python -m py_compile`) y el arranque de la aplicación Flask sin errores.
+
 ### 2026-10-15
 
 **Creación de directorios para Blueprints**

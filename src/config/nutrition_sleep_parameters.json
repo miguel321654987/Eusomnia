@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "description": "Parámetros de referencia nutricional para correlacionarlos con la higiene del sueño.",
+    "last_update": "2026-10-16",
+    "sources": {
+      "vitamin_e": "https://ods.od.nih.gov/factsheets/VitaminE-Consumer/",
+      "vitamin_b12": "https://ods.od.nih.gov/factsheets/VitaminB12-Consumer/",
+      "protein": "https://www.healthline.com/nutrition/how-much-protein-per-day",
+      "carbs": "https://www.hsph.harvard.edu/nutritionsource/carbohydrates/",
+      "sugars": "https://www.who.int/news-room/fact-sheets/detail/healthy-diet",
+      "alcohol": "https://www.who.int/publications/i/item/9789240013131",
+      "caffeine": "https://ec.europa.eu/food/safety/food_improvement_agents/caffeine_en",
+      "omega3": "https://www.heart.org/en/healthy-living/healthy-eating/eat-smart/fats/omega-3-fatty-acids",
+      "meal_weighting": "https://www.sleepfoundation.org/nutrition/how-eating-affects-sleep#meal-timing"
+    }
+  },
+
+  "user_profile": {
+    "sex": {
+      "type": "enum",
+      "options": ["male", "female", "other"],
+      "description": "Sexo biológico del usuario (influye en algunos rangos de requerimientos)."
+    },
+    "weight_kg": {
+      "type": "number",
+      "min": 30,
+      "max": 250,
+      "description": "Peso corporal en kilogramos; se usa para calcular requerimientos de proteína."
+    }
+  },
+
+  "nutrients": {
+    "vitamin_e_mg": {
+      "min_ref": 15,
+      "max_ref": null,
+      "unit": "mg",
+      "description": "Vitamina E – Valor Diario Recomendado (RDA). No se establece límite superior porque la toxicidad ocurre a dosis mucho mayores."
+    },
+    "vitamin_b12_µg": {
+      "min_ref": 2.4,
+      "max_ref": null,
+      "unit": "µg",
+      "description": "Vitamina B12 – RDA para adultos."
+    },
+    "protein_g": {
+      "min_ref": null,
+      "max_ref": null,
+      "unit": "g",
+      "description": "Proteína total. El rango depende del peso: 0.8 – 1.2 g/kg de peso corporal.",
+      "calc_min": "weight_kg * 0.8",
+      "calc_max": "weight_kg * 1.2"
+    },
+    "carbohydrates_percent": {
+      "min_ref": 45,
+      "max_ref": 65,
+      "unit": "%",
+      "description": "Carbohidratos como % de la ingesta calórica total."
+    },
+    "sugars_percent": {
+      "min_ref": 0,
+      "max_ref": 10,
+      "unit": "%",
+      "description": "Azúcares libres como % de la ingesta calórica total (OMS < 10 %)."
+    },
+    "alcohol_g": {
+      "min_ref": 0,
+      "max_ref": 14,
+      "unit": "g",
+      "description": "Alcohol máximo recomendado (≈ 1 bebida estándar)."
+    },
+    "caffeine_mg": {
+      "min_ref": 0,
+      "max_ref": 200,
+      "unit": "mg",
+      "description": "Cafeína máxima recomendada (EFSA)."
+    },
+    "omega3_mg": {
+      "min_ref": 250,
+      "max_ref": 500,
+      "unit": "mg",
+      "description": "EPA + DHA combinados. Guía de la American Heart Association."
+    },
+    "other_excitants": {
+      "min_ref": null,
+      "max_ref": null,
+      "unit": null,
+      "description": "Excitantes sin rango oficial (ej. té verde, yerba mate)."
+    }
+  },
+
+  "meals": {
+    "breakfast": {
+      "weight_factor": 0.8,
+      "description": "Comida temprana; menor impacto en la latencia del sueño."
+    },
+    "lunch": {
+      "weight_factor": 1.0,
+      "description": "Comida intermedia; influencia moderada."
+    },
+    "snack": {
+      "weight_factor": 1.2,
+      "description": "Merienda; peso intermedio entre comida y cena."
+    },
+    "dinner": {
+      "weight_factor": 1.5,
+      "description": "Cena (última ingesta antes de acostarse); mayor impacto en calidad del sueño."
+    }
+  },
+
+  "calculation_rules": {
+    "protein_per_meal": "protein_g * (meal_weight_factor / sum_of_all_factors)",
+    "carbs_per_meal": "total_carbs_g * (meal_weight_factor / sum_of_all_factors)",
+    "sugars_per_meal": "total_sugars_g * (meal_weight_factor / sum_of_all_factors)",
+    "caffeine_per_meal": "caffeine_mg * (meal_weight_factor / sum_of_all_factors)",
+    "alcohol_per_meal": "alcohol_g * (meal_weight_factor / sum_of_all_factors)"
+  }
+}
