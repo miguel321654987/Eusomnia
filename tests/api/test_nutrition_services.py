@@ -10,6 +10,10 @@ for _path in (SRC_ROOT, PROJECT_ROOT):
 
 from api.blueprints.nutrition_bp import services  # noqa: E402
 
+import pytest
+from types import SimpleNamespace
+import requests
+
 
 def _make_raw_response():
     """Minimal Edamam-like response with two parsed ingredients."""
@@ -137,6 +141,142 @@ def test_analyze_foods_falls_back_to_get_on_low_quality(monkeypatch):
 
     assert result["calories"] == 200.0
     assert result["total_weight_g"] == 200.0
+
+
+def test_analyze_foods_success_path(monkeypatch):
+    """When the bulk recipe POST succeeds, the service should return a
+    ``NormalizedNutrition`` instance populated from the aggregated nutrients
+    and the (mocked) supplement/excitants helpers.
+    """
+    # Mock the translation to be a no‑op (avoid external calls).
+    monkeypatch.setattr(services, "translate_text", lambda txt: txt)
+
+    # Provide a deterministic raw response that the aggregation logic can
+    # consume. It contains two ingredients with a few nutrient codes.
+    raw_response = {
+        "ingredients": [
+            {
+                "parsed": [{
+                    "weight": 150.0,
+                    "nutrients": {
+                        "ENERC_KCAL": {"quantity": 300.0},
+                        "PROCNT": {"quantity": 10.0},
+                    },
+                }],
+            },
+            {
+                "parsed": [{
+                    "weight": 50.0,
+                    "nutrients": {
+                        "ENERC_KCAL": {"quantity": 100.0},
+                        "PROCNT": {"quantity": 5.0},
+                    },
+                }],
+            },
+        ]
+    }
+    monkeypatch.setattr(services, "fetch_edamam_recipe", lambda title, lines: raw_response)
+
+    # Mock supplement resolution and excitant detection to keep the focus on the
+    # aggregation and model construction.
+    monkeypatch.setattr(services, "resolve_supplement_values", lambda pairs, manual: {
+        "caffeine_mg": 0.0,
+        "alcohol_g": 0.0,
+        "omega3_mg": 0.0,
+    })
+    monkeypatch.setattr(services, "detect_excitants", lambda pairs: False)
+
+    result = services.analyze_foods(
+        title="Test Meal",
+        ingredient_lines=["bread", "ham"],
+        meal_type="lunch",
+        manual={},
+    )
+
+    # The aggregated calories should be 400 (300+100) and protein 15 (10+5).
+    assert result["calories"] == 400.0
+    assert result["protein_g"] == 15.0
+    # Total weight is the sum of parsed weights.
+    assert result["total_weight_g"] == 200.0
+    # No excitants detected in this minimal scenario.
+    assert result["other_excitants_present"] is False
+
+
+def test_translate_text_caching_and_fallback(monkeypatch):
+    """Ensure the translation routine falls back to Google when MyMemory fails
+    and that subsequent calls hit the in‑memory cache.
+    """
+    calls = SimpleNamespace(my_mem=0, google=0)
+
+    class DummyMyMemory:
+        def __init__(self, source, target):
+            pass
+        def translate(self, txt):
+            calls.my_mem += 1
+            raise RuntimeError("simulated failure")
+
+    class DummyGoogle:
+        def __init__(self, source, target):
+            pass
+        def translate(self, txt):
+            calls.google += 1
+            return f"{txt}_en"
+
+    monkeypatch.setattr(services, "MyMemoryTranslator", DummyMyMemory)
+    monkeypatch.setattr(services, "GoogleTranslator", DummyGoogle)
+
+    # First call triggers the fallback path.
+    result1 = services.translate_text("café")
+    assert result1 == "café_en"
+    assert calls.my_mem == 1
+    assert calls.google == 1
+
+    # Second call should hit the cache – no additional translator calls.
+    result2 = services.translate_text("café")
+    assert result2 == "café_en"
+    assert calls.my_mem == 1 and calls.google == 1
+
+
+def test_get_edamam_credentials_missing(monkeypatch):
+    """When the environment variables are absent, an APIException is raised."""
+    # Ensure the variables are unset for the test.
+    monkeypatch.delenv("EDAMAM_APP_ID", raising=False)
+    monkeypatch.delenv("EDAMAM_APP_KEY", raising=False)
+    with pytest.raises(services.APIException) as excinfo:
+        services.get_edamam_credentials()
+    assert excinfo.value.status_code == 500
+
+
+def test_fetch_edamam_recipe_error_handling(monkeypatch):
+    """Simulate a network error and a non‑200 response to verify exception flow."""
+    monkeypatch.setattr(services, "get_edamam_credentials", lambda: ("id", "key"))
+
+    class DummyResponse:
+        def __init__(self, status_code, json_data=None, raise_for=None):
+            self.status_code = status_code
+            self._json = json_data or {}
+            self.raise_for = raise_for
+
+        def json(self):
+            if isinstance(self._json, Exception):
+                raise self._json
+            return self._json
+
+    # 1️⃣ Network exception path
+    def raise_req(*_, **__):
+        raise requests.exceptions.RequestException("connection broken")
+    monkeypatch.setattr(services.requests, "post", raise_req)
+    with pytest.raises(services.APIException) as exc:
+        services.fetch_edamam_recipe("Meal", ["bread"])
+    assert exc.value.status_code == 502
+
+    # 2️⃣ Non‑200 response with error payload
+    def ok_resp(*_, **__):
+        return DummyResponse(400, {"error": "bad"})
+    monkeypatch.setattr(services.requests, "post", ok_resp)
+    with pytest.raises(services.APIException) as exc2:
+        services.fetch_edamam_recipe("Meal", ["bread"])
+    assert exc2.value.status_code == 502
 
 
 def _sample_values(**overrides):

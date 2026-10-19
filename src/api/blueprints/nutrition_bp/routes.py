@@ -212,6 +212,169 @@ def get_nutrition_log(entry_id):
     }), 200
 
 
+@bp.route("/logs", methods=["GET"])
+@jwt_required()
+def list_nutrition_logs():
+    """Return a paginated list of the current user's NutritionLog entries.
+
+    Query parameters (optional):
+        - ``page`` (int): page number, default 1.
+        - ``per_page`` (int): items per page, default 20.
+    """
+    current_user_id = int(get_jwt_identity())
+    # Extract pagination parameters with safe defaults.
+    try:
+        page = int(request.args.get("page", 1))
+        per_page = int(request.args.get("per_page", 20))
+    except ValueError:
+        raise APIException("Pagination parameters must be integers", status_code=400)
+
+    if page < 1 or per_page < 1:
+        raise APIException("Pagination parameters must be positive", status_code=400)
+
+    # Build query joining NutritionLog with DailyEntry to enforce ownership.
+    stmt = (
+        select(NutritionLog)
+        .join(DailyEntry, NutritionLog.entry_id == DailyEntry.id)
+        .where(DailyEntry.user_id == current_user_id)
+        .order_by(NutritionLog.id.desc())
+        .limit(per_page)
+        .offset((page - 1) * per_page)
+    )
+    logs = db.session.execute(stmt).scalars().all()
+
+    # Serialize each log.
+    results = [log.serialize() for log in logs]
+    return jsonify({
+        "message": "Nutrition logs list retrieved successfully",
+        "results": results,
+        "page": page,
+        "per_page": per_page,
+    }), 200
+
+
+@bp.route("/log/<int:entry_id>", methods=["PUT", "PATCH"])
+@jwt_required()
+def update_nutrition_log(entry_id):
+    """Partial update of an existing NutritionLog.
+
+    Allows updating any mutable numeric field (e.g., calories, protein_g, ...).
+    Fields not provided remain unchanged.
+    """
+    current_user_id = int(get_jwt_identity())
+    body = request.get_json(silent=True) or {}
+
+    # Locate the associated DailyEntry to verify ownership.
+    entry = db.session.get(DailyEntry, entry_id)
+    if entry is None or entry.user_id != current_user_id:
+        raise APIException("Daily entry not found", status_code=404)
+
+    # Fetch the NutritionLog; must exist to update.
+    stmt = select(NutritionLog).where(NutritionLog.entry_id == entry.id)
+    log = db.session.execute(stmt).scalar_one_or_none()
+    if log is None:
+        raise APIException("Nutrition log not found for this entry", status_code=404)
+
+    # List of fields that can be patched.
+    mutable_fields = [
+        "calories",
+        "protein_g",
+        "carbohydrates_g",
+        "sugars_g",
+        "fat_g",
+        "caffeine_mg",
+        "alcohol_g",
+        "omega3_mg",
+        "sodium_mg",
+        "vitamin_e_mg",
+        "vitamin_b12_ug",
+        "total_weight_g",
+        "meal_type",
+        "other_excitants_present",
+    ]
+
+    # Apply updates with validation.
+    for field in mutable_fields:
+        if field in body:
+            value = body[field]
+            # Simple numeric validation for most fields.
+            if field in (
+                "calories",
+                "protein_g",
+                "carbohydrates_g",
+                "sugars_g",
+                "fat_g",
+                "caffeine_mg",
+                "alcohol_g",
+                "omega3_mg",
+                "sodium_mg",
+                "vitamin_e_mg",
+                "vitamin_b12_ug",
+                "total_weight_g",
+            ):
+                try:
+                    numeric = float(value)
+                except (TypeError, ValueError):
+                    raise APIException(f"{field} must be a number", status_code=400)
+                if numeric < 0:
+                    raise APIException(f"{field} cannot be negative", status_code=400)
+                setattr(log, field, numeric)
+            elif field == "meal_type":
+                # Validate against sleep params if provided.
+                params = load_sleep_params()
+                if value is not None:
+                    allowed = list(params["meals"].keys())
+                    if value not in allowed:
+                        raise APIException(
+                            f"meal_type must be one of: {', '.join(allowed)}",
+                            status_code=400,
+                        )
+                setattr(log, field, value)
+            else:
+                # Boolean or nullable fields.
+                setattr(log, field, value)
+
+    try:
+        db.session.commit()
+    except Exception as exc:
+        db.session.rollback()
+        raise APIException(f"Error updating nutrition log: {str(exc)}", status_code=500)
+
+    return jsonify({
+        "message": "Nutrition log updated successfully",
+        "results": log.serialize(),
+    }), 200
+
+
+@bp.route("/log/<int:entry_id>", methods=["DELETE"])
+@jwt_required()
+def delete_nutrition_log(entry_id):
+    """Delete the NutritionLog linked to a DailyEntry.
+
+    Only the owner of the entry can delete its nutrition log.
+    """
+    current_user_id = int(get_jwt_identity())
+    entry = db.session.get(DailyEntry, entry_id)
+    if entry is None or entry.user_id != current_user_id:
+        raise APIException("Daily entry not found", status_code=404)
+
+    stmt = select(NutritionLog).where(NutritionLog.entry_id == entry.id)
+    log = db.session.execute(stmt).scalar_one_or_none()
+    if log is None:
+        raise APIException("Nutrition log not found for this entry", status_code=404)
+
+    try:
+        db.session.delete(log)
+        db.session.commit()
+    except Exception as exc:
+        db.session.rollback()
+        raise APIException(f"Error deleting nutrition log: {str(exc)}", status_code=500)
+
+    return jsonify({
+        "message": "Nutrition log deleted successfully"
+    }), 200
+
+
 @bp.route("/parameters", methods=["GET"])
 @jwt_required()
 def get_nutrition_parameters():
