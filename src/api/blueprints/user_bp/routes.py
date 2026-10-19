@@ -1,7 +1,9 @@
 from flask import request, jsonify
-from sqlalchemy import select
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-
+from flask_jwt_extended import (
+    create_access_token,
+    jwt_required,
+    get_jwt_identity,
+)
 from api.extensions import db, bcrypt
 from api.utils import APIException
 from api.blueprints.user_bp import user_bp
@@ -9,238 +11,185 @@ from api.blueprints.user_bp.models import User, UserPreferences
 
 
 @user_bp.route("/signup", methods=["POST"])
-def handle_signup():
-    body = request.get_json()
-    if body is None:
+def register_user():
+    """Crear una cuenta de usuario.
+
+    Se espera un cuerpo JSON con los campos:
+    ``email``, ``password``, ``name`` y ``last_name``.
+    """
+    data = request.get_json()
+    if not data:
         raise APIException("JSON body is required", status_code=400)
 
-    email = body.get("email")
-    password = body.get("password")
-    name = body.get("name")
-    last_name = body.get("last_name")
-
-    if not email or not isinstance(email, str) or email.strip() == "":
-        raise APIException("Field 'email' is required", status_code=400)
-    if not password or not isinstance(password, str) or password.strip() == "":
-        raise APIException("Field 'password' is required", status_code=400)
-    if not name or not isinstance(name, str) or name.strip() == "":
-        raise APIException("Field 'name' is required", status_code=400)
-    if not last_name or not isinstance(last_name, str) or last_name.strip() == "":
-        raise APIException("Field 'last_name' is required", status_code=400)
-
-    stmt = select(User).where(User.email == email.strip())
-    user_exists = db.session.execute(stmt).scalar_one_or_none()
-
-    if user_exists is not None:
-        raise APIException("Email is already registered", status_code=409)
-
-    try:
-        hashed_password = bcrypt.generate_password_hash(
-            password.strip()).decode("utf-8")
-
-        new_user = User(
-            email=email.strip(),
-            password=hashed_password,
-            name=name.strip(),
-            last_name=last_name.strip(),
-            is_active=True
-        )
-
-        db.session.add(new_user)
-        db.session.flush()
-
-        default_preferences = UserPreferences(user_id=new_user.id)
-        db.session.add(default_preferences)
-        db.session.commit()
-
-        return jsonify({
-            "message": "User created successfully",
-            "results": new_user.serialize()
-        }), 201
-
-    except Exception as e:
-        db.session.rollback()
+    required = ["email", "password", "name", "last_name"]
+    missing = [field for field in required if not data.get(field)]
+    if missing:
         raise APIException(
-            f"Internal server error creating user: {str(e)}", status_code=500)
+            f"Missing fields: {', '.join(missing)}", status_code=400)
+
+    if db.session.query(User).filter_by(email=data["email"]).first():
+        raise APIException(
+            "User with this email already exists", status_code=409)
+
+    hashed_pw = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
+    user = User(
+        email=data["email"],
+        password=hashed_pw,
+        name=data["name"],
+        last_name=data["last_name"],
+    )
+    db.session.add(user)
+    db.session.flush()  # Obtain user.id before commit
+
+    # Crear preferencias por defecto para el nuevo usuario
+    preferences = UserPreferences(user_id=user.id)
+    db.session.add(preferences)
+    db.session.commit()
+
+    return jsonify({"message": "User registered successfully", "user": user.serialize()}), 201
 
 
 @user_bp.route("/login", methods=["POST"])
-def create_token():
-    body = request.get_json()
-    if body is None:
+def login_user():
+    """Autenticar al usuario y devolver un token JWT.
+
+    Se requiere ``email`` y ``password`` en el cuerpo JSON.
+    """
+    data = request.get_json()
+    if not data:
         raise APIException("JSON body is required", status_code=400)
 
-    email = body.get("email")
-    password = body.get("password")
-
+    email = data.get("email")
+    password = data.get("password")
     if not email or not password:
         raise APIException(
-            "Fields 'email' and 'password' are required", status_code=400)
+            "Both email and password are required", status_code=400)
 
-    stmt = select(User).where(User.email == email.strip())
-    user = db.session.execute(stmt).scalar_one_or_none()
-
-    if user is None or not bcrypt.check_password_hash(user.password, password.strip()):
-        raise APIException(
-            "Invalid credentials. Email or password incorrect", status_code=401)
-
-    if not user.is_active:
-        raise APIException(
-            "Access denied: Your account is deactivated", status_code=403)
+    user = db.session.query(User).filter_by(email=email).first()
+    if not user or not bcrypt.check_password_hash(user.password, password):
+        raise APIException("Invalid credentials", status_code=401)
 
     access_token = create_access_token(identity=str(user.id))
-
-    return jsonify({
-        "message": "Authentication successful",
-        "token": access_token,
-        "user_id": user.id
-    }), 200
+    return jsonify({"access_token": access_token, "user": user.serialize()}), 200
 
 
 @user_bp.route("/profile", methods=["GET"])
 @jwt_required()
-def protected():
-    current_user_id = get_jwt_identity()
-    user = db.session.get(User, int(current_user_id))
-
-    if user is None:
+def get_current_user():
+    """Devuelve la información del usuario autenticado y sus preferencias."""
+    user_id = int(get_jwt_identity())
+    user = db.session.get(User, user_id)
+    if not user:
         raise APIException("User not found", status_code=404)
 
-    if not user.is_active:
-        raise APIException(
-            "Access denied: Your account is deactivated", status_code=403)
-
+    preferences = (
+        db.session.query(UserPreferences).filter_by(user_id=user_id).first()
+    )
     return jsonify({
-        "message": "Access granted to profile",
-        "results": user.serialize()
+        "user": user.serialize(),
+        "preferences": preferences.serialize() if preferences else None,
     }), 200
 
 
-@user_bp.route('/preferences', methods=['GET'])
+@user_bp.route("/profile", methods=["PUT"])
 @jwt_required()
-def get_user_preferences():
-    current_user_id = int(get_jwt_identity())
-    stmt = select(UserPreferences).where(
-        UserPreferences.user_id == current_user_id)
-    prefs = db.session.execute(stmt).scalar_one_or_none()
+def update_preferences():
+    """Actualizar las preferencias del usuario autenticado.
 
-    if prefs is None:
-        prefs = UserPreferences(user_id=current_user_id)
-        db.session.add(prefs)
-        db.session.commit()
+    Se aceptan los campos ``ai_provider``, ``custom_api_key``, ``selected_model``
+    y ``timezone``. Sólo los provistos en el JSON son actualizados.
+    """
+    user_id = int(get_jwt_identity())
+    pref = db.session.query(UserPreferences).filter_by(user_id=user_id).first()
+    if not pref:
+        # Si no existen, crear una con valores por defecto
+        pref = UserPreferences(user_id=user_id)
+        db.session.add(pref)
 
-    return jsonify({
-        "message": "User preferences retrieved successfully",
-        "results": prefs.serialize()
-    }), 200
+    data = request.get_json() or {}
+    # Campos opcionales a actualizar
+    for field in ["ai_provider", "custom_api_key", "selected_model", "timezone"]:
+        if field in data:
+            setattr(pref, field, data[field])
+
+    db.session.commit()
+    return jsonify({"message": "Preferences updated", "preferences": pref.serialize()}), 200
 
 
-@user_bp.route('/preferences', methods=['PUT'])
+@user_bp.route("/", methods=["GET"])
 @jwt_required()
-def update_user_preferences():
-    current_user_id = int(get_jwt_identity())
-    body = request.get_json()
-    if body is None:
-        raise APIException("JSON body is required", status_code=400)
+def list_users():
+    """Listar todos los usuarios (paginado).
 
-    stmt = select(UserPreferences).where(
-        UserPreferences.user_id == current_user_id)
-    prefs = db.session.execute(stmt).scalar_one_or_none()
-
-    if prefs is None:
-        prefs = UserPreferences(user_id=current_user_id)
-        db.session.add(prefs)
-
-    if "ai_provider" in body:
-        prefs.ai_provider = body["ai_provider"]
-    if "custom_api_key" in body:
-        prefs.custom_api_key = body["custom_api_key"]
-    if "selected_model" in body:
-        prefs.selected_model = body["selected_model"]
-    if "timezone" in body:
-        prefs.timezone = body["timezone"]
-
+    Sólo usuarios autenticados pueden acceder a este recurso; en entornos de
+    producción se esperaría que sólo administradores lo usen, pero por ahora el
+    control de roles no está modelado, así que cualquier usuario autenticado
+    podrá obtener la lista.
+    """
+    # Parámetros de paginación simples
     try:
-        db.session.commit()
-        return jsonify({
-            "message": "User preferences updated successfully",
-            "results": prefs.serialize()
-        }), 200
-    except Exception as e:
-        db.session.rollback()
+        page = int(request.args.get("page", 1))
+        per_page = int(request.args.get("per_page", 100))
+    except ValueError:
+        raise APIException("Invalid pagination parameters", status_code=400)
+
+    if page < 1 or per_page < 1:
         raise APIException(
-            f"Error updating preferences: {str(e)}", status_code=500)
+            "Pagination parameters must be positive", status_code=400)
+
+    query = db.session.query(User).order_by(User.id)
+    users = query.offset((page - 1) * per_page).limit(per_page).all()
+    total = query.count()
+    return (
+        jsonify(
+            {
+                "users": [u.serialize() for u in users],
+                "page": page,
+                "per_page": per_page,
+                "total": total,
+            }
+        ),
+        200,
+    )
 
 
-@user_bp.route('', methods=['GET'])
-def get_all_users():
-    stmt = select(User)
-    users_query = db.session.scalars(stmt).all()
-
-    if not users_query:
-        return jsonify({
-            "message": "No users found in database",
-            "results": []
-        }), 200
-
-    all_users = [user.serialize() for user in users_query]
-
-    return jsonify({
-        "message": "Users retrieved successfully",
-        "results": all_users,
-        "total_users": len(all_users)
-    }), 200
-
-
-@user_bp.route('/<int:user_id>', methods=['GET'])
-def get_user_by_id(user_id):
-    user = db.session.get(User, user_id)
-
-    if user is None:
-        raise APIException(
-            f"User with ID {user_id} was not found", status_code=404)
-
-    return jsonify({
-        "message": "User retrieved successfully",
-        "results": user.serialize()
-    }), 200
-
-
-@user_bp.route('/<int:user_id>', methods=['DELETE'])
+@user_bp.route("/<int:user_id>", methods=["GET"])
 @jwt_required()
-def delete_user(user_id):
-    current_user_id = get_jwt_identity()
-    if int(user_id) != int(current_user_id):
-        raise APIException(
-            "You are not allowed to delete this account", status_code=403)
+def get_user_by_id(user_id: int):
+    """Obtener información de un usuario específico por ID."""
+    user = db.session.get(User, user_id)
+    if not user:
+        raise APIException("User not found", status_code=404)
+    return jsonify({"user": user.serialize()}), 200
 
-    body = request.get_json(silent=True)
-    if body is None or 'current_password' not in body:
-        raise APIException(
-            "Current password is required to delete account", status_code=400)
 
-    current_password = body.get('current_password')
-    if not isinstance(current_password, str) or current_password.strip() == "":
-        raise APIException("Invalid password provided", status_code=400)
+@user_bp.route("/<int:user_id>", methods=["DELETE"])
+@jwt_required()
+def delete_user(user_id: int):
+    """Eliminar la cuenta del usuario autenticado.
+
+    El cuerpo JSON debe contener ``current_password`` para confirmar la acción.
+    Sólo el propio usuario (o un administrador en caso de existir) puede
+    eliminarse.
+    """
+    jwt_user_id = int(get_jwt_identity())
+    if jwt_user_id != user_id:
+        # En ausencia de roles de administrador, denegamos la operación.
+        raise APIException("Permission denied", status_code=403)
+
+    data = request.get_json() or {}
+    current_password = data.get("current_password")
+    if not current_password:
+        raise APIException("'current_password' is required", status_code=400)
 
     user = db.session.get(User, user_id)
-    if user is None:
-        raise APIException(
-            f"User with ID {user_id} does not exist", status_code=404)
+    if not user:
+        raise APIException("User not found", status_code=404)
 
-    if not bcrypt.check_password_hash(user.password, current_password.strip()):
-        raise APIException("Current password is incorrect", status_code=401)
+    if not bcrypt.check_password_hash(user.password, current_password):
+        raise APIException("Invalid password", status_code=401)
 
-    try:
-        db.session.delete(user)
-        db.session.commit()
-
-        return jsonify({
-            "message": f"Account with ID {user_id} has been permanently deleted",
-            "id_deleted": user_id
-        }), 200
-
-    except Exception as e:
-        db.session.rollback()
-        raise APIException(
-            f"Internal error deleting user: {str(e)}", status_code=500)
+    # Eliminar usuario (y cascada a preferencias si está configurado en el modelo)
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"message": "User deleted successfully"}), 200
