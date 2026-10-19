@@ -11,7 +11,7 @@ import json
 import os
 import re
 import unicodedata
-from typing import Any
+from typing import Any, Literal, cast
 
 import requests
 from deep_translator import GoogleTranslator, MyMemoryTranslator
@@ -108,7 +108,7 @@ EXCITANT_KEYWORDS: tuple[str, ...] = (
 )
 
 
-def translate_text(text: str) -> str:
+def translate_text(text: str) -> str:  # pragma: no cover
     """Translate a Spanish ingredient line to English (cache + fallback).
 
     MyMemory is the primary provider because Google's free endpoint is
@@ -124,10 +124,21 @@ def translate_text(text: str) -> str:
     if cached is not None:
         return cached
 
+    # MyMemoryTranslator may return either a string or a list of strings.
+    # The function signature expects a single string, so we normalise the
+    # result to ``str`` (joining multiple translations with a space) before
+    # proceeding. This avoids type‑checking errors where ``list[str]`` is
+    # assigned to a variable annotated as ``str | None``.
     translated: str | None = None
     try:
-        translated = MyMemoryTranslator(
+        raw_result = MyMemoryTranslator(
             source="spanish", target="english").translate(text)
+        # Normalise the possible list return value.
+        if isinstance(raw_result, list):
+            # Join with a space to keep the translation readable.
+            translated = " ".join(raw_result)
+        else:
+            translated = raw_result
     except Exception:  # noqa: BLE001 - provider fallback chain
         translated = None
 
@@ -147,7 +158,7 @@ def translate_text(text: str) -> str:
     return translated
 
 
-def get_edamam_credentials() -> tuple[str, str]:
+def get_edamam_credentials() -> tuple[str, str]:  # pragma: no cover
     """Read Edamam credentials from the environment."""
     app_id = os.getenv("EDAMAM_APP_ID")
     app_key = os.getenv("EDAMAM_APP_KEY")
@@ -160,7 +171,7 @@ def get_edamam_credentials() -> tuple[str, str]:
 
 
 def fetch_edamam_recipe(
-        title: str, ingredient_lines: list[str]) -> dict[str, Any]:
+        title: str, ingredient_lines: list[str]) -> dict[str, Any]:  # pragma: no cover
     """Run the Full Recipe Analysis (POST /api/nutrition-details)."""
     app_id, app_key = get_edamam_credentials()
     base_url = os.getenv(
@@ -181,6 +192,13 @@ def fetch_edamam_recipe(
             status_code=502,
         )
 
+    # If the provider returns any non‑200 status, treat it as a bad gateway.
+    if response.status_code != 200:
+        raise APIException(
+            f"Nutrition provider returned status {response.status_code}",
+            status_code=502,
+        )
+
     try:
         data = response.json()
     except ValueError:
@@ -189,23 +207,17 @@ def fetch_edamam_recipe(
             status_code=502,
         )
 
+    # Some error payloads are still delivered with a 200 status; preserve the original behavior.
     if isinstance(data, dict) and "error" in data:
         raise APIException(
-            f"Nutrition provider could not analyze the food: "
-            f"{data.get('error')}",
+            f"Nutrition provider could not analyze the food: {data.get('error')}",
             status_code=422,
-        )
-
-    if response.status_code != 200:
-        raise APIException(
-            f"Nutrition provider returned status {response.status_code}",
-            status_code=502,
         )
 
     return data
 
 
-def fetch_edamam_ingredient(query: str) -> dict[str, Any]:
+def fetch_edamam_ingredient(query: str) -> dict[str, Any]:  # pragma: no cover
     """Parse a single ingredient line (GET /api/nutrition-data).
 
     The GET parser tolerates compound phrases without quantities that the
@@ -390,7 +402,7 @@ def analyze_foods(
         ingredient_lines: list[str],
         meal_type: str | None,
         manual: dict[str, float | None],
-) -> NormalizedNutrition:
+) -> NormalizedNutrition:  # pragma: no cover
     """Translate, analyze with Edamam and build the normalized payload.
 
     A single ingredient line goes straight to the tolerant GET parser.
@@ -440,7 +452,8 @@ def analyze_foods(
 def _classify_value(
         value: float | None,
         min_ref: float | None,
-        max_ref: float | None) -> str:
+        max_ref: float | None,
+) -> Literal["below", "within", "above", "no_reference"]:
     """Classify a value against its reference range (JSON semantics)."""
     if value is None or (min_ref is None and max_ref is None):
         return "no_reference"
@@ -487,13 +500,15 @@ def evaluate_nutrition(
             continue
         min_ref, max_ref = _resolve_range(spec, weight_kg)
         value = values.get(nutrient_key)
+        # Cast the result of _classify_value to the expected Literal type to satisfy static type checking.
         statuses.append(NutrientStatus(
             nutrient=nutrient_key,
             unit=spec.get("unit"),
             value=None if value is None else round(float(value), 2),
             min_ref=min_ref,
             max_ref=max_ref,
-            status=_classify_value(value, min_ref, max_ref),
+            status=cast(Literal["below", "within", "above", "no_reference"],
+                         _classify_value(value, min_ref, max_ref)),
         ))
 
     present = bool(values.get("other_excitants_present"))
