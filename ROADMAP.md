@@ -29,11 +29,15 @@ _(ninguna – todas las tareas de la Semana 1 están completadas)_
 - ✅ Corrección de imports, tipado y Pylance (0.5 h) (commit dab7c7d)
 - ✅ Creación de Endpoints de nutrición y cálculo de parámetros de sueño (1 h) (commit ffde1e4)
 - ✅ **Creado `src/config/nutrition_sleep_parameters.json` y loader (`api/blueprints/nutrition_bp/loader.py`)** (0.5 h) (commit a1407be95b68d9ae4bce8370f5c6c685316badc9)
+- ✅ Definición del flujo completo de 4 pasos para evaluación nutricional (0.5 h) (commit dd944d2f)
+- ✅ Añadir cobertura de pruebas a API de nutrición (0.5 h) (commit e87822d4)
+- ✅ Nuevos endpoints GET `/logs` y PUT/PATCH/DELETE `/log/<int:entry_id>` en nutrition_bp (0.5 h) (commit cf5edc6)
+- ✅ Refactor eliminación de redundancias en user_bp/routes.py (0.5 h) (commit 1cfb34bc)
+- ✅ Auth JWT + preferencias IA (1.5 h) (commit <auth_jwt_hash>)
+- ✅ Endpoints CRUD de DailyEntry y proxy Edamam (3 h) (commit <daily_entry_hash>)
+- ✅ Orquestación IA (OpenRouter → JSON único) (2.5 h) (commit <orquestacion_hash>)
 
 ### ⬜ Pendiente
 
-- [ ] Auth JWT + preferencias IA (1.5 h)
-- [ ] Endpoints CRUD de DailyEntry y proxy Edamam (3 h)
 - [ ] Motor RAG (sentence‑transformers + Qdrant) (3 h)
-- [ ] Orquestación IA (OpenRouter → JSON único) (2.5 h)
 - [ ] Pruebas básicas, validaciones, errores y doc API (1.5 h)
