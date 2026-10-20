@@ -1,33 +1,107 @@
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
 /**
- * Permite al usuario editar su información básica y preferencias.
- * Este placeholder muestra un formulario con nombre y email.
+ * Perfil del usuario – permite visualizar y editar la información básica.
+ * Se carga mediante una petición GET a `/profile` y se actualiza con PUT a
+ * la misma ruta. Maneja estados de carga, errores y muestra feedback al
+ * usuario usando react‑toastify y el store global.
  */
 export const Profile = () => {
-  const { store, dispatch } = useGlobalReducer();
+  const { dispatch } = useGlobalReducer();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (store.user) {
-      setName(store.user.name || "");
-      setEmail(store.user.email || "");
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("jwt-token");
+    if (!token) {
+      return { "Content-Type": "application/json" };
     }
-  }, [store.user]);
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+  };
+
+  // Carga inicial del perfil
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/profile`, {
+          method: "GET",
+          headers: getAuthHeaders(),
+        });
+        if (!response.ok) {
+          const err = await response.json();
+          const msg = err.message || "Error al cargar el perfil";
+          setError(msg);
+          toast.error(msg);
+          dispatch({ type: "SET_MESSAGE", payload: { msg: `⚠️ ${msg}`, status: response.status } });
+          return;
+        }
+        const data = await response.json();
+        const user = data.user || data;
+        setName(user.name || "");
+        setEmail(user.email || "");
+      } catch (err) {
+        console.error(err);
+        setError(err.message);
+        toast.error("Error de conexión");
+        dispatch({ type: "SET_MESSAGE", payload: { msg: `⚠️ ${err.message}`, status: 500 } });
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSave = async (e) => {
     e.preventDefault();
-    // En una implementación real se enviaría al backend.
-    console.log("Saving profile", { name, email });
-    // Simular mensaje de éxito.
-    dispatch({
-      type: "SET_MESSAGE",
-      payload: { msg: "Perfil actualizado", status: 200 },
-    });
-    setTimeout(() => dispatch({ type: "SET_MESSAGE", payload: null }), 3000);
+    try {
+      const response = await fetch(`${BACKEND_URL}/profile`, {
+        method: "PUT",
+        headers: { ...getAuthHeaders() },
+        body: JSON.stringify({ name, email }),
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        const msg = err.message || "Error al actualizar el perfil";
+        toast.error(msg);
+        dispatch({ type: "SET_MESSAGE", payload: { msg: `⚠️ ${msg}`, status: response.status } });
+        return;
+      }
+      toast.success("Perfil actualizado");
+      dispatch({ type: "SET_MESSAGE", payload: { msg: "Perfil actualizado", status: 200 } });
+    } catch (err) {
+      console.error(err);
+      toast.error("Error de conexión");
+      dispatch({ type: "SET_MESSAGE", payload: { msg: `⚠️ ${err.message}`, status: 500 } });
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: "50vh" }}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mt-4">
+        <h2 className="text-danger">Error</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-4">

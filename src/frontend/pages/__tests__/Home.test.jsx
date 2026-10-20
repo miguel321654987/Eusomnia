@@ -1,4 +1,6 @@
-import React from "react";
+/* eslint-disable no-unused-vars */
+/* global describe, test, expect */
+import React from "react"; // React needed for JSX transpilation (may be unused depending on setup)
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { Home } from "../Home";

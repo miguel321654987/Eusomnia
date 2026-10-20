@@ -84,7 +84,7 @@ export const DailyLog = () => {
         return;
       }
 
-      const data = await response.json();
+       // const data = await response.json(); // No se usa el resultado directamente
       dispatch({ type: "SET_MESSAGE", payload: { msg: "✅ Entrada guardada", status: 201 } });
       toast.success("Entrada guardada exitosamente");
       // Opcional: podrías actualizar el store con la nueva entrada aquí.
