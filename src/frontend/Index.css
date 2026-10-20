@@ -1,0 +1,54 @@
+/* ---------------------------------------------------------------
+   VARIABLES DE TEMA (reemplazan styled‑components)
+   --------------------------------------------------------------- */
+
+:root {
+  --color-primary: #00bcd4;   /* cian - color primario del demo */
+  --color-bg: #121212;       /* fondo oscuro global */
+  --color-surface: #1e1e1e; /* superficie (cards, footer, sidebar) */
+  --color-text-primary: #ffffff;   /* texto claro */
+  --color-text-secondary: #bbbbbb; /* texto secundario */
+  --font-main: 'Montserrat', sans-serif;
+  --font-code: 'Roboto Mono', monospace;
+}
+
+/* ---------------------------------------------------------------
+   ESTILOS GLOBALES
+   --------------------------------------------------------------- */
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+}
+
+a { color: var(--color-primary); text-decoration: none; }
+
+/* ---------------------------------------------------------------
+   COMPONENTES PERSONALIZADOS (Bootstrap extensions)
+   --------------------------------------------------------------- */
+
+.navbar-custom {
+  background-color: var(--color-primary) !important;
+}
+
+.navbar-custom .nav-link,
+.navbar-custom .navbar-brand,
+.navbar-custom .navbar-text {
+  color: var(--color-text-primary) !important;
+}
+
+.footer-custom {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  text-align: center;
+  padding: 1rem 0;
+  margin-top: 2rem;
+}
+
+.sidebar {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  width: 200px;
+  min-height: calc(100vh - 56px);
+}
