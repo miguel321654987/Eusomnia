@@ -1,5 +1,32 @@
 # CHANGE LOG
 
+### 2026-10-19
+
+**feat(api): Añadidos en src/api/blueprints/nutrition_bp/routes.py GET `/logs` y PUT/PATCH/DELETE /log/\<int:entry_id\>**
+(commit cf5edc69b7045ca4144002f4a6e64cddb19e268)
+
+- Se añadieron los endpoints solicitados y se corrigió el manejo de errores en la integración con Edamam.
+- Listado paginado de NutritionLog, actualizaciones parciales y eliminación con validaciones.
+
+**refactor(api): Eliminar redundancias de endpoints en src/api/blueprints/user_bp/routes.py**
+(commit 1cfb34bca7ae324710596cebd29919fef436f9ed)
+
+- Simplificación de rutas y consolidación de lógica en `user_bp`.
+- Mejoras en validaciones y respuesta uniforme.
+
+### 2026-10-18
+
+**feat(api): Definición del flujo completo de **4 pasos** necesarios para obtener la evaluación nutricional**
+(commit dd944d2f534425710cad1f7f03ed0ca1d2fbb855)
+
+- Diagnóstico del error 404 y definición del flujo de creación de DailyEntry, NutritionLog, consulta y evaluación.
+- Ejemplos de request/response y esqueleto de pruebas unitarias.
+
+**test(api): Añadir cobertura de pruebas a API de nutrición**
+(commit e87822d48fad052cd71fe28f5c567de1a53551db)
+
+- Configuración de fixtures, pruebas de endpoints y ejecución exitosa de la suite (26 tests).
+
 ### 2026-10-16
 
 **fix(api)Corrección de errores en import, Pylance y tipado**  
