@@ -49,11 +49,14 @@ export const Home = () => {
       <section
         className="hero d-flex flex-column justify-content-center align-items-center text-center py-5"
         style={{
-          background: "linear-gradient(135deg, var(--color-primary), var(--color-surface))",
+          background:
+            "linear-gradient(135deg, var(--color-primary), var(--color-surface))",
         }}
       >
         <h1 className="display-4 fw-bold mb-3">Eusomnia</h1>
-        <p className="lead mb-4">Monitorea y mejora tu sueño con inteligencia artificial.</p>
+        <p className="lead mb-4">
+          Monitorea y mejora tu sueño con inteligencia artificial.
+        </p>
         <Link to="/daily-log" className="btn btn-primary btn-lg">
           Comenzar Registro Diario
         </Link>
@@ -64,7 +67,10 @@ export const Home = () => {
         <div className="container">
           <div className="row g-4">
             <div className="col-md-4">
-              <div className="card h-100 text-center" style={{ backgroundColor: "var(--color-surface)" }}>
+              <div
+                className="card h-100 text-center"
+                style={{ backgroundColor: "var(--color-surface)" }}
+              >
                 <div className="card-body">
                   <h5 className="card-title">Entradas</h5>
                   <p className="card-text display-6">{recentLogs.length}</p>
@@ -72,7 +78,10 @@ export const Home = () => {
               </div>
             </div>
             <div className="col-md-4">
-              <div className="card h-100 text-center" style={{ backgroundColor: "var(--color-surface)" }}>
+              <div
+                className="card h-100 text-center"
+                style={{ backgroundColor: "var(--color-surface)" }}
+              >
                 <div className="card-body">
                   <h5 className="card-title">Horas de Sueño</h5>
                   <p className="card-text display-6">7.8 h</p>
@@ -80,7 +89,10 @@ export const Home = () => {
               </div>
             </div>
             <div className="col-md-4">
-              <div className="card h-100 text-center" style={{ backgroundColor: "var(--color-surface)" }}>
+              <div
+                className="card h-100 text-center"
+                style={{ backgroundColor: "var(--color-surface)" }}
+              >
                 <div className="card-body">
                   <h5 className="card-title">Calidad</h5>
                   <p className="card-text display-6">Alta</p>

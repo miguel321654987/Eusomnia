@@ -1,6 +1,7 @@
 import { closeModalSafely } from "../utils.js";
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+// During unit tests import.meta may be undefined; guard against that.
+const BACKEND_URL = (import.meta && import.meta.env && import.meta.env.VITE_BACKEND_URL) || "http://localhost:3000";
 
 export const getActions = (store, dispatch) => {
   // 🔥 Helper interno para incluir el Token JWT de forma automática y segura

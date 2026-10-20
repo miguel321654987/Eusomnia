@@ -1,6 +1,9 @@
 /* eslint-disable no-unused-vars */
-/* global describe, test, expect */
+/* global describe, test, expect, global */
 import React from "react"; // React needed for JSX transpilation (may be unused depending on setup)
+import { vi, beforeEach } from "vitest"; // Import vi and beforeEach for mocking functions and setup in Vitest
+// Extiende expect con los matchers de jest-dom (e.g., toBeInTheDocument)
+import "@testing-library/jest-dom";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { Home } from "../Home";
@@ -11,6 +14,11 @@ import { Home } from "../Home";
  * estén presentes y que las clases de Bootstrap definidas se apliquen.
  */
 describe("Home component", () => {
+  beforeEach(() => {
+    // Mock fetch to prevent actual network request during the hero test
+    global.fetch = vi.fn().mockResolvedValue({ ok: false, json: async () => ({}) });
+  });
+
   test("renders hero section with title and CTA", () => {
     render(
       <MemoryRouter>
