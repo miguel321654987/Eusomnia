@@ -13,7 +13,7 @@ version: 1.0
 ## 🚀 Core Operation Protocol (CRITICAL)
 
 Before proposing any structural change, architecture design, or action steps, the AI **MUST** strictly open, read, and obey the mandatory planning workflow defined in:
-👉 `.agents/spec/PLANNING_GUIDE.md`
+👉 `.agents/spec/PLANNING-GUIDE.md`
 
 ## 🛠️ Project Stack
 
@@ -51,4 +51,4 @@ For any interaction, analysis, or code generation, you must mandatorily read the
 
 ## 🏗️ Operational Workflows
 
-- Planification protocol standard: [Planning Guide](.agents/spec/PLANNING_GUIDE.md) → `.agents/spec/PLANNING_GUIDE.md`
+- Planification protocol standard: [Planning Guide](.agents/spec/PLANNING-GUIDE.md) → `.agents/spec/PLANNING-GUIDE.md`

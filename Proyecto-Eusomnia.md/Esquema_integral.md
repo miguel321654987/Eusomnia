@@ -41,11 +41,11 @@
 - **IA en acción (Solo para Voz):** El backend actúa como un proxy seguro y transmite el audio a la API de Whisper. Whisper convierte la voz en texto exacto en inglés y se lo devuelve a Flask.
 - **Resultado en la UI:** El navegador despliega el texto definitivo (ya sea escrito o transcrito por Whisper) dentro del cuadro de edición por si el usuario quiere pulir la redacción, corregir errores o matizar palabras antes de proceder.
 
-### 1C · Enriquecimiento Nutricional Externo (CalorieNinjas)
+### 1C · Enriquecimiento Nutricional Externo (Edamam)
 
-- **BACKEND:** El backend actúa como proxy y transmite la información de comida (campo de comida del formulario) a la API de CalorieNinjas. Esta API devuelve información nutricional detallada (calorías, cafeína, azúcar, etc.).
+- **BACKEND:** El backend actúa como proxy y transmite la información de comida (campo de comida del formulario) a la API de Edamam. Esta API devuelve información nutricional detallada (calorías, cafeína, azúcar, etc.).
 - **Resultado en la UI:** El navegador muestra la información nutricional obtenida y permite al usuario revisar y confirmar sus datos antes de proceder.
-- **Punto de integración:** La nutrición no se trata como un dato aislado del sueño: el resultado de CalorieNinjas se incorpora inmediatamente al **contexto del mismo registro diario**, de modo que queda disponible tanto para el análisis de patrones (Paso 2) como para la interpretación del sueño y las recomendaciones (Paso 3).
+- **Punto de integración:** La nutrición no se trata como un dato aislado del sueño: el resultado de Edamam se incorpora inmediatamente al **contexto del mismo registro diario**, de modo que queda disponible tanto para el análisis de patrones (Paso 2) como para la interpretación del sueño y las recomendaciones (Paso 3).
 
 ### 1D · Confirmación del Registro Diario
 
@@ -69,7 +69,7 @@ Los datos de sueño y los datos de hábitos se convierten en una única matriz d
 
 ### 2B · Normalización de la Información Nutricional
 
-- **Backend (Flask):** El servidor procesa el resultado de CalorieNinjas obtenido en el Paso 1C y lo normaliza a un formato comparable entre días: calorías totales, cafeína, azúcar y demás valores relevantes, asociados siempre a la comida concreta registrada.
+- **Backend (Flask):** El servidor procesa el resultado de Edamam obtenido en el Paso 1C y lo normaliza a un formato comparable entre días: calorías totales, cafeína, azúcar y demás valores relevantes, asociados siempre a la comida concreta registrada.
 - **Resultado:** Un bloque nutricional estandarizado del día, listo para ser correlacionado con hábitos y con sueño.
 
 ### 2C · Análisis de Patrones y Correlaciones sobre el Histórico
@@ -151,7 +151,7 @@ Estos elementos no pertenecen a un solo paso: atraviesan toda la arquitectura de
 
 | Fase                      | Qué entra                                                       | Qué se procesa                                                                                               | Qué sale                                                                                                 |
 | ------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| **Paso 1 · Captura**      | Relato del sueño (texto o voz) + formulario de hábitos + comida | Transcripción con Whisper (si hay voz) y enriquecimiento con CalorieNinjas                                   | Un único registro diario revisado y confirmado                                                           |
+| **Paso 1 · Captura**      | Relato del sueño (texto o voz) + formulario de hábitos + comida | Transcripción con Whisper (si hay voz) y enriquecimiento con Edamam                                          | Un único registro diario revisado y confirmado                                                           |
 | **Paso 2 · Análisis**     | El registro diario confirmado                                   | Extracción vectorial onírica (Qdrant), normalización nutricional y motor de correlaciones sobre el histórico | Contexto unificado (sueño + símbolos + hábitos + nutrición + patrones)                                   |
 | **Paso 3 · IA**           | El contexto unificado                                           | Una sola orquestación (clave de app o BYOAI - Pro)                                                           | JSON único: interpretación, emociones, símbolos, lectura de hábitos, patrones, recomendaciones y alertas |
 | **Paso 4 · Persistencia** | El JSON y todos los datos del día                               | Guardado con SQLAlchemy en el registro diario                                                                | Resultado visual: tarjeta de interpretación, badges, tarjetas de recomendaciones e historial             |
