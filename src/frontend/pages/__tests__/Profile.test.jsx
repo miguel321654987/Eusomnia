@@ -1,4 +1,4 @@
-/* global describe, test, beforeEach, afterEach, expect, global, require */
+/* global describe, test, beforeEach, afterEach, expect, global */
 // Importamos React explícitamente para que JSX sea transformado correctamente.
 // Añade los matchers de jest-dom como toBeInTheDocument
 import "@testing-library/jest-dom";
@@ -7,21 +7,28 @@ import { MemoryRouter } from "react-router-dom";
 import { Profile } from "../Profile";
 import { vi } from "vitest";
 
-// Mock the global useGlobalReducer hook to capture dispatch calls
-// Ajustamos la ruta del mock al hook real ubicado en src/frontend/hooks
-vi.mock("../hooks/useGlobalReducer.jsx", () => ({
+// Shared dispatch mock to allow assertions against the same instance used by
+// the component rendered in each test.
+const { dispatchMock } = vi.hoisted(() => ({ dispatchMock: vi.fn() }));
+
+vi.mock("../../hooks/useGlobalReducer.jsx", () => ({
   __esModule: true,
   default: vi.fn(() => ({
     store: { user: null },
-    dispatch: vi.fn(),
+    dispatch: dispatchMock,
   })),
 }));
 
 // Mock react-toastify to avoid actual DOM toasts during tests
+const { toastSuccessMock, toastErrorMock } = vi.hoisted(() => ({
+  toastSuccessMock: vi.fn(),
+  toastErrorMock: vi.fn(),
+}));
+
 vi.mock("react-toastify", () => ({
   toast: {
-    success: vi.fn(),
-    error: vi.fn(),
+    success: toastSuccessMock,
+    error: toastErrorMock,
   },
 }));
 
@@ -70,7 +77,7 @@ describe("Profile component", () => {
         json: async () => ({ message: "updated" }),
       });
 
-    const { dispatch } = require("../hooks/useGlobalReducer.jsx").default();
+    // The shared dispatch mock is used directly to assert SET_MESSAGE calls.
 
     render(
       <MemoryRouter>
@@ -88,10 +95,9 @@ describe("Profile component", () => {
 
     await waitFor(() => {
       // Verify toast.success called
-      const { toast } = require("react-toastify");
-      expect(toast.success).toHaveBeenCalledWith("Perfil actualizado");
+      expect(toastSuccessMock).toHaveBeenCalledWith("Perfil actualizado");
       // Verify dispatch received success message
-      expect(dispatch).toHaveBeenCalledWith({
+      expect(dispatchMock).toHaveBeenCalledWith({
         type: "SET_MESSAGE",
         payload: { msg: "Perfil actualizado", status: 200 },
       });

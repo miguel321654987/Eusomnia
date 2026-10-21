@@ -54,7 +54,7 @@ export const Signup = ({ signupModal }) => {
 
     try {
       const resp = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/signup`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

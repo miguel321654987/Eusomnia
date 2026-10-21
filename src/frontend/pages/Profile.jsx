@@ -19,7 +19,7 @@ export const Profile = () => {
     import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
   const getAuthHeaders = () => {
     const token = localStorage.getItem("jwt-token");
-    if (!token) {
+    if (!token || token === "undefined" || token === "null") {
       return { "Content-Type": "application/json" };
     }
     return {
@@ -32,7 +32,7 @@ export const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/profile`, {
+        const response = await fetch(`${BACKEND_URL}/api/users/profile`, {
           method: "GET",
           headers: getAuthHeaders(),
         });
@@ -70,7 +70,7 @@ export const Profile = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${BACKEND_URL}/profile`, {
+      const response = await fetch(`${BACKEND_URL}/api/users/profile`, {
         method: "PUT",
         headers: { ...getAuthHeaders() },
         body: JSON.stringify({ name, email }),
@@ -127,8 +127,11 @@ export const Profile = () => {
       <h2>Perfil</h2>
       <form onSubmit={handleSave} className="mt-3">
         <div className="mb-3">
-          <label className="form-label">Nombre</label>
+          <label className="form-label" htmlFor="profile-name">
+            Nombre
+          </label>
           <input
+            id="profile-name"
             type="text"
             className="form-control"
             value={name}
@@ -136,8 +139,11 @@ export const Profile = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Email</label>
+          <label className="form-label" htmlFor="profile-email">
+            Email
+          </label>
           <input
+            id="profile-email"
             type="email"
             className="form-control"
             value={email}
