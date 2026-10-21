@@ -17,7 +17,7 @@ export const History = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
   const getAuthHeaders = () => {
     const token = localStorage.getItem("jwt-token");
-    if (!token) {
+    if (!token || token === "undefined" || token === "null") {
       return { "Content-Type": "application/json" };
     }
     return {

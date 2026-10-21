@@ -15,10 +15,11 @@ export const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+  const BACKEND_URL =
+    import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
   const getAuthHeaders = () => {
     const token = localStorage.getItem("jwt-token");
-    if (!token) {
+    if (!token || token === "undefined" || token === "null") {
       return { "Content-Type": "application/json" };
     }
     return {
@@ -31,7 +32,7 @@ export const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/profile`, {
+        const response = await fetch(`${BACKEND_URL}/api/users/profile`, {
           method: "GET",
           headers: getAuthHeaders(),
         });
@@ -40,7 +41,10 @@ export const Profile = () => {
           const msg = err.message || "Error al cargar el perfil";
           setError(msg);
           toast.error(msg);
-          dispatch({ type: "SET_MESSAGE", payload: { msg: `⚠️ ${msg}`, status: response.status } });
+          dispatch({
+            type: "SET_MESSAGE",
+            payload: { msg: `⚠️ ${msg}`, status: response.status },
+          });
           return;
         }
         const data = await response.json();
@@ -51,7 +55,10 @@ export const Profile = () => {
         console.error(err);
         setError(err.message);
         toast.error("Error de conexión");
-        dispatch({ type: "SET_MESSAGE", payload: { msg: `⚠️ ${err.message}`, status: 500 } });
+        dispatch({
+          type: "SET_MESSAGE",
+          payload: { msg: `⚠️ ${err.message}`, status: 500 },
+        });
       } finally {
         setLoading(false);
       }
@@ -63,7 +70,7 @@ export const Profile = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${BACKEND_URL}/profile`, {
+      const response = await fetch(`${BACKEND_URL}/api/users/profile`, {
         method: "PUT",
         headers: { ...getAuthHeaders() },
         body: JSON.stringify({ name, email }),
@@ -72,21 +79,33 @@ export const Profile = () => {
         const err = await response.json();
         const msg = err.message || "Error al actualizar el perfil";
         toast.error(msg);
-        dispatch({ type: "SET_MESSAGE", payload: { msg: `⚠️ ${msg}`, status: response.status } });
+        dispatch({
+          type: "SET_MESSAGE",
+          payload: { msg: `⚠️ ${msg}`, status: response.status },
+        });
         return;
       }
       toast.success("Perfil actualizado");
-      dispatch({ type: "SET_MESSAGE", payload: { msg: "Perfil actualizado", status: 200 } });
+      dispatch({
+        type: "SET_MESSAGE",
+        payload: { msg: "Perfil actualizado", status: 200 },
+      });
     } catch (err) {
       console.error(err);
       toast.error("Error de conexión");
-      dispatch({ type: "SET_MESSAGE", payload: { msg: `⚠️ ${err.message}`, status: 500 } });
+      dispatch({
+        type: "SET_MESSAGE",
+        payload: { msg: `⚠️ ${err.message}`, status: 500 },
+      });
     }
   };
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "50vh" }}>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "50vh" }}
+      >
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -108,8 +127,11 @@ export const Profile = () => {
       <h2>Perfil</h2>
       <form onSubmit={handleSave} className="mt-3">
         <div className="mb-3">
-          <label className="form-label">Nombre</label>
+          <label className="form-label" htmlFor="profile-name">
+            Nombre
+          </label>
           <input
+            id="profile-name"
             type="text"
             className="form-control"
             value={name}
@@ -117,8 +139,11 @@ export const Profile = () => {
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Email</label>
+          <label className="form-label" htmlFor="profile-email">
+            Email
+          </label>
           <input
+            id="profile-email"
             type="email"
             className="form-control"
             value={email}

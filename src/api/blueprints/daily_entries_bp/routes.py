@@ -93,3 +93,52 @@ def create_daily_entry():
         db.session.rollback()
         raise APIException(
             f"Error creating daily entry: {str(e)}", status_code=500)
+
+
+@daily_entries_bp.route("/<int:entry_id>", methods=["PUT", "PATCH"])
+@jwt_required()
+def update_daily_entry(entry_id):
+    current_user_id = int(get_jwt_identity())
+    entry = db.session.get(DailyEntry, entry_id)
+
+    if entry is None or entry.user_id != current_user_id:
+        raise APIException("Daily entry not found", status_code=404)
+
+    body = request.get_json()
+    if body is None:
+        raise APIException("JSON body is required", status_code=400)
+
+    try:
+        sleep_data = body.get("sleep")
+        if sleep_data and entry.sleep_report:
+            if "raw_text" in sleep_data:
+                entry.sleep_report.raw_text = sleep_data["raw_text"]
+            if "final_text" in sleep_data:
+                entry.sleep_report.final_text = sleep_data["final_text"]
+            if "audio_url" in sleep_data:
+                entry.sleep_report.audio_url = sleep_data["audio_url"]
+
+        habits_data = body.get("habits")
+        if habits_data and entry.habit_log:
+            for field in [
+                "physical_activity",
+                "dinner_type",
+                "bedtime_mood",
+                "screen_time",
+                "incidents",
+                "food_notes",
+            ]:
+                if field in habits_data:
+                    setattr(entry.habit_log, field, habits_data[field])
+
+        db.session.commit()
+
+        return jsonify({
+            "message": "Daily entry updated successfully",
+            "results": entry.serialize()
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        raise APIException(
+            f"Error updating daily entry: {str(e)}", status_code=500)
