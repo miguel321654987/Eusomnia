@@ -227,9 +227,9 @@ export const DailyResult = () => {
             <span className="badge bg-primary">Motor IA Unificado</span>
           </div>
 
-          <p className="lead fs-6 mb-4" style={{ lineHeight: "1.7" }}>
+          <p className="lead fs-6 mb-4 text-white" style={{ lineHeight: "1.7" }}>
             {analysis?.interpretation || (
-              <span className="text-muted italic">
+              <span className="text-light opacity-75 fst-italic">
                 El análisis aún no se ha generado o está en proceso. Pulsa
                 "Re-analizar con IA" para obtener la lectura.
               </span>
@@ -239,7 +239,7 @@ export const DailyResult = () => {
           {/* Emociones y Símbolos en Badges */}
           <div className="row g-3">
             <div className="col-md-6">
-              <h6 className="text-muted text-uppercase small fw-bold">
+              <h6 className="text-light opacity-75 text-uppercase small fw-bold">
                 🎭 Emociones Predominantes
               </h6>
               <div className="d-flex flex-wrap gap-2 mt-2">
@@ -253,13 +253,13 @@ export const DailyResult = () => {
                     </span>
                   ))
                 ) : (
-                  <span className="text-muted small">Sin emociones registradas</span>
+                  <span className="text-light opacity-75 small">Sin emociones registradas</span>
                 )}
               </div>
             </div>
 
             <div className="col-md-6">
-              <h6 className="text-muted text-uppercase small fw-bold">
+              <h6 className="text-light opacity-75 text-uppercase small fw-bold">
                 🗝️ Símbolos Oníricos Detectados
               </h6>
               <div className="d-flex flex-wrap gap-2 mt-2">
@@ -273,7 +273,7 @@ export const DailyResult = () => {
                     </span>
                   ))
                 ) : (
-                  <span className="text-muted small">Sin símbolos detectados</span>
+                  <span className="text-light opacity-75 small">Sin símbolos detectados</span>
                 )}
               </div>
             </div>
@@ -291,45 +291,45 @@ export const DailyResult = () => {
               <h4 className="h5 text-info mb-3">
                 🌿 Lectura de Hábitos y Contexto
               </h4>
-              <p className="text-white-50" style={{ lineHeight: "1.6" }}>
+              <p className="text-light opacity-90" style={{ lineHeight: "1.6" }}>
                 {analysis?.habits_reading ||
                   "La IA relaciona tus actividades nocturnas con el descanso obtenido."}
               </p>
 
               <hr className="border-secondary my-3" />
 
-              <h6 className="text-muted small text-uppercase fw-bold mb-3">
+              <h6 className="text-light opacity-75 small text-uppercase fw-bold mb-3">
                 Resumen de Hábitos Registrados
               </h6>
               <div className="row g-2 small">
                 <div className="col-6">
-                  <strong>Actividad física:</strong>{" "}
-                  <span className="text-capitalize">
+                  <span className="text-light opacity-75">Actividad física:</span>{" "}
+                  <strong className="text-white text-capitalize">
                     {habit_log?.physical_activity || "No registrada"}
-                  </span>
+                  </strong>
                 </div>
                 <div className="col-6">
-                  <strong>Tipo de cena:</strong>{" "}
-                  <span className="text-capitalize">
+                  <span className="text-light opacity-75">Tipo de cena:</span>{" "}
+                  <strong className="text-white text-capitalize">
                     {habit_log?.dinner_type || "No registrada"}
-                  </span>
+                  </strong>
                 </div>
                 <div className="col-6">
-                  <strong>Ánimo al dormir:</strong>{" "}
-                  <span className="text-capitalize">
+                  <span className="text-light opacity-75">Ánimo al dormir:</span>{" "}
+                  <strong className="text-white text-capitalize">
                     {habit_log?.bedtime_mood || "No registrado"}
-                  </span>
+                  </strong>
                 </div>
                 <div className="col-6">
-                  <strong>Uso de pantallas:</strong>{" "}
-                  <span className="text-capitalize">
+                  <span className="text-light opacity-75">Uso de pantallas:</span>{" "}
+                  <strong className="text-white text-capitalize">
                     {habit_log?.screen_time || "No registrado"}
-                  </span>
+                  </strong>
                 </div>
                 {habit_log?.incidents && (
                   <div className="col-12 mt-2">
-                    <strong>Incidencias:</strong>{" "}
-                    <span className="badge bg-dark border border-secondary text-white-50">
+                    <span className="text-light opacity-75">Incidencias:</span>{" "}
+                    <span className="badge bg-dark border border-secondary text-white">
                       {habit_log.incidents}
                     </span>
                   </div>
@@ -351,42 +351,117 @@ export const DailyResult = () => {
               {nutrition_log ? (
                 <>
                   <div className="row text-center g-2 mb-3">
+                    {/* Calorías */}
                     <div className="col-6">
-                      <div className="p-3 bg-dark rounded border border-secondary">
-                        <div className="small text-muted">Calorías</div>
+                      <div className="p-2 bg-dark rounded border border-secondary">
+                        <div className="small text-light opacity-75 fw-bold mb-1">Calorías Totales</div>
                         <div className="fs-5 fw-bold text-white">
-                          {nutrition_log.calories} kcal
+                          {Math.round(
+                            (Number(nutrition_log.calories || 0) +
+                              Number(nutrition_log.alcohol_g || 0) * 7) *
+                              10
+                          ) / 10}{" "}
+                          kcal
+                        </div>
+                        {nutrition_log.alcohol_g > 0 && (
+                          <div
+                            className="text-danger"
+                            style={{ fontSize: "0.7rem" }}
+                          >
+                            +
+                            {Math.round(nutrition_log.alcohol_g * 7 * 10) / 10}{" "}
+                            kcal (alcohol)
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Grasas */}
+                    <div className="col-6">
+                      <div className="p-2 bg-dark rounded border border-secondary">
+                        <div className="small text-light opacity-75 fw-bold mb-1">Grasas Totales</div>
+                        <div className="fs-5 fw-bold text-white">
+                          {nutrition_log.fat_g} g
                         </div>
                       </div>
                     </div>
+
+                    {/* Proteínas */}
                     <div className="col-6">
-                      <div className="p-3 bg-dark rounded border border-secondary">
-                        <div className="small text-muted">Cafeína</div>
+                      <div className="p-2 bg-dark rounded border border-secondary">
+                        <div className="small text-light opacity-75 fw-bold mb-1">Proteínas</div>
+                        <div className="fs-5 fw-bold text-white">
+                          {nutrition_log.protein_g} g
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Carbohidratos y Azúcar */}
+                    <div className="col-6">
+                      <div className="p-2 bg-dark rounded border border-secondary">
+                        <div className="small text-light opacity-75 fw-bold mb-1">Carbs / Azúcar</div>
+                        <div className="fs-6 fw-bold text-white mt-1">
+                          {nutrition_log.carbohydrates_g}g /{" "}
+                          <span className="text-warning">
+                            {nutrition_log.sugar_g}g
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Cafeína */}
+                    <div className="col-6">
+                      <div className="p-2 bg-dark rounded border border-secondary">
+                        <div className="small text-light opacity-75 fw-bold mb-1">Cafeína</div>
                         <div className="fs-5 fw-bold text-warning">
                           {nutrition_log.caffeine_mg} mg
                         </div>
                       </div>
                     </div>
+
+                    {/* Alcohol */}
                     <div className="col-6">
-                      <div className="p-3 bg-dark rounded border border-secondary">
-                        <div className="small text-muted">Azúcares</div>
-                        <div className="fs-5 fw-bold text-white">
-                          {nutrition_log.sugar_g} g
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-6">
-                      <div className="p-3 bg-dark rounded border border-secondary">
-                        <div className="small text-muted">Alcohol</div>
+                      <div className="p-2 bg-dark rounded border border-secondary">
+                        <div className="small text-light opacity-75 fw-bold mb-1">Alcohol</div>
                         <div className="fs-5 fw-bold text-danger">
                           {nutrition_log.alcohol_g} g
                         </div>
                       </div>
                     </div>
+
+                    {/* Sodio y Vitaminas */}
+                    <div className="col-12">
+                      <div className="p-2 bg-dark rounded border border-secondary small text-light opacity-90">
+                        <span>Sodio: <strong className="text-white">{nutrition_log.sodium_mg} mg</strong></span>
+                        <span className="mx-2">•</span>
+                        <span>Vit. B12: <strong className="text-white">{nutrition_log.vitamin_b12_ug} µg</strong></span>
+                        <span className="mx-2">•</span>
+                        <span>Vit. E: <strong className="text-white">{nutrition_log.vitamin_e_mg} mg</strong></span>
+                      </div>
+                    </div>
                   </div>
+
                   {habit_log?.food_notes && (
-                    <div className="small text-muted mt-2">
-                      <em>Notas: "{habit_log.food_notes}"</em>
+                    <div className="small text-light opacity-75 mt-2 border-top border-secondary pt-2">
+                      <strong className="text-white">Registro de comidas:</strong>
+                      {(() => {
+                        try {
+                          const parsed = JSON.parse(habit_log.food_notes);
+                          if (typeof parsed === "object" && parsed !== null) {
+                            return (
+                              <ul className="mb-0 mt-1 ps-3 text-light opacity-90">
+                                {parsed.breakfast && <li><strong>Desayuno:</strong> {parsed.breakfast}</li>}
+                                {parsed.lunch && <li><strong>Comida:</strong> {parsed.lunch}</li>}
+                                {parsed.snack && <li><strong>Merienda:</strong> {parsed.snack}</li>}
+                                {parsed.dinner && <li><strong>Cena:</strong> {parsed.dinner}</li>}
+                              </ul>
+                            );
+                          }
+                          return <div className="text-light opacity-90">{habit_log.food_notes}</div>;
+                        } catch {
+                          return <div className="text-light opacity-90">{habit_log.food_notes}</div>;
+                        }
+                      })()}
                     </div>
                   )}
                 </>
@@ -411,7 +486,7 @@ export const DailyResult = () => {
                 <h4 className="h5 text-warning mb-2">
                   📈 Patrones y Correlaciones con el Histórico
                 </h4>
-                <p className="mb-0 text-white-50" style={{ lineHeight: "1.6" }}>
+                <p className="mb-0 text-light opacity-90" style={{ lineHeight: "1.6" }}>
                   {analysis.patterns_detected}
                 </p>
               </div>
@@ -439,13 +514,13 @@ export const DailyResult = () => {
                           <span className="badge bg-primary me-2 mt-1">
                             {idx + 1}
                           </span>
-                          <span className="text-white-50">{rec}</span>
+                          <span className="text-light opacity-90">{rec}</span>
                         </div>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="col-12 text-muted">
+                  <div className="col-12 text-light opacity-75">
                     No hay recomendaciones adicionales generadas.
                   </div>
                 )}
@@ -459,11 +534,11 @@ export const DailyResult = () => {
           className="card p-4 border-0 shadow-sm"
           style={{ backgroundColor: "var(--color-surface, #1e1e24)" }}
         >
-          <h4 className="h6 text-muted text-uppercase fw-bold mb-3">
+          <h4 className="h6 text-light opacity-75 text-uppercase fw-bold mb-3">
             📖 Relato Original Registrado
           </h4>
           <div
-            className="p-3 rounded text-white-50"
+            className="p-3 rounded text-white"
             style={{
               backgroundColor: "#121217",
               whiteSpace: "pre-wrap",
