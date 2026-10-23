@@ -2,7 +2,7 @@
 
 ## Descripción General
 
-**Diagrama ASCII – Flujo completo (con Qdrant y Sentence‑Transformer)**
+**Diagrama ASCII – Flujo completo (con Qdrant y LangGraph)**
 
 ```
 ┌─1─┐  1️⃣ Entrada del usuario
@@ -30,7 +30,7 @@
 └─┬─┘
   │
   ▼
-┌─6─┐  6️⃣ Vectorización (Sentence‑Transformer)
+┌─6─┐  6️⃣ Vectorización (LangGraph)
 │   │  Convierte el texto del sueño en un vector denso
 └─┬─┘
   │
@@ -250,7 +250,7 @@ class DreamRetrievalService:
 | Fase RAG     | Paso             | Quién actúa                      | Qué hace exactamente                                                                                                        | Qué se obtiene (Output)                                                                    |
 | ------------ | ---------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | Inicio       | 1. Entrada       | El Usuario                       | Introduce su experiencia en la app.                                                                                         | El string: "Soñé que un felino me mordía la mano".                                         |
-| RETRIEVAL    | 2. Vectorización | sentence-transformers            | Traduce el lenguaje humano a coordenadas matemáticas que capturan el significado.                                           | Un Vector (Tensor/Array) de números que representa conceptualmente el sueño.               |
+| RETRIEVAL    | 2. Vectorización | LangGraph                        | Traduce el lenguaje humano a coordenadas matemáticas que capturan el significado.                                           | Un Vector (Tensor/Array) de números que representa conceptualmente el sueño.               |
 | RETRIEVAL    | 3. Búsqueda      | Qdrant Client (`search`)         | Envía el vector al motor Qdrant y compara contra los puntos almacenados en la colección.                                    | Los puntos (`points`) con mayor similitud y sus IDs internos.                              |
 | RETRIEVAL    | 4. Recuperación  | Qdrant / Tu código Python        | Extrae los `payload` (`interpretation_text`) de los puntos devueltos por Qdrant (reemplaza la lectura del CSV por índices). | Fragmentos de texto plano con los significados exactos (ej: "Gato: ...", "Mordisco: ..."). |
 | AUGMENTATION | 5. Ensamblaje    | Tu código Python                 | Empaqueta el sueño original y los fragmentos recuperados de los payloads dentro de las instrucciones para la IA final.      | Un Prompt estructurado enriquecido con tus datos (Input para el LLM).                      |

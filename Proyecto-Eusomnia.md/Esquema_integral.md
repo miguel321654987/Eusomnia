@@ -64,7 +64,7 @@ Los datos de sueño y los datos de hábitos se convierten en una única matriz d
 - **Backend + Caché de Memoria (Flask + Qdrant):** El servidor de Flask toma el texto final del sueño y ejecuta una búsqueda geométrica en bloque:
   - **Diccionario Base en db:** El diccionario base .csv (~1.000 - 7.000 términos según el escogido) aporta precisión gramatical (Ej: diferenciar si una araña persigue al usuario, o si el usuario la aplasta con una piedra).
   - **Formato Vectorial Precargado:** El diccionario se procesa para convertirse en un archivo vectorial procesado con Qdrant.
-  - **Búsqueda Matricial en Bloque:** Flask usa la librería **sentence-transformers** para convertir textos en vectores matemáticos (embeddings) y los compara con los escenarios del diccionario simultáneamente.
+  - **Búsqueda Matricial en Bloque:** Flask usa la librería **LangGraph** para convertir textos en vectores matemáticos (embeddings) y los compara con los escenarios del diccionario simultáneamente.
 - **Resultado:** El motor en memoria RAM obtiene los **conceptos oníricos detectados** (slugs y summary), que pasan a formar parte del contexto unificado en el registro diario al que pertenecen.
 
 ### 2B · Normalización de la Información Nutricional

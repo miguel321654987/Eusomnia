@@ -76,7 +76,7 @@
 
 ### 2026-10-13
 
-**Instalación de Qdrant y sentence-transformers**
+**Instalación de Qdrant y LangGraph**
 (commit f8f7a68 | branch **develop**)
 
 **Actualización de documentación AGENTS y guías de planificación**
@@ -88,7 +88,7 @@
 
 **Stack + repo, ramas y estructura** (commit f8f7a68 | branch **develop**)
 
-**Entorno local y dependencias (Qdrant, sentence-transformers)** (commit f8f7a68 | branch **develop**)
+**Entorno local y dependencias (Qdrant, LangGraph)** (commit f8f7a68 | branch **develop**)
 
 **Backlog de épicas e historias (MVP v1.0 vs v1.1+)** (commit a8b86b6 | branch **develop**)
 
