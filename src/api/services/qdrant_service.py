@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import csv
 import os
-from typing import Any, Mapping, Sequence
+from typing import Any, Callable, Mapping, Sequence, cast
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
@@ -18,6 +18,7 @@ try:
     from langchain_openai import OpenAIEmbeddings
 except ImportError:
     OpenAIEmbeddings = None
+from pydantic import SecretStr
 
 
 class DreamRetrievalService:
@@ -45,12 +46,15 @@ class DreamRetrievalService:
         if embeddings is not None:
             self.embeddings = embeddings
         elif OpenAIEmbeddings is not None:
+            openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
             self.embeddings = OpenAIEmbeddings(
                 model=os.getenv("EMBEDDING_MODEL", "openai/text-embedding-3-small"),
                 base_url=os.getenv(
                     "OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"
                 ),
-                api_key=os.getenv("OPENROUTER_API_KEY"),
+                api_key=SecretStr(openrouter_api_key)
+                if openrouter_api_key
+                else None,
                 check_embedding_ctx_length=False,
             )
         else:
@@ -129,7 +133,10 @@ class DreamRetrievalService:
         for start in range(0, len(texts), batch_size):
             batch_texts = texts[start : start + batch_size]
             batch_metadatas = metadatas[start : start + batch_size]
-            vectors = self.embeddings.embed_documents(batch_texts)
+            embeddings = self.embeddings
+            if embeddings is None:
+                raise RuntimeError("OpenAIEmbeddings is not available")
+            vectors = embeddings.embed_documents(batch_texts)
 
             points = []
             for offset, (vector, metadata) in enumerate(
@@ -175,17 +182,26 @@ class DreamRetrievalService:
         query_vector = self.encode_dream(dream_text)
         limit = max(1, int(top_k))
         try:
-            if hasattr(self.client, "search"):
+            search = getattr(self.client, "search", None)
+            if callable(search):
+                search_fn = cast(Callable[..., Any], search)
                 return list(
-                    self.client.search(
-                        collection_name=self.collection_name,
-                        query_vector=query_vector,
-                        limit=limit,
-                        with_payload=True,
+                    cast(
+                        Sequence[Any],
+                        search_fn(
+                            collection_name=self.collection_name,
+                            query_vector=query_vector,
+                            limit=limit,
+                            with_payload=True,
+                        ),
                     )
                 )
 
-            response = self.client.query_points(
+            query_points = getattr(self.client, "query_points", None)
+            if not callable(query_points):
+                raise AttributeError("Qdrant client has no search or query_points method")
+            query_points_fn = cast(Callable[..., Any], query_points)
+            response = query_points_fn(
                 collection_name=self.collection_name,
                 query=query_vector,
                 limit=limit,
@@ -194,7 +210,7 @@ class DreamRetrievalService:
             points = getattr(response, "points", None)
             if points is None:
                 points = response
-            return list(points)
+            return list(cast(Sequence[Any], points))
         except Exception as exc:
             raise ConnectionError(
                 f"Qdrant retrieval failed: {exc}"
