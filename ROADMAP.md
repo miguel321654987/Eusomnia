@@ -8,7 +8,7 @@
 
 - ✅ Problema/solución y alcance MVP (2 h) (commit f8f7a68)
 - ✅ Stack + repo, ramas y estructura (1.5 h) (commit f8f7a68)
-- ✅ Entorno local y dependencias (Qdrant, sentence‑transformers) (2 h) (commit f8f7a68)
+- ✅ Entorno local y dependencias (Qdrant, LangGraph + LangChain OpenAI embeddings + `qdrant-client`) (2 h) (commit f8f7a68)
 - ✅ Modelo de datos (diagrama: User+prefs, DailyEntry, SleepReport, HabitLog, NutritionLog, DreamConcept, SleepAnalysis) (3 h) (commit <hash‑modelo>)
 - ✅ Backlog de épicas e historias (MVP v1.0 vs v1.1+) (2 h) (commit a8b86b6)
 - ✅ Wireframes (Home, Registro, Resultado, Historial, Perfil, Navbar, Footer) (3 h) (commit <hash‑wireframes>)
@@ -39,5 +39,5 @@ _(ninguna – todas las tareas de la Semana 1 están completadas)_
 
 ### ⬜ Pendiente
 
-- [ ] Motor RAG (sentence‑transformers + Qdrant) (3 h)
+- [ ] Motor RAG (LangGraph + LangChain OpenAI embeddings + `qdrant-client`) (3 h)
 - [ ] Pruebas básicas, validaciones, errores y doc API (1.5 h)

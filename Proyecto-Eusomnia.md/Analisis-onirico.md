@@ -106,7 +106,7 @@
 3. **Persistencia** – SQLAlchemy crea una fila en `daily_entries`.
 4. **Solicitud de análisis** – El cliente llama a `POST /analysis/<id>`.
 5. **Serialización** – El backend convierte la fila en un payload JSON.
-6. **Vectorización** – _Sentence‑Transformer_ codifica el texto en un vector numérico.
+6. **Vectorización** – LangChain `OpenAIEmbeddings` codifica el texto en un vector numérico.
 7. **Búsqueda semántica** – Qdrant compara el vector con los almacenados y devuelve los puntos más similares.
 8. **Recuperación de contexto** – Se extraen los textos de interpretación (`payload.interpretation_text`) de los puntos obtenidos (origen CSV).
 9. **Ensamblaje del Prompt** – Se construye un prompt estructurado que incluye el sueño original y los fragmentos recuperados.
@@ -125,7 +125,7 @@
 
 | Paso      | Acción                       | Herramienta / Tecnologías                                                                                                          |
 | --------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| **6**     | **Vectorización**            | _Sentence‑Transformer_ (`all‑MiniLM‑L6‑v2`) transforma el texto en un vector denso.                                                |
+| **6**     | **Vectorización**            | LangChain `OpenAIEmbeddings` transforma el texto en un vector denso.                                                |
 | **7**     | **Búsqueda semántica**       | Cliente **Qdrant** envía el vector y recibe los puntos más cercanos (top‑k).                                                       |
 | **8**     | **Recuperación de contexto** | Se extraen los `payload.interpretation_text` de cada punto (originados del CSV del diccionario de sueños).                         |
 | **9**     | **Ensamblaje del Prompt**    | El código Python combina el sueño del usuario y los fragmentos recuperados dentro de una plantilla estructurada, lista para la IA. |
@@ -144,7 +144,7 @@ Estos bloques resaltan cómo el flujo incorpora la lógica RAG antes de la gener
 FASE 1: RECUPERACIÓN (Retrieval Semántico con Qdrant)
 ===============================================================
   ▼
-[ APP (Sentence-Transformer) ]
+[ APP (LangChain Embeddings) ]
   ▼ Convierte el sueño en números
   Vector: [0.12, -0.45, 0.89, ...]
   ▼
@@ -188,7 +188,7 @@ FASE 3: GENERACIÓN (Respuesta Final con LLM)
 # Implements semantic retrieval using Qdrant
 
 import os
-from sentence_transformers import SentenceTransformer
+from langchain_openai import OpenAIEmbeddings
 from qdrant_client import QdrantClient
 
 
@@ -197,14 +197,14 @@ class DreamRetrievalService:
     def __init__(self, collection_name="dream_dictionary"):
         # Load connection details from environment variables (.env)
         qdrant_url = os.getenv("QDRANT_URL", "http://localhost:6333")
-        self.model = SentenceTransformer("all-MiniLM-L6-v2")
+        self.model = OpenAIEmbeddings(model=os.getenv("EMBEDDING_MODEL", "openai/text-embedding-3-small"), base_url=os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"), api_key=os.getenv("OPENROUTER_API_KEY"))
         self.client = QdrantClient(url=qdrant_url)
         self.collection = collection_name
 
     def encode_dream(self, dream_text):
         # Convert user dream text into a dense vector
         try:
-            vector = self.model.encode(dream_text).tolist()
+            vector = self.model.embed_query(dream_text)
             return vector
         except Exception as e:
             # Structured error handling for encoding failures

@@ -24,7 +24,7 @@
   <!-- IA & vectores -->
   <img src="https://img.shields.io/badge/OpenRouter-AI-6B46C1?style=flat-square&logo=openai&logoColor=white" alt="OpenRouter"/>
   <img src="https://img.shields.io/badge/Qdrant-Vector%20DB-DC244C?style=flat-square&logo=qdrant&logoColor=white" alt="Qdrant"/>
-  <img src="https://img.shields.io/badge/sentence--transformers-NLP-FF6F00?style=flat-square&logo=huggingface&logoColor=white" alt="LangGraph"/>
+  <img src="https://img.shields.io/badge/LangChain-Embeddings-1C3C3C?style=flat-square&logo=langchain&logoColor=white" alt="LangChain Embeddings"/>
   <!-- Infraestructura -->
   <img src="https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker"/>
   <img src="https://img.shields.io/badge/Gunicorn-WSGI-499848?style=flat-square&logo=gunicorn&logoColor=white" alt="Gunicorn"/>
@@ -137,7 +137,7 @@ curl -X POST http://localhost:3000/nutrition/evaluate \
 ### Inteligencia Artificial & Datos
 
 - **OpenRouter** — orquestación IA (modelo configurable)
-- **LangGraph** (`all-MiniLM-L6-v2`) — vectorización semántica
+- **LangChain OpenAI embeddings** (`text-embedding-3-small`) — vectorización semántica
 - **Qdrant** — motor de búsqueda vectorial para el diccionario onírico
 - **Edamam API** — enriquecimiento nutricional (proxy desde Flask)
 

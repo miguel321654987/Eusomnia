@@ -25,7 +25,11 @@ requests = "*"
 flask-bcrypt = "*"
 flask-migrate = "*"
 deep-translator = "*"
-
+langgraph = "*"
+langchain = "*"
+langchain-core = "*"
+langchain-openai = "*"
+qdrant-client = "*"
 [requires]
 python_version = "3.13"
 
