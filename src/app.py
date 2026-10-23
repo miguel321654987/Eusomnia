@@ -38,6 +38,20 @@ jwt = JWTManager(app)
 # UNIÓN OFICIAL: Aquí le inyectamos el motor Flask a Bcrypt
 bcrypt.init_app(app)
 
+# Application-level configuration inherited from environment variables (.env).
+app.config["QDRANT_URL"] = os.getenv("QDRANT_URL", "http://localhost:6333")
+app.config["QDRANT_API_KEY"] = os.getenv("QDRANT_API_KEY")
+app.config["QDRANT_COLLECTION"] = os.getenv("QDRANT_COLLECTION", "dream_dictionary")
+app.config["OPENROUTER_BASE_URL"] = os.getenv(
+    "OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"
+)
+app.config["EMBEDDING_MODEL"] = os.getenv(
+    "EMBEDDING_MODEL", "openai/text-embedding-3-small"
+)
+app.config["OPENROUTER_MODEL"] = os.getenv(
+    "OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct:free"
+)
+
 app.url_map.strict_slashes = False
 
 db_url = os.getenv("DATABASE_URL")
