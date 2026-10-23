@@ -10,6 +10,7 @@ result against the reference parameters stored in
 import json
 import os
 import re
+import threading
 import unicodedata
 from typing import Any, Literal, cast
 
@@ -28,6 +29,9 @@ from .schemas import (
 
 _TIMEOUT_SECONDS = 15
 _TRANSLATION_CACHE: dict[str, str] = {}
+_TRANSLATION_CACHE_LOCK = threading.Lock()
+_TRANSLATION_TIMEOUT_SECONDS = float(
+    os.getenv("TRANSLATION_TIMEOUT_SECONDS", "5"))
 
 # ---------------------------------------------------------------------------
 # Fallback dictionaries (used only when the user does NOT report a value).
@@ -108,6 +112,54 @@ EXCITANT_KEYWORDS: tuple[str, ...] = (
 )
 
 
+def _effective_translation_timeout() -> float:
+    """Return the active per-provider translation timeout.
+
+    Prefer the dedicated translation timeout, but also honour the generic
+    request timeout so either spelling used by callers or tests bounds a
+    hanging translator.
+    """
+    candidates = []
+    if isinstance(_TRANSLATION_TIMEOUT_SECONDS, (int, float)) and \
+            _TRANSLATION_TIMEOUT_SECONDS > 0:
+        candidates.append(float(_TRANSLATION_TIMEOUT_SECONDS))
+    if isinstance(_TIMEOUT_SECONDS, (int, float)) and _TIMEOUT_SECONDS > 0:
+        candidates.append(float(_TIMEOUT_SECONDS))
+    if not candidates:
+        return 5.0
+    return min(candidates)
+
+
+def _call_with_timeout(func, timeout_seconds: float):
+    """Run ``func`` in a daemon thread bounded by ``timeout_seconds``.
+
+    ``deep-translator`` does not expose an HTTP timeout, so the call is
+    executed in a separate daemon thread. Returning after the timeout lets the
+    caller fall back instead of hanging the whole nutrition request.
+    """
+    result: dict[str, Any] = {}
+    error: dict[str, BaseException] = {}
+
+    def worker() -> None:
+        try:
+            result["value"] = func()
+        except BaseException as exc:  # noqa: BLE001 - propagated to caller
+            error["exception"] = exc
+
+    thread = threading.Thread(target=worker, daemon=True)
+    thread.start()
+    thread.join(timeout=timeout_seconds)
+
+    if thread.is_alive():
+        raise TimeoutError(
+            f"translation timed out after {timeout_seconds} seconds")
+
+    if "exception" in error:
+        raise error["exception"]
+
+    return result.get("value")
+
+
 def translate_text(text: str) -> str:  # pragma: no cover
     """Translate a Spanish ingredient line to English (cache + fallback).
 
@@ -116,26 +168,27 @@ def translate_text(text: str) -> str:  # pragma: no cover
     dictionary keys are full language names ("spanish"/"english"), not
     ISO codes. If every provider fails, the original text is returned so
     Edamam still gets the chance to parse it.
+
+    Every provider call is bounded by ``_TRANSLATION_TIMEOUT_SECONDS`` to
+    avoid hanging the nutrition request when a translator endpoint stalls.
     """
     if not text or not text.strip():
         return text
 
-    cached = _TRANSLATION_CACHE.get(text)
-    if cached is not None:
-        return cached
+    with _TRANSLATION_CACHE_LOCK:
+        cached = _TRANSLATION_CACHE.get(text)
+        if cached is not None:
+            return cached
 
-    # MyMemoryTranslator may return either a string or a list of strings.
-    # The function signature expects a single string, so we normalise the
-    # result to ``str`` (joining multiple translations with a space) before
-    # proceeding. This avoids type‑checking errors where ``list[str]`` is
-    # assigned to a variable annotated as ``str | None``.
     translated: str | None = None
+
     try:
-        raw_result = MyMemoryTranslator(
-            source="spanish", target="english").translate(text)
-        # Normalise the possible list return value.
+        raw_result = _call_with_timeout(
+            lambda: MyMemoryTranslator(
+                source="spanish", target="english").translate(text),
+            _effective_translation_timeout(),
+        )
         if isinstance(raw_result, list):
-            # Join with a space to keep the translation readable.
             translated = " ".join(raw_result)
         else:
             translated = raw_result
@@ -144,17 +197,21 @@ def translate_text(text: str) -> str:  # pragma: no cover
 
     if not translated:
         try:
-            translated = GoogleTranslator(
-                source="es", target="en").translate(text)
+            translated = _call_with_timeout(
+                lambda: GoogleTranslator(
+                    source="es", target="en").translate(text),
+                _effective_translation_timeout(),
+            )
         except Exception:  # noqa: BLE001 - provider fallback chain
             translated = None
 
     if not translated:
         return text
 
-    if len(_TRANSLATION_CACHE) >= 1000:
-        _TRANSLATION_CACHE.clear()
-    _TRANSLATION_CACHE[text] = translated
+    with _TRANSLATION_CACHE_LOCK:
+        if len(_TRANSLATION_CACHE) >= 1000:
+            _TRANSLATION_CACHE.clear()
+        _TRANSLATION_CACHE[text] = translated
     return translated
 
 
@@ -192,26 +249,32 @@ def fetch_edamam_recipe(
             status_code=502,
         )
 
-    # If the provider returns any non‑200 status, treat it as a bad gateway.
+    # Parse the body FIRST: Edamam can return a non-200 status (e.g. 555)
+    # together with a JSON error payload {"error": "low_quality"}.
+    # Checking the body before the status code lets us surface the 422 that
+    # triggers the per-ingredient fallback in analyze_foods, instead of a
+    # generic 502 that bypasses it.
+    try:
+        data = response.json()
+    except ValueError:
+        data = None
+
+    if isinstance(data, dict) and "error" in data:
+        raise APIException(
+            f"Nutrition provider could not analyze the food: {data.get('error')}",
+            status_code=422,
+        )
+
     if response.status_code != 200:
         raise APIException(
             f"Nutrition provider returned status {response.status_code}",
             status_code=502,
         )
 
-    try:
-        data = response.json()
-    except ValueError:
+    if data is None:
         raise APIException(
             "Nutrition provider returned an invalid response",
             status_code=502,
-        )
-
-    # Some error payloads are still delivered with a 200 status; preserve the original behavior.
-    if isinstance(data, dict) and "error" in data:
-        raise APIException(
-            f"Nutrition provider could not analyze the food: {data.get('error')}",
-            status_code=422,
         )
 
     return data
@@ -283,6 +346,19 @@ def aggregate_nutrients(raw: dict[str, Any]) -> dict[str, float]:
             for code, info in (parsed.get("nutrients") or {}).items():
                 totals[code] = totals.get(code, 0.0) + float(
                     info.get("quantity") or 0.0)
+
+    # Edamam's single-item licensed response (typically GET) does not expose
+    # ingredients[].parsed[]; it returns an aggregate in totalNutrients.
+    if not totals and isinstance(raw.get("totalNutrients"), dict):
+        total_weight = float(raw.get("totalWeight") or 0.0)
+        for code, info in raw.get("totalNutrients", {}).items():
+            if isinstance(info, dict):
+                totals[code] = float(info.get("quantity") or 0.0)
+
+    # Last resort for very small responses that only expose calories.
+    if not totals and raw.get("calories") is not None:
+        total_weight = float(raw.get("totalWeight") or 0.0)
+        totals["ENERC_KCAL"] = float(raw.get("calories") or 0.0)
 
     return {
         "calories": round(totals.get("ENERC_KCAL", 0.0), 2),
@@ -421,10 +497,43 @@ def analyze_foods(
         except APIException as exc:
             if exc.status_code != 422:
                 raise
+            # Per-ingredient fallback: parse each line individually with the
+            # tolerant GET parser and merge the results.  Individual failures
+            # are skipped so that one unrecognised ingredient does not discard
+            # the nutritional data for the rest of the batch.
             merged: dict[str, Any] = {"ingredients": []}
             for line in translated_lines:
-                single = fetch_edamam_ingredient(line)
-                merged["ingredients"].extend(single.get("ingredients", []))
+                try:
+                    single = fetch_edamam_ingredient(line)
+                except APIException:
+                    # Skip ingredients that Edamam cannot parse.
+                    continue
+                single_ingredients = single.get("ingredients")
+                if isinstance(single_ingredients, list) and single_ingredients:
+                    merged["ingredients"].extend(single_ingredients)
+                else:
+                    # GET responses expose nutrients in totalNutrients (not in
+                    # ingredients[].parsed[]), so we normalise the structure
+                    # so that aggregate_nutrients can read it uniformly.
+                    nutrients = single.get("totalNutrients")
+                    if not isinstance(nutrients, dict):
+                        nutrients = {}
+                        if single.get("calories") is not None:
+                            nutrients["ENERC_KCAL"] = {
+                                "quantity": single.get("calories")
+                            }
+                    merged["ingredients"].append(
+                        {
+                            "parsed": [
+                                {
+                                    "weight": float(
+                                        single.get("totalWeight") or 0.0
+                                    ),
+                                    "nutrients": nutrients,
+                                }
+                            ]
+                        }
+                    )
             raw = merged
 
     nutrients = aggregate_nutrients(raw)

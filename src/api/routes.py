@@ -49,6 +49,12 @@ def get_recent_logs():
                 or title
             )
 
+        sleep_hours = None
+        sleep_quality = None
+        if entry.habit_log is not None:
+            sleep_hours = entry.habit_log.total_sleep_hours
+            sleep_quality = entry.habit_log.sleep_quality
+
         logs.append(
             {
                 "id": entry.id,
@@ -56,6 +62,8 @@ def get_recent_logs():
                 "date": entry.entry_date.isoformat()
                 if entry.entry_date is not None
                 else None,
+                "sleep_hours": sleep_hours,
+                "sleep_quality": sleep_quality,
             }
         )
 

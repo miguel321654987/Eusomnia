@@ -71,6 +71,16 @@ def create_daily_entry():
         )
         db.session.add(sleep_report)
 
+        total_sleep_hours_raw = habits_data.get("total_sleep_hours")
+        try:
+            total_sleep_hours = (
+                float(total_sleep_hours_raw)
+                if total_sleep_hours_raw not in (None, "")
+                else None
+            )
+        except (TypeError, ValueError):
+            total_sleep_hours = None
+
         habit_log = HabitLog(
             entry_id=new_entry.id,
             physical_activity=habits_data.get("physical_activity"),
@@ -78,7 +88,9 @@ def create_daily_entry():
             bedtime_mood=habits_data.get("bedtime_mood"),
             screen_time=habits_data.get("screen_time"),
             incidents=habits_data.get("incidents"),
-            food_notes=habits_data.get("food_notes")
+            food_notes=habits_data.get("food_notes"),
+            total_sleep_hours=total_sleep_hours,
+            sleep_quality=habits_data.get("sleep_quality")
         )
         db.session.add(habit_log)
 
@@ -127,9 +139,19 @@ def update_daily_entry(entry_id):
                 "screen_time",
                 "incidents",
                 "food_notes",
+                "sleep_quality",
             ]:
                 if field in habits_data:
                     setattr(entry.habit_log, field, habits_data[field])
+
+            if "total_sleep_hours" in habits_data:
+                raw = habits_data.get("total_sleep_hours")
+                try:
+                    entry.habit_log.total_sleep_hours = (
+                        float(raw) if raw not in (None, "") else None
+                    )
+                except (TypeError, ValueError):
+                    entry.habit_log.total_sleep_hours = None
 
         db.session.commit()
 
