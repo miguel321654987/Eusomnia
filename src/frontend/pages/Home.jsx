@@ -10,6 +10,31 @@ import useGlobalReducer from "../hooks/useGlobalReducer";
  * Se utilizan las variables de tema definidas en `Index.css` y clases de Bootstrap
  * para garantizar consistencia visual y comportamiento responsivo.
  */
+const SLEEP_QUALITY_LABELS = {
+  muy_baja: "Muy baja (tronco)",
+  baja: "Baja",
+  intermedia: "Intermedia",
+  alta: "Alta",
+  tronco: "Tronco duro",
+};
+
+const FALLBACK_LOGS = [
+  {
+    id: "fallback-1",
+    title: "Daily entry",
+    date: null,
+    sleep_hours: null,
+    sleep_quality: null,
+  },
+  {
+    id: "fallback-2",
+    title: "Daily entry",
+    date: null,
+    sleep_hours: null,
+    sleep_quality: null,
+  },
+];
+
 export const Home = () => {
   const { store } = useGlobalReducer();
   // Estado local para los logs recientes (placeholder mientras la API real está
@@ -22,7 +47,7 @@ export const Home = () => {
     const fetchLogs = async () => {
       // Si el usuario no ha iniciado sesión (sin token), no llamamos al endpoint protegido
       if (!store.token) {
-        setRecentLogs([]);
+        setRecentLogs(FALLBACK_LOGS);
         return;
       }
 
@@ -41,7 +66,7 @@ export const Home = () => {
         setRecentLogs(data.logs ?? []);
       } catch (error) {
         console.error("Failed to fetch recent logs:", error);
-        setRecentLogs([]);
+        setRecentLogs(FALLBACK_LOGS);
       }
     };
 
@@ -66,68 +91,40 @@ export const Home = () => {
           Comenzar Registro Diario
         </Link>
       </section>
-
-      {/* Stats Cards */}
-      <section className="stats py-5 bg-dark">
-        <div className="container">
-          <div className="row g-4">
-            <div className="col-md-4">
-              <div
-                className="card h-100 text-center"
-                style={{ backgroundColor: "var(--color-surface)" }}
-              >
-                <div className="card-body">
-                  <h5 className="card-title">Entradas</h5>
-                  <p className="card-text display-6">{recentLogs.length}</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div
-                className="card h-100 text-center"
-                style={{ backgroundColor: "var(--color-surface)" }}
-              >
-                <div className="card-body">
-                  <h5 className="card-title">Horas de Sueño</h5>
-                  <p className="card-text display-6">7.8 h</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-md-4">
-              <div
-                className="card h-100 text-center"
-                style={{ backgroundColor: "var(--color-surface)" }}
-              >
-                <div className="card-body">
-                  <h5 className="card-title">Calidad</h5>
-                  <p className="card-text display-6">Alta</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/*
+    
 
       {/* Recent Logs List */}
-      <section className="recent-logs py-5">
+      <section className="recent-logs py-5 text-white">
         <div className="container">
           <h2 className="h3 mb-4 text-center">Últimos Registros</h2>
           {recentLogs.length === 0 ? (
-            <p className="text-center text-muted">
+            <p className="text-center text-white-50">
               {store.token
                 ? "No hay registros recientes."
                 : "Inicia sesión para ver tus registros diarios."}
             </p>
           ) : (
-            <ul className="list-group">
+            <ul className="list-group text-white">
               {recentLogs.map((log) => (
                 <li
                   key={log.id}
-                  className="list-group-item d-flex justify-content-between align-items-center"
+                  className="list-group-item d-flex justify-content-between align-items-center text-white-50"
                   style={{ backgroundColor: "var(--color-surface)" }}
                 >
-                  <span>{log.title}</span>
-                  <small className="text-muted">{log.date}</small>
+                  <div className="d-flex flex-column">
+                    <span>{log.title}</span>
+                    <small className="text-white-50">
+                      Sueño:{" "}
+                      {log.sleep_hours != null ? `${log.sleep_hours} h` : "—"} ·
+                      Calidad:{" "}
+                      {SLEEP_QUALITY_LABELS[log.sleep_quality] ||
+                        (log.sleep_quality != null ? log.sleep_quality : "—")}
+                    </small>
+                  </div>
+                  <small className="text-white-50">
+                    {log.date != null ? log.date : "—"}
+                  </small>
                 </li>
               ))}
             </ul>

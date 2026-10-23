@@ -62,6 +62,8 @@ export const DailyLog = () => {
   const [physicalActivity, setPhysicalActivity] = useState("media");
   const [bedtimeMood, setBedtimeMood] = useState("relajada");
   const [screenTime, setScreenTime] = useState("menos_1h");
+  const [totalSleepHours, setTotalSleepHours] = useState("");
+  const [sleepQuality, setSleepQuality] = useState("intermedia");
   const [selectedIncidents, setSelectedIncidents] = useState([]);
 
   // 4 Tomas de Alimentos del Día (JSON specification)
@@ -133,6 +135,10 @@ export const DailyLog = () => {
       if (h.physical_activity) setPhysicalActivity(h.physical_activity);
       if (h.bedtime_mood) setBedtimeMood(h.bedtime_mood);
       if (h.screen_time) setScreenTime(h.screen_time);
+      if (h.total_sleep_hours !== null && h.total_sleep_hours !== undefined) {
+        setTotalSleepHours(String(h.total_sleep_hours));
+      }
+      if (h.sleep_quality) setSleepQuality(h.sleep_quality);
       if (h.incidents) {
         try {
           const parsed = JSON.parse(h.incidents);
@@ -188,14 +194,16 @@ export const DailyLog = () => {
     }
 
     setAnalyzingNutrition(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
     try {
-      // Analizamos cada toma con su meal_type correspondiente
+      // Analyze every meal in parallel instead of waiting for up to four
+      // sequential requests, and surface a real error when a request fails.
       const mealKeys = ["breakfast", "lunch", "snack", "dinner"];
-      const resultsPerMeal = {};
-
-      for (const key of mealKeys) {
-        const text = meals[key].trim();
-        if (text) {
+      const mealEntries = mealKeys
+        .filter((key) => meals[key].trim().length > 0)
+        .map(async (key) => {
+          const text = meals[key].trim();
           const resp = await fetch(`${BACKEND_URL}/api/nutrition/analyze`, {
             method: "POST",
             headers: getAuthHeaders(),
@@ -203,13 +211,27 @@ export const DailyLog = () => {
               query: text,
               meal_type: key,
             }),
+            signal: controller.signal,
           });
-          if (resp.ok) {
-            const data = await resp.json();
-            resultsPerMeal[key] = data.results;
+          if (!resp.ok) {
+            let message = `Error ${resp.status} al analizar ${key}`;
+            try {
+              const errorData = await resp.json();
+              message = errorData?.message || errorData?.error || message;
+            } catch {
+              // Keep the HTTP status message when the body is not JSON.
+            }
+            throw new Error(message);
           }
-        }
-      }
+          const data = await resp.json();
+          return { key, result: data.results };
+        });
+
+      const completed = await Promise.all(mealEntries);
+      const resultsPerMeal = {};
+      completed.forEach(({ key, result }) => {
+        resultsPerMeal[key] = result;
+      });
 
       // Consolidación de nutrientes y suma de calorías metabólicas del alcohol (7 kcal/g)
       const totals = {
@@ -260,8 +282,13 @@ export const DailyLog = () => {
       toast.success("Nutrición del día calculada exitosamente.");
     } catch (err) {
       console.error(err);
-      toast.error(err.message || "Error al conectar con el servicio nutricional");
+      let message = err?.message || "Error al conectar con el servicio nutricional";
+      if (err?.name === "AbortError") {
+        message = "El análisis nutricional ha tardado demasiado y fue cancelado";
+      }
+      toast.error(message);
     } finally {
+      clearTimeout(timeoutId);
       setAnalyzingNutrition(false);
     }
   };
@@ -279,6 +306,14 @@ export const DailyLog = () => {
       if (!sleepText.trim()) {
         setErrors({ sleepText: "El relato del sueño es obligatorio." });
         return;
+      }
+      const hoursTrimmed = totalSleepHours.trim();
+      if (hoursTrimmed !== "") {
+        const parsedHours = Number(hoursTrimmed);
+        if (!Number.isFinite(parsedHours) || parsedHours < 0 || parsedHours > 24) {
+          setErrors({ totalSleepHours: "Las horas totales deben estar entre 0 y 24." });
+          return;
+        }
       }
     }
 
@@ -336,6 +371,8 @@ export const DailyLog = () => {
             screen_time: screenTime,
             incidents: JSON.stringify(selectedIncidents),
             food_notes: serializedFoodNotes,
+            total_sleep_hours: totalSleepHours.trim() === "" ? null : Number(totalSleepHours),
+            sleep_quality: sleepQuality,
           },
         };
 
@@ -367,12 +404,14 @@ export const DailyLog = () => {
         }
 
         // Persistir información nutricional consolidada si hay alimentos
+        // NOTE: Do NOT add meal-type prefixes here — Edamam cannot parse
+        // lines like "Desayuno: 1 café con leche" and returns 0 for all nutrients.
         const allFoodLines = [
-          meals.breakfast && `Desayuno: ${meals.breakfast}`,
-          meals.lunch && `Comida: ${meals.lunch}`,
-          meals.snack && `Merienda: ${meals.snack}`,
-          meals.dinner && `Cena: ${meals.dinner}`,
-        ].filter(Boolean);
+          meals.breakfast,
+          meals.lunch,
+          meals.snack,
+          meals.dinner,
+        ].filter((line) => line && line.trim().length > 0);
 
         if (allFoodLines.length > 0 && targetEntryId) {
           try {
@@ -627,6 +666,44 @@ export const DailyLog = () => {
                           <option value="mas_2h">
                             Más de 2 horas en la cama
                           </option>
+                        </select>
+                      </div>
+
+                      {/* Sueño total y calidad */}
+                      <div className="col-md-6 mt-3">
+                        <label className="form-label">
+                          Horas totales dormidas:
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="24"
+                          step="0.5"
+                          className="form-control bg-dark text-white border-secondary"
+                          value={totalSleepHours}
+                          onChange={(e) => setTotalSleepHours(e.target.value)}
+                          placeholder="Ej: 7.5"
+                        />
+                        {errors.totalSleepHours && (
+                          <div className="text-danger small mt-1">
+                            {errors.totalSleepHours}
+                          </div>
+                        )}
+                      </div>
+                      <div className="col-md-6 mt-3">
+                        <label className="form-label">
+                          Calidad del sueño:
+                        </label>
+                        <select
+                          className="form-select bg-dark text-white border-secondary"
+                          value={sleepQuality}
+                          onChange={(e) => setSleepQuality(e.target.value)}
+                        >
+                          <option value="muy_baja">Muy baja (tronco)</option>
+                          <option value="baja">Baja</option>
+                          <option value="intermedia">Intermedia</option>
+                          <option value="alta">Alta</option>
+                          <option value="tronco">Tronco duro</option>
                         </select>
                       </div>
 
