@@ -260,9 +260,13 @@ def fetch_edamam_recipe(
         data = None
 
     if isinstance(data, dict) and "error" in data:
+        # Edamam rejects batches as non-200 responses with an error body.
+        # ``low_quality`` becomes 422 to trigger the GET fallback; other
+        # provider-reported errors stay generic 502 failures.
+        status_code = 422 if data.get('error') == 'low_quality' else 502
         raise APIException(
             f"Nutrition provider could not analyze the food: {data.get('error')}",
-            status_code=422,
+            status_code=status_code,
         )
 
     if response.status_code != 200:

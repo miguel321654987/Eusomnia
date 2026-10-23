@@ -24,7 +24,7 @@
   <!-- IA & vectores -->
   <img src="https://img.shields.io/badge/OpenRouter-AI-6B46C1?style=flat-square&logo=openai&logoColor=white" alt="OpenRouter"/>
   <img src="https://img.shields.io/badge/Qdrant-Vector%20DB-DC244C?style=flat-square&logo=qdrant&logoColor=white" alt="Qdrant"/>
-  <img src="https://img.shields.io/badge/sentence--transformers-NLP-FF6F00?style=flat-square&logo=huggingface&logoColor=white" alt="sentence-transformers"/>
+  <img src="https://img.shields.io/badge/sentence--transformers-NLP-FF6F00?style=flat-square&logo=huggingface&logoColor=white" alt="LangGraph"/>
   <!-- Infraestructura -->
   <img src="https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker"/>
   <img src="https://img.shields.io/badge/Gunicorn-WSGI-499848?style=flat-square&logo=gunicorn&logoColor=white" alt="Gunicorn"/>
@@ -103,7 +103,7 @@ curl -X POST http://localhost:3000/nutrition/evaluate \
   -d '{"entry_id": 42, "weight_kg": 70}'
 ```
 
-| 🔍 **Motor RAG** | Búsqueda semántica de símbolos oníricos con `sentence-transformers` + Qdrant |
+| 🔍 **Motor RAG** | Búsqueda semántica de símbolos oníricos con `LangGraph` + Qdrant |
 | 🤖 **Interpretación IA** | Un único JSON de OpenRouter: interpretación, emociones, símbolos, hábitos, patrones, recomendaciones y alertas |
 | 📊 **Historial** | Consulta de todos los registros diarios con su análisis completo |
 | 👤 **Perfil privado** | JWT + Bcrypt; el diario es estrictamente privado por usuario autenticado |
@@ -137,7 +137,7 @@ curl -X POST http://localhost:3000/nutrition/evaluate \
 ### Inteligencia Artificial & Datos
 
 - **OpenRouter** — orquestación IA (modelo configurable)
-- **sentence-transformers** (`all-MiniLM-L6-v2`) — vectorización semántica
+- **LangGraph** (`all-MiniLM-L6-v2`) — vectorización semántica
 - **Qdrant** — motor de búsqueda vectorial para el diccionario onírico
 - **Edamam API** — enriquecimiento nutricional (proxy desde Flask)
 
@@ -157,7 +157,7 @@ Usuario (relato del sueño + hábitos + comida)
         ▼
 ┌─────────────────────────────────────────────┐
 │          FASE 1 · RETRIEVAL (RAG)           │
-│  sentence-transformers → vector del sueño   │
+│  LangGraph → vector del sueño   │
 │  Qdrant → símbolos oníricos más cercanos    │
 └────────────────────┬────────────────────────┘
                      │ contexto simbólico
@@ -309,7 +309,7 @@ eusomnia/
 - [ ] Modelos SQLAlchemy y migraciones
 - [ ] Autenticación JWT + hashing de contraseñas con Bcrypt
 - [ ] Blueprints y endpoints del backend
-- [ ] Motor RAG (sentence-transformers + Qdrant)
+- [ ] Motor RAG (LangGraph + Qdrant)
 - [ ] Orquestación IA con OpenRouter
 - [ ] SPA React (Home, Diario, Resultado, Historial, Perfil)
 - [ ] Despliegue en producción (Render + PostgreSQL)
