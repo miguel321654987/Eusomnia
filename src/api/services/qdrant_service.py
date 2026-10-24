@@ -163,6 +163,29 @@ class DreamRetrievalService:
     ingest_dream_concepts = ingest_documents
 
     def ingest_from_csv(self, csv_path, text_column="interpretation_text", id_column="id"):
+        """Ingest records from a CSV file.
+
+        El CSV de *diccionario* tiene dos formatos de fila:
+
+        * **Líneas 1‑7799** – ``symbol`` contiene la palabra completa, ``context``
+          contiene información de contexto y ``meaning`` la explicación.
+        * **Líneas >= 7800** – ``symbol`` es una única letra; la palabra completa
+          se encuentra en ``context``.
+
+        Para que el ``id`` de cada punto sea **único** y represente la palabra
+        clave, se aplica la siguiente lógica:
+
+        ````python
+        if len(row.get("symbol", "").strip()) > 1:
+            record_id = row["symbol"].strip()
+        else:
+            record_id = row.get("context", "").strip()
+        ````
+
+        El ``record_id`` se inserta en el campo ``id`` del registro y también se
+        incluye en el ``payload`` de Qdrant, de modo que la búsqueda pueda
+        devolverlo.
+        """
         import csv
 
         records = []
@@ -170,11 +193,26 @@ class DreamRetrievalService:
             reader = csv.DictReader(handle)
             for index, row in enumerate(reader):
                 record = dict(row)
+                # Texto que será embeddeado
                 record.setdefault(
                     "interpretation_text", record.get(text_column, "")
                 )
-                if id_column and id_column not in record:
-                    record["id"] = index
+
+                # Determinamos el ID siguiendo la regla descrita arriba.
+                symbol_val = str(record.get("symbol", "")).strip()
+                if len(symbol_val) > 1:
+                    record_id = symbol_val
+                else:
+                    # Si ``symbol`` es una letra o está vacío, usamos ``context``.
+                    record_id = str(record.get("context", "")).strip()
+
+                # Si no se pudo determinar un ID (caso inesperado), usamos el índice.
+                if not record_id:
+                    record_id = str(index)
+
+                # Garantizamos que el campo ``id`` exista para que ``ingest_documents``
+                # lo utilice como ``point_id``.
+                record["id"] = record_id
                 records.append(record)
         return self.ingest_documents(records)
 
