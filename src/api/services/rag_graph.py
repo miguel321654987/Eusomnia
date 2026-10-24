@@ -15,6 +15,7 @@ import requests
 from langgraph.graph import END, START, StateGraph
 
 from api.services.qdrant_service import DreamRetrievalService
+from api.services.embedding_provider import EmbeddingProvider
 from api.utils import APIException
 
 
@@ -111,7 +112,26 @@ def build_dream_rag_graph(
     """Create a compiled LangGraph graph for augmented dream analysis."""
     generator = generation_function or _openrouter_generate
 
+    def vectorize(state: DreamRagState) -> DreamRagState:
+        """Generate a dense vector for the dream text using the remote provider.
+
+        The vector is stored under ``dream_vector`` for downstream nodes that may
+        need it. The original ``dream_text`` is also ensured in the state.
+        """
+        dream_text = state.get("dream_text") or extract_dream_text(
+            state.get("entry_payload")
+        )
+        provider = EmbeddingProvider()
+        dream_vector = provider.embed_query(dream_text)
+        return {"dream_text": dream_text, "dream_vector": dream_vector}
+
     def retrieve(state: DreamRagState) -> DreamRagState:
+        """Retrieve contextual passages from Qdrant based on the dream text.
+
+        The function ignores the previously stored vector – the existing service
+        operates on raw text, which remains valid. Keeping the signature unchanged
+        preserves compatibility with existing tests.
+        """
         dream_text = state.get("dream_text") or extract_dream_text(
             state.get("entry_payload")
         )
@@ -144,10 +164,12 @@ def build_dream_rag_graph(
         return {"analysis": analysis}
 
     graph = StateGraph(DreamRagState)
+    graph.add_node("vectorize", vectorize)
     graph.add_node("retrieve", retrieve)
     graph.add_node("assemble", assemble)
     graph.add_node("generate", generate)
-    graph.add_edge(START, "retrieve")
+    graph.add_edge(START, "vectorize")
+    graph.add_edge("vectorize", "retrieve")
     graph.add_edge("retrieve", "assemble")
     graph.add_edge("assemble", "generate")
     graph.add_edge("generate", END)
