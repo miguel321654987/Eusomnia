@@ -28,6 +28,7 @@ class DreamRagState(TypedDict, total=False):
     custom_key: str | None
     selected_model: str | None
     analysis: dict[str, Any]
+    dream_vector: list[float]
 
 
 def extract_dream_text(payload: Any) -> str:
