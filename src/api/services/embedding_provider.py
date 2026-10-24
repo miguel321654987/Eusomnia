@@ -26,6 +26,9 @@ except ImportError as exc:
         "'langchain-openai' package."
     ) from exc
 
+# ``OpenAIEmbeddings`` expects the API key as a ``SecretStr`` (or callable).
+from pydantic import SecretStr
+
 
 class EmbeddingProvider:
     """Thin client that produces dense embedding vectors via OpenRouter.
@@ -48,7 +51,7 @@ class EmbeddingProvider:
         self._embeddings = OpenAIEmbeddings(
             model=self.model,
             base_url=self.base_url,
-            api_key=self.api_key,
+            api_key=SecretStr(self.api_key),
             # Disable context‑length validation – the remote service will handle it.
             check_embedding_ctx_length=False,
         )
