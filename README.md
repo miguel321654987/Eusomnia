@@ -256,6 +256,74 @@ npm run start
 docker run -p 6333:6333 qdrant/qdrant
 ```
 
+### Ingestión de datos en Qdrant
+
+**Variables de entorno** (añada al `.env`):
+
+```dotenv
+QDRANT_URL=https://<your-cluster>.eu-west-1-0.aws.cloud.qdrant.io
+QDRANT_API_KEY=<your-api-key>
+QDRANT_COLLECTION=Eusomnia
+```
+
+**Ingestión rápida (sin embeddings)**
+
+Para cargar el CSV de ejemplo sin generar embeddings (útil cuando no hay acceso a OpenAI), ejecute el script ad‑hoc siguiente:
+
+```bash
+python - <<'PY'
+import csv, os
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, VectorParams, PointStruct
+
+url = os.getenv('QDRANT_URL')
+api_key = os.getenv('QDRANT_API_KEY')
+collection = os.getenv('QDRANT_COLLECTION') or 'Eusomnia'
+
+client = QdrantClient(url=url, api_key=api_key, check_compatibility=False)
+if not client.collection_exists(collection):
+    client.create_collection(
+        collection_name=collection,
+        vectors_config=VectorParams(size=10, distance=Distance.COSINE),
+    )
+
+csv_path = 'data/diccionario.csv'
+points = []
+with open(csv_path, newline='', encoding='utf-8') as f:
+    for idx, row in enumerate(csv.DictReader(f)):
+        vector = [0.0] * 10
+        payload = {
+            'meaning': row.get('meaning', ''),
+            'symbol': row.get('symbol', ''),
+            'context': row.get('context', ''),
+        }
+        points.append(PointStruct(id=idx, vector=vector, payload=payload))
+
+# Upsert en lotes de 64
+for i in range(0, len(points), 64):
+    client.upsert(collection_name=collection, points=points[i:i+64])
+print('Ingestión completada. Puntos totales:', client.get_collection(collection).points_count)
+PY
+```
+
+**Ingestión con embeddings reales**
+
+Si dispone de acceso a OpenRouter/OpenAI, use el script oficial que genera embeddings:
+
+```bash
+python scripts/bootstrap_ingest.py
+```
+
+**Verificación**
+
+Compruebe que la colección contiene los documentos esperados:
+
+```bash
+curl -H "api-key: $QDRANT_API_KEY" "$QDRANT_URL/collections/$QDRANT_COLLECTION"
+```
+
+El campo `points_count` debe coincidir con el número de filas del CSV (≈ 8 010).
+
 ---
 
 ## Migraciones de base de datos
