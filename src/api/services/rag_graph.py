@@ -63,8 +63,12 @@ def _openrouter_generate(
     if not api_key:
         raise APIException("AI provider API key is not configured", status_code=500)
 
+    # Seleccionamos el modelo de OpenRouter. El valor por defecto es el router gratuito
+    # "openrouter/free", que delega al modelo libre disponible. Puede sobrescribirse
+    # mediante la variable de entorno OPENROUTER_MODEL o pasando explícitamente el
+    # parámetro `model`.
     selected_model = model or os.getenv(
-        "OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct:free"
+        "OPENROUTER_MODEL", "openrouter/free"
     )
     enriched_payload = dict(entry_payload or {})
     if contexts:

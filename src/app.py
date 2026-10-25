@@ -31,7 +31,8 @@ CORS(
 )
 
 # Nota: este fallback es para trabajar en modo local desde VS Code/localhost.
-app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "local-dev-secret-key")
+app.config["JWT_SECRET_KEY"] = os.getenv(
+    "JWT_SECRET_KEY", "local-dev-secret-key")
 
 jwt = JWTManager(app)
 
@@ -41,15 +42,18 @@ bcrypt.init_app(app)
 # Application-level configuration inherited from environment variables (.env).
 app.config["QDRANT_URL"] = os.getenv("QDRANT_URL", "http://localhost:6333")
 app.config["QDRANT_API_KEY"] = os.getenv("QDRANT_API_KEY")
-app.config["QDRANT_COLLECTION"] = os.getenv("QDRANT_COLLECTION", "dream_dictionary")
+app.config["QDRANT_COLLECTION"] = os.getenv(
+    "QDRANT_COLLECTION", "dream_dictionary")
 app.config["OPENROUTER_BASE_URL"] = os.getenv(
     "OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"
 )
 app.config["EMBEDDING_MODEL"] = os.getenv(
     "EMBEDDING_MODEL", "openai/text-embedding-3-small"
 )
+# Modelo por defecto para OpenRouter. Se utiliza el router gratuito que delega al modelo libre disponible.
+# Puede sobrescribirse mediante la variable de entorno OPENROUTER_MODEL.
 app.config["OPENROUTER_MODEL"] = os.getenv(
-    "OPENROUTER_MODEL", "meta-llama/llama-3.3-70b-instruct:free"
+    "OPENROUTER_MODEL", "openrouter/free"
 )
 
 app.url_map.strict_slashes = False
@@ -57,7 +61,8 @@ app.url_map.strict_slashes = False
 db_url = os.getenv("DATABASE_URL")
 if db_url is not None and not db_url.startswith("sqlite:///"):
     # Convert possible postgres:// scheme to sqlalchemy compatible form
-    app.config["SQLALCHEMY_DATABASE_URI"] = db_url.replace("postgres://", "postgresql://")
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_url.replace(
+        "postgres://", "postgresql://")
 else:
     # Bloque especial para Windows Local
     base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -76,15 +81,18 @@ setup_admin(app)
 # REGISTRO DE BLUEPRINTS
 app.register_blueprint(api, url_prefix="/api")
 
+
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
 
 # generate sitemap with all your endpoints
 
+
 @app.route("/")
 def sitemap():
     return generate_sitemap(app)
+
 
 if __name__ == "__main__":
     # LANZAMIENTO DEL SERVIDOR WEB FLASK
