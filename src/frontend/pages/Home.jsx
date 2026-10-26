@@ -75,14 +75,7 @@ export const Home = () => {
 
   return (
     <main className="home-page text-white container-fluid p-0">
-      {/* Hero Section */}
-      <section
-        className="hero d-flex flex-column justify-content-center align-items-center text-center py-5"
-        style={{
-          background:
-            "linear-gradient(135deg, var(--color-primary), var(--color-surface))",
-        }}
-      >
+      <section className="hero d-flex flex-column justify-content-center align-items-center text-center py-5">
         <h1 className="display-4 fw-bold mb-3">Eusomnia</h1>
         <p className="lead mb-4">
           Monitorea y mejora tu sueño con inteligencia artificial.
@@ -110,7 +103,6 @@ export const Home = () => {
                 <li
                   key={log.id}
                   className="list-group-item d-flex justify-content-between align-items-center text-white-50"
-                  style={{ backgroundColor: "var(--color-surface)" }}
                 >
                   <div className="d-flex flex-column">
                     <span>{log.title}</span>

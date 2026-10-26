@@ -103,7 +103,7 @@ export const Profile = () => {
   if (loading) {
     return (
       <div
-        className="d-flex justify-content-center align-items-center"
+        className="profile-page d-flex justify-content-center align-items-center"
         style={{ height: "50vh" }}
       >
         <div className="spinner-border text-primary" role="status">
@@ -115,7 +115,7 @@ export const Profile = () => {
 
   if (error) {
     return (
-      <div className="container mt-4">
+      <div className="container mt-4 profile-page">
         <h2 className="text-danger">Error</h2>
         <p>{error}</p>
       </div>
@@ -123,7 +123,7 @@ export const Profile = () => {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 profile-page">
       <h2>Perfil</h2>
       <form onSubmit={handleSave} className="mt-3">
         <div className="mb-3">

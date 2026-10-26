@@ -1,19 +1,18 @@
-// Theme definition for the UI demo
 import { createGlobalStyle } from "styled-components";
 
 export const theme = {
   colors: {
-    primary: "#00bcd4", // cyan accent
-    background: "#121212", // dark background
-    surface: "#1e1e1e",
-    textPrimary: "#ffffff",
-    textSecondary: "#bbbbbb",
+    primary: "#2f6f60",
+    background: "#f4f7f5",
+    surface: "#ffffff",
+    textPrimary: "#20312d",
+    textSecondary: "#60716b",
   },
   fonts: {
-    main: "'Montserrat', sans-serif",
-    code: "'Roboto Mono', monospace",
+    main: '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
+    code: "ui-monospace, SFMono-Regular, Consolas, monospace",
   },
-  spacing: (factor) => `${8 * factor}px`, // 8px grid
+  spacing: (factor) => `${8 * factor}px`,
 };
 
 export const GlobalStyles = createGlobalStyle`

@@ -58,7 +58,7 @@ export const History = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: "50vh" }}>
+      <div className="history-page d-flex justify-content-center align-items-center" style={{ height: "50vh" }}>
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -68,7 +68,7 @@ export const History = () => {
 
   if (error) {
     return (
-      <div className="container mt-4">
+      <div className="container mt-4 history-page">
         <h2 className="text-danger">Error</h2>
         <p>{error}</p>
       </div>
@@ -76,7 +76,7 @@ export const History = () => {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 history-page">
       <h2>Historial</h2>
       {entries.length === 0 ? (
         <p>No hay entradas registradas.</p>
