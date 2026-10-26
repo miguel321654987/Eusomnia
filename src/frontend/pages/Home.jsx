@@ -76,11 +76,25 @@ export const Home = () => {
   return (
     <main className="home-page text-white container-fluid p-0">
       <section className="hero d-flex flex-column justify-content-center align-items-center text-center py-5">
-        <h1 className="display-4 fw-bold mb-3">Eusomnia</h1>
-        <p className="lead mb-4">
+        <span
+          className="hero-dream-mark bi bi-moon-stars-fill"
+          aria-hidden="true"
+        />
+        <h1 className="display-4 fw-bold mb-3" aria-label="Eusomnia">
+          {"Eusomnia".split("").map((letter, index) => (
+            <span
+              className="hero-title-letter"
+              aria-hidden="true"
+              key={`${letter}-${index}`}
+            >
+              {letter}
+            </span>
+          ))}
+        </h1>
+        <p className="lead mb-4 hero-lead">
           Monitorea y mejora tu sueño con inteligencia artificial.
         </p>
-        <Link to="/daily-log" className="btn btn-primary btn-lg">
+        <Link to="/daily-log" className="btn btn-primary btn-lg hero-cta">
           Comenzar Registro Diario
         </Link>
       </section>
