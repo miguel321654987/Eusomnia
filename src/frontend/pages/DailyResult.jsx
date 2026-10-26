@@ -114,7 +114,7 @@ export const DailyResult = () => {
   if (loading) {
     return (
       <div
-        className="d-flex justify-content-center align-items-center bg-dark text-white"
+        className="dailyresult-state d-flex justify-content-center align-items-center bg-dark text-white"
         style={{ minHeight: "80vh" }}
       >
         <div className="spinner-border text-primary" role="status">
@@ -126,7 +126,7 @@ export const DailyResult = () => {
 
   if (error) {
     return (
-      <div className="container py-5 text-white">
+      <div className="container py-5 text-white dailyresult-state">
         <div className="alert alert-danger" role="alert">
           <h4 className="alert-heading">Error al cargar el resultado</h4>
           <p>{error}</p>
@@ -144,7 +144,7 @@ export const DailyResult = () => {
 
   if (!entry) {
     return (
-      <div className="container py-5 text-center text-white">
+      <div className="container py-5 text-center text-white dailyresult-state">
         <div
           className="card p-5 border-0 shadow-sm mx-auto"
           style={{

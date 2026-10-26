@@ -18,7 +18,7 @@ export const Layout = () => {
       <Login loginModal="loginModal" />
       <Signup signupModal="signupModal" />
 
-      <main className="d-flex align-items-start">
+      <main className="app-main d-flex align-items-start">
         {/* Mostrar el mensaje global de manera persistente sobre todo el contenido */}
         <MessageToast />
         <Sidebar />

@@ -78,11 +78,15 @@ def _openrouter_generate(
     if contexts:
         enriched_payload["_rag_context"] = contexts
 
+    # NOTE: The system prompt remains in English for clarity to the model, but we explicitly
+    # instruct the model to respond **solely in Spanish**. This guarantees that the JSON values
+    # are always in the UI language, avoiding intermittent English output.
     system_prompt = (
         "You are an expert sleep hygiene and dream analysis assistant for Eusomnia. "
         "Analyze the provided daily log containing sleep narrative, habits and nutrition. "
-        "Return ONLY a valid JSON object with keys: interpretation, predominant_emotions, "
-        "detected_symbols, habits_reading, patterns_detected, recommendations, alerts."
+        "Respond ONLY in Spanish. Return a valid JSON object with keys: interpretation, "
+        "predominant_emotions, detected_symbols, habits_reading, patterns_detected, "
+        "recommendations, alerts."
     )
     # ---------------------------------------------------------------------
     # Configuración de logging (se usará en todo el módulo)
