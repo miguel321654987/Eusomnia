@@ -586,8 +586,7 @@ export const DailyResult = () => {
                   recommendations.map((rec, idx) => (
                     <div className="col-md-6" key={idx}>
                       <div
-                        className="p-3 rounded h-100 border border-secondary"
-                        style={{ backgroundColor: "#15151c" }}
+                        className="recommendation-item p-3 rounded h-100 border border-secondary"
                       >
                         <div className="d-flex align-items-start">
                           <span className="badge bg-primary me-2 mt-1">
@@ -617,9 +616,8 @@ export const DailyResult = () => {
             📖 Relato Original Registrado
           </h4>
           <div
-            className="p-3 rounded text-white"
+            className="dream-text p-3 rounded text-white"
             style={{
-              backgroundColor: "#121217",
               whiteSpace: "pre-wrap",
               lineHeight: "1.6",
             }}

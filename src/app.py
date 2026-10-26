@@ -26,7 +26,11 @@ app: Flask = Flask(__name__)
 # Se especifica el origen del frontend y se habilita el soporte de credenciales
 CORS(
     app,
-    resources={r"/api/*": {"origins": ["http://localhost:5173"]}},
+    resources={
+        r"/api/*": {
+            "origins": ["http://localhost:5173", "http://localhost:5174"]
+        }
+    },
     supports_credentials=True,
 )
 

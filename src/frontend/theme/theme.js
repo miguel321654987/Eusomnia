@@ -2,11 +2,11 @@ import { createGlobalStyle } from "styled-components";
 
 export const theme = {
   colors: {
-    primary: "#2f6f60",
-    background: "#f4f7f5",
+    primary: "#357b9d",
+    background: "#e8f1f7",
     surface: "#ffffff",
-    textPrimary: "#20312d",
-    textSecondary: "#60716b",
+    textPrimary: "#203441",
+    textSecondary: "#5e7180",
   },
   fonts: {
     main: '"Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
