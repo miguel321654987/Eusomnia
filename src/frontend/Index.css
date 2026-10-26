@@ -28,14 +28,62 @@
   --bs-danger-rgb: 166, 78, 75;
 }
 
-@keyframes title-pulse {
-  0%,
-  100% {
-    text-shadow: 0 0 0 rgba(46, 139, 184, 0);
+@keyframes home-glow-drift {
+  from {
+    transform: translate3d(-8%, -3%, 0) scale(0.92);
   }
 
-  50% {
-    text-shadow: 0 0 18px rgba(46, 139, 184, 0.38);
+  to {
+    transform: translate3d(8%, 3%, 0) scale(1.08);
+  }
+}
+
+@keyframes hero-dream-arrive {
+  0% {
+    opacity: 0;
+    transform: translate3d(calc(-70vw - 50%), -50%, 0) rotate(-35deg) scale(0.55);
+  }
+
+  16% {
+    opacity: 1;
+  }
+
+  60% {
+    opacity: 1;
+    transform: translate3d(-50%, -50%, 0) rotate(0) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) rotate(12deg) scale(0.72);
+  }
+}
+
+@keyframes hero-title-letter-form {
+  from {
+    filter: blur(8px);
+    opacity: 0;
+    transform: translate3d(0, 0.55em, 0) scale(0.75);
+  }
+
+  to {
+    filter: blur(0);
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes hero-content-arrive {
+  from {
+    filter: blur(5px);
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+
+  to {
+    filter: blur(0);
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -185,10 +233,50 @@ textarea {
 }
 
 .home-page .hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   min-height: 340px;
   padding: clamp(3.5rem, 8vw, 6rem) 1.25rem !important;
   background: transparent !important;
   color: var(--color-text-primary);
+}
+
+.home-page .hero-dream-mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  display: grid;
+  width: 4.5rem;
+  height: 4.5rem;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 50%;
+  background: rgba(233, 246, 252, 0.88);
+  box-shadow: 0 8px 28px rgba(24, 79, 111, 0.2);
+  color: #276b91;
+  font-size: 2rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  animation: hero-dream-arrive 1.7s cubic-bezier(0.22, 0.75, 0.26, 1) both;
+}
+
+.home-page .hero::before {
+  position: absolute;
+  z-index: -1;
+  inset: -45%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(38, 155, 216, 0.38) 0%,
+    rgba(72, 176, 224, 0.23) 26%,
+    rgba(132, 204, 234, 0.1) 43%,
+    transparent 62%
+  );
+  content: "";
+  animation: home-glow-drift 9s ease-in-out infinite alternate;
+  pointer-events: none;
 }
 
 .home-page .hero h1 {
@@ -196,7 +284,44 @@ textarea {
   color: #123d58;
   font-size: clamp(2.5rem, 6vw, 4rem);
   letter-spacing: -0.055em;
-  animation: title-pulse 4.5s ease-in-out infinite;
+}
+
+.home-page .hero-title-letter {
+  display: inline-block;
+  opacity: 0;
+  animation: hero-title-letter-form 0.52s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+.home-page .hero-title-letter:nth-child(1) {
+  animation-delay: 1.85s;
+}
+
+.home-page .hero-title-letter:nth-child(2) {
+  animation-delay: 1.98s;
+}
+
+.home-page .hero-title-letter:nth-child(3) {
+  animation-delay: 2.11s;
+}
+
+.home-page .hero-title-letter:nth-child(4) {
+  animation-delay: 2.24s;
+}
+
+.home-page .hero-title-letter:nth-child(5) {
+  animation-delay: 2.37s;
+}
+
+.home-page .hero-title-letter:nth-child(6) {
+  animation-delay: 2.5s;
+}
+
+.home-page .hero-title-letter:nth-child(7) {
+  animation-delay: 2.63s;
+}
+
+.home-page .hero-title-letter:nth-child(8) {
+  animation-delay: 2.76s;
 }
 
 .home-page .hero .lead {
@@ -204,6 +329,11 @@ textarea {
   color: #294e65;
   font-size: clamp(1.05rem, 2vw, 1.25rem);
   font-weight: 600;
+  animation: hero-content-arrive 0.8s 3.55s ease-out both;
+}
+
+.home-page .hero-cta {
+  animation: hero-content-arrive 0.8s 3.95s ease-out both;
 }
 
 .recent-logs {
@@ -691,7 +821,22 @@ textarea {
     transition-duration: 0.01ms !important;
   }
 
-  .home-page .hero h1 {
+  .home-page .hero-title-letter {
+    animation: none;
+    opacity: 1;
+  }
+
+  .home-page .hero .lead,
+  .home-page .hero-cta {
+    animation: none;
+    opacity: 1;
+  }
+
+  .home-page .hero-dream-mark {
+    display: none;
+  }
+
+  .home-page .hero::before {
     animation: none;
   }
 }
