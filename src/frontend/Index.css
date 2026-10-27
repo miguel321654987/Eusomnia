@@ -191,8 +191,8 @@ textarea {
 }
 
 .sidebar {
-  flex: 0 0 154px;
-  width: 154px;
+  flex: 0 0 115.5px;
+  width: 115.5px;
   min-height: calc(100vh - 68px);
   padding: 1.25rem !important;
   background: rgba(184, 218, 239, 0.73);
