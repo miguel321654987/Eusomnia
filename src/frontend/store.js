@@ -1,7 +1,13 @@
 export const initialStore = () => {
+  const storedToken = localStorage.getItem("jwt-token");
+  const validToken =
+    storedToken && storedToken !== "undefined" && storedToken !== "null"
+      ? storedToken
+      : null;
+
   return {
     message: null,
-    token: localStorage.getItem("jwt-token") || null,
+    token: validToken,
     user: null,
     api: {
       listLoading: false,

@@ -23,7 +23,7 @@ export function StoreProvider({ children }) {
       const actions = getActions(store, dispatch);
 
       try {
-        const userResponse = await fetch(apiUrl("/api/users/profile"), {
+        const userResponse = await fetch(`${BACKEND_URL}/api/users/profile`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

@@ -40,11 +40,14 @@ export const Login = ({ loginModal, signupModal }) => {
     }
 
     try {
-      const resp = await fetch(apiUrl("/api/users/login"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const resp = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        },
+      );
 
       if (!resp.ok) {
         const datosError = await resp.json();
@@ -58,10 +61,11 @@ export const Login = ({ loginModal, signupModal }) => {
       }
 
       const data = await resp.json();
-      localStorage.setItem("jwt-token", data.token);
+      const token = data.access_token || data.token;
+      localStorage.setItem("jwt-token", token);
       dispatch({
         type: "LOGIN_SUCCESS",
-        payload: { token: data.token, user: null },
+        payload: { token: token, user: data.user || null },
       });
       dispatch({
         type: "SET_MESSAGE",

@@ -1,15 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./Index.css"; // Global styles for your application
-
-// 🌟 ¡AÑADE ESTAS DOS LÍNEAS AQUÍ PARA CARGAR BOOTSTRAP!
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-
-import { RouterProvider } from "react-router-dom"; // Import RouterProvider to use the router
-import { router } from "./routes.jsx"; // Import the router configuration
-import { StoreProvider } from "./hooks/StoreProvider.jsx"; // Import the StoreProvider for global state management
 import "bootstrap-icons/font/bootstrap-icons.css";
+import "./Index.css";
+
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes.jsx";
+import { StoreProvider } from "./hooks/StoreProvider.jsx";
 import { ToastContainer } from "react-toastify";
 
 export const Main = () => {
