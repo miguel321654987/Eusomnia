@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "secondary-fixed": "#d2e4ff", "on-primary-container": "#00626e", "surface-container": "#17202f", "on-secondary-fixed": "#001c37", "outline-variant": "#3b494c", "surface-container-low": "#131c2b", "on-surface-variant": "#bac9cc", "primary-container": "#00e5ff", "primary-fixed": "#9cf0ff", "surface-tint": "#00daf3", "error-container": "#93000a", "surface-variant": "#2c3545", "surface-container-high": "#222a3a", "error": "#ffb4ab", "on-primary-fixed-variant": "#004f58", "surface-bright": "#31394a", "primary": "#c3f5ff", "on-surface": "#dae2f8", "on-tertiary-fixed": "#2a1800", "on-error": "#690005", "tertiary": "#ffe9d2", "on-tertiary": "#462a00", "secondary-container": "#2b486a", "tertiary-container": "#ffc67e", "secondary": "#abc9f1", "on-tertiary-container": "#7d4f00", "on-secondary-container": "#9ab7df", "on-primary-fixed": "#001f24", "secondary-fixed-dim": "#abc9f1", "background": "#0a1322", "on-error-container": "#ffdad6", "on-primary": "#00363d", "surface-container-highest": "#2c3545", "surface-container-lowest": "#060e1d", "surface-dim": "#0a1322", "on-secondary": "#113252", "on-tertiary-fixed-variant": "#643f00", "inverse-surface": "#dae2f8", "surface": "#0a1322", "on-background": "#dae2f8", "inverse-on-surface": "#283141", "on-secondary-fixed-variant": "#2b486a", "outline": "#849396", "primary-fixed-dim": "#00daf3", "tertiary-fixed": "#ffddb6", "inverse-primary": "#006875", "tertiary-fixed-dim": "#ffb95a" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-mobile": "0.75rem", "space-sm": "0.5rem", "space-xl": "2.25rem", "gutter": "1.25rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "margin-mobile": "1rem", "space-md": "1rem", "margin": "2rem" }, "fontFamily": { "label-md": [ "Space Grotesk" ], "label-lg": [ "Space Grotesk" ], "headline-sm": [ "Plus Jakarta Sans" ], "headline-xl-mobile": [ "Plus Jakarta Sans" ], "headline-xl": [ "Plus Jakarta Sans" ], "body-md": [ "Manrope" ], "headline-lg-mobile": [ "Plus Jakarta Sans" ], "headline-lg": [ "Plus Jakarta Sans" ], "label-sm": [ "Space Grotesk" ], "body-lg": [ "Manrope" ], "headline-md": [ "Plus Jakarta Sans" ], "body-sm": [ "Manrope" ] }, "fontSize": { "label-md": [ "12px", { "lineHeight": "16px", "fontWeight": "500" } ], "label-lg": [ "14px", { "lineHeight": "20px", "fontWeight": "600" } ], "headline-sm": [ "16px", { "lineHeight": "24px", "fontWeight": "600" } ], "headline-xl-mobile": [ "26px", { "lineHeight": "32px", "fontWeight": "700" } ], "headline-xl": [ "36px", { "lineHeight": "44px", "fontWeight": "700" } ], "body-md": [ "14px", { "lineHeight": "22px", "fontWeight": "400" } ], "headline-lg-mobile": [ "22px", { "lineHeight": "28px", "fontWeight": "700" } ], "headline-lg": [ "28px", { "lineHeight": "36px", "fontWeight": "700" } ], "label-sm": [ "10px", { "lineHeight": "14px", "fontWeight": "600" } ], "body-lg": [ "16px", { "lineHeight": "26px", "fontWeight": "400" } ], "headline-md": [ "20px", { "lineHeight": "28px", "fontWeight": "600" } ], "body-sm": [ "12px", { "lineHeight": "18px", "fontWeight": "400" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,229,255,0.06)]"><div class="h-16 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center relative shadow-[0_0_16px_rgba(0,229,255,0.25)]"><span class="material-symbols-outlined text-primary-container text-[22px]">bedtime</span><span class="material-symbols-outlined text-primary text-[14px] absolute top-1 right-1">hub</span></div><span class="font-headline-md text-headline-md tracking-tight text-primary">Eusomnia</span></div><nav class="hidden xl:flex items-center gap-space-sm bg-surface-container-lowest/60 p-space-xs rounded-xl backdrop-blur-md" data-active-classes="bg-surface-container-high text-primary font-bold rounded-lg shadow-[0_0_12px_rgba(0,229,255,0.15)]"><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="home" href="#">Home</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="registro-diario" href="#">Registro Diario</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="resultado-del-dia" href="#">Resultado del Día</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="historial" href="#">Historial</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="perfil" href="#">Perfil</a></nav><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm pl-space-md py-space-xs bg-surface-container-low rounded-full"><span class="font-label-sm text-label-sm text-on-surface-variant hidden sm:inline">Usuario activo:</span><span class="font-label-md text-label-md text-on-surface">Maruja</span><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div><a class="flex items-center gap-space-xs text-on-surface-variant hover:text-error transition-colors p-space-xs rounded-lg group" data-path="login" href="#" title="Cerrar sesión"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-error transition-colors">logout</span><span class="font-label-md text-label-md hidden md:inline text-on-surface-variant group-hover:text-error transition-colors">Cerrar sesión</span></a></div></div></header><main class="w-full pt-16 flex-1 bg-surface relative"><div class="flex flex-col w-full">
+<!-- Atmospheric Background Ambient Glows -->
+<div class="relative w-full overflow-hidden">
+<div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary-container/10 rounded-full blur-[140px] pointer-events-none"></div>
+<div class="absolute top-96 -left-32 w-[450px] h-[450px] bg-secondary-container/20 rounded-full blur-[120px] pointer-events-none"></div>
+<!-- HERO SECTION -->
+<section class="max-w-7xl mx-auto px-6 lg:px-12 pt-12 pb-24 relative z-10">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<!-- Left Column: Typography & CTAs -->
+<div class="lg:col-span-7 flex flex-col space-y-6">
+<div class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-full bg-surface-container-high/80 backdrop-blur-md w-fit shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-label-md text-label-md text-primary tracking-wide uppercase">Neuro-Monitoreo Circadiano • v2.6 Activa</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl tracking-tight text-on-surface lg:text-[48px] lg:leading-[56px]">
+            Descifra la conexión entre tus días y <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary-container to-secondary">tus sueños</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+            Unificamos la higiene neuro-circadiana, biométricas nutricionales y el análisis onírico generativo. Tu día explica el estresor somático; nuestra IA decodifica el símbolo de tu subconsciente.
+          </p>
+<!-- Action Cluster -->
+<div class="flex flex-wrap items-center gap-space-md pt-4">
+<a class="inline-flex items-center justify-center gap-space-sm px-space-xl py-space-md rounded-xl bg-primary-container text-on-primary-container font-label-lg text-label-lg shadow-[0_0_24px_rgba(0,229,255,0.45)] hover:shadow-[0_0_32px_rgba(0,229,255,0.7)] transition-all duration-300 transform hover:-translate-y-0.5" data-path="registro-diario" href="#">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+<span>Comenzar Registro Diario</span>
+</a>
+<button class="inline-flex items-center justify-center gap-space-sm px-space-lg py-space-md rounded-xl bg-surface-container-high text-on-surface font-label-lg text-label-lg hover:bg-surface-container-highest transition-colors shadow-sm" onclick="document.getElementById('demoModal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[20px] text-primary">auto_fix_high</span>
+<span>Ver Demo de Análisis</span>
+</button>
+</div>
+<!-- Active User Badge Pill -->
+<div class="pt-4 flex items-center gap-space-md">
+<div class="flex items-center gap-space-sm bg-surface-container-low px-space-md py-space-xs rounded-full">
+<span class="material-symbols-outlined text-primary text-[18px]">verified_user</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Sesión activa de: <strong class="text-on-surface">Maruja G.</strong></span>
+</div>
+<span class="font-label-sm text-label-sm text-outline tracking-wider uppercase">Última sincronización: Hoy, 07:42 AM</span>
+</div>
+</div>
+<!-- Right Column: Bioluminescent HUD Mockup Card -->
+<div class="lg:col-span-5 relative">
+<!-- Glass glow backing -->
+<div class="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-primary-container/20 via-primary/5 to-secondary/10 blur-xl opacity-75"></div>
+<div class="relative bg-surface-container-low/90 backdrop-blur-xl rounded-2xl p-space-lg shadow-[0_16px_40px_rgba(0,15,35,0.6)] flex flex-col space-y-space-md">
+<!-- HUD Header -->
+<div class="flex items-center justify-between pb-space-xs">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container text-[18px]">psychology</span>
+</div>
+<div>
+<div class="font-label-lg text-label-lg text-on-surface leading-tight">Sinapsis Nocturna</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Bio-Telemetry Matrix</div>
+</div>
+</div>
+<span class="px-space-sm py-0.5 rounded-full bg-primary-container/15 font-label-sm text-label-sm text-primary tracking-wide">CALIBRADO</span>
+</div>
+<!-- Sleep Score Dial & Metrics -->
+<div class="bg-surface-container p-space-md rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-space-md">
+<!-- Circular SVG Progress Metric -->
+<div class="relative w-16 h-16 flex items-center justify-center">
+<svg class="w-16 h-16 -rotate-90 transform" viewbox="0 0 36 36">
+<path class="text-surface-variant" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-primary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="84, 100" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+<span class="absolute font-label-lg text-label-lg font-bold text-on-surface">84%</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Restauración Alta</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">7h 42m • Ciclo REM óptimo</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary-container text-[24px]">trending_up</span>
+</div>
+<!-- Real-time Synapse Wave Sparkline -->
+<div class="bg-surface-container p-space-md rounded-xl flex flex-col space-y-2">
+<div class="flex justify-between items-center text-on-surface-variant font-label-sm text-label-sm">
+<span>ESTRUCTURA DEL SUEÑO (NREM / REM)</span>
+<span class="text-primary">02:14 - 04:30 PICO REM</span>
+</div>
+<div class="h-10 w-full flex items-center">
+<svg class="w-full h-8 text-primary-container" preserveaspectratio="none" viewbox="0 0 280 40">
+<path d="M0,30 Q25,32 50,15 T100,28 T150,8 T200,25 T240,12 T280,30" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+<path d="M0,30 Q25,32 50,15 T100,28 T150,8 T200,25 T240,12 T280,30 L280,40 L0,40 Z" fill="currentColor" fill-opacity="0.1"></path>
+</svg>
+</div>
+</div>
+<!-- Nutritional & Dream Impact Alert -->
+<div class="bg-tertiary-container/15 rounded-xl p-space-sm flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-[20px] shrink-0 mt-0.5">local_cafe</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-tertiary font-semibold">Alerta Somática Nutricional</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Cena alta en lípidos (21:30) y 85mg cafeína alteraron la latencia NREM en 34 min.</span>
+</div>
+</div>
+<!-- Dream Semantic Anchor Preview -->
+<div class="p-space-sm bg-surface-container rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">cloud</span>
+<span class="font-label-md text-label-md text-on-surface">Símbolo: "Vuelo Nocturno"</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold">Resonancia IA 92%</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: THE 3 PILLARS OF EUSOMNIA -->
+<section class="max-w-7xl mx-auto px-6 lg:px-12 py-20 relative z-10">
+<div class="flex flex-col items-center text-center space-y-3 mb-16">
+<span class="font-label-md text-label-md text-primary tracking-widest uppercase">Metodología Científica</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Los Tres Pilares de Eusomnia</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+          Superamos los diarios manuales tediosos y las apps de música genérica vinculando fisiología real con la psicología profunda de tus sueños.
+        </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Pilar 1 -->
+<div class="bg-surface-container-low rounded-2xl p-space-lg flex flex-col justify-between hover:bg-surface-container transition-all duration-300 group shadow-md">
+<div class="flex flex-col space-y-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[28px]">timer</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-primary-container/10 text-primary">01 • AGILIDAD</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Registro Rápido Sin Fricción</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Diseñado para completarse en menos de 2 minutos matutinos. Wizard guiado paso a paso con selectores hápticos para capturar sueños antes de que la memoria remota se disipe.
+            </p>
+</div>
+<div class="pt-8 flex items-center gap-space-sm text-primary font-label-md text-label-md">
+<span>Flujo de 4 fases adaptativas</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</div>
+</div>
+<!-- Pilar 2 -->
+<div class="bg-surface-container rounded-2xl p-space-lg flex flex-col justify-between hover:bg-surface-container-high transition-all duration-300 group shadow-md relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/5 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex flex-col space-y-space-md relative z-10">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-primary-container group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[28px]">hub</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-primary-container/20 text-primary-container font-semibold">02 • MOTOR UNIFICADO</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Causa Somática + Símbolo Onírico</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              El sueño aporta la metáfora; tus hábitos (pantallas, cafeína, cena) la causa biológica. Nuestra IA entrelaza ambos mundos para explicar por qué soñaste lo que soñaste.
+            </p>
+</div>
+<div class="pt-8 flex items-center gap-space-sm text-primary font-label-md text-label-md relative z-10">
+<span>Análisis semántico multimodal</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</div>
+</div>
+<!-- Pilar 3 -->
+<div class="bg-surface-container-low rounded-2xl p-space-lg flex flex-col justify-between hover:bg-surface-container transition-all duration-300 group shadow-md">
+<div class="flex flex-col space-y-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-tertiary-fixed group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[28px]">vital_signs</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-tertiary/10 text-tertiary">03 • NUTRICIÓN &amp; EDAMAM</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Prescripciones Personalizadas</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Integración con bases de datos metabólicas para balancear triptófano, magnesio y carbohidratos complejos en tus últimas comidas antes de la fase de reposo profundo.
+            </p>
+</div>
+<div class="pt-8 flex items-center gap-space-sm text-tertiary font-label-md text-label-md">
+<span>Micro-hábitos circadianos</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: VISUAL ARCHITECTURE SHOWCASE (PHOTO & HUD INTERACTION) -->
+<section class="max-w-7xl mx-auto px-6 lg:px-12 py-12 relative z-10">
+<div class="bg-surface-container-low rounded-3xl p-8 lg:p-12 relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-12 shadow-xl">
+<div class="flex-1 flex flex-col space-y-6">
+<span class="font-label-md text-label-md text-primary tracking-widest uppercase">Arquitectura del Descanso</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">
+            Tu santuario nocturno respaldado por ciencia clínica
+          </h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            Desde la regulación de luxes ambientales hasta la amortiguación del cortisol nocturno, Eusomnia modela tu entorno óptimo para una fase NREM 3 restauradora y sueños lúcidos no fragmentados.
+          </p>
+<div class="grid grid-cols-2 gap-4 pt-2">
+<div class="bg-surface-container p-4 rounded-xl flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[24px]">thermostat</span>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">18.5° C</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Temp. Óptima Cuarto</div>
+</div>
+</div>
+<div class="bg-surface-container p-4 rounded-xl flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container text-[24px]">wb_twilight</span>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">&lt; 10 Lux</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Luz Azul Cero 60m</div>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full lg:w-5/12 h-80 rounded-2xl overflow-hidden relative shadow-lg">
+<img class="w-full h-full object-cover" data-alt="Minimalist modern bedroom at twilight with deep indigo and bioluminescent cyan ambient lighting, comfortable luxurious organic linen bed, serene relaxing atmosphere promoting circadian melatonin synthesis, architectural photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMx0qdUZmuwbbL9r2AC89ywM1z-6ONHrQVXB9l8UR81E3S_T9kfWaFTptzel4C0dTBTwCzY7NqjqzTH2wSgZ13c1rPgGbgHL2vvufIggzhmSK7PvGIf-A-utsZDcO366u6bxZu7dxC32tHrkNZbqeC8Kq7E4ciJ9fe3K6W0JUkwrP3aQo8GHAbfPOlMprlxda8YF0Ii-i6bzw00Gf_5aNhZNChGjHScJXR2Z6qdh3d"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 via-transparent to-transparent flex items-end p-6">
+<div class="flex items-center gap-3 bg-surface-container-lowest/90 backdrop-blur-md px-4 py-2 rounded-xl">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container animate-ping"></span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Sensor de Entorno • Listo para dormir</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: RECENT USER RECORDS / DIRECT ACCESS -->
+<section class="max-w-7xl mx-auto px-6 lg:px-12 py-16 relative z-10">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+<div>
+<span class="font-label-md text-label-md text-primary tracking-widest uppercase">Últimas Entradas Registradas</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface pt-1">Bitácora de Maruja</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Selecciona una tarjeta para explorar la correlación biológica o solicitar re-análisis generativo.</p>
+</div>
+<a class="inline-flex items-center gap-space-xs font-label-md text-label-md text-primary hover:text-primary-container transition-colors" data-path="historial" href="#">
+<span>Ver todas las noches (24)</span>
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Record Card 1 -->
+<div class="bg-surface-container-low rounded-2xl p-space-lg flex flex-col justify-between hover:bg-surface-container transition-all duration-300 shadow-md">
+<div class="flex flex-col space-y-space-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="font-semibold text-primary">28 OCT • AYER</span>
+<div class="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px] text-primary-container">hotel</span>
+<span class="text-on-surface">8h 10m</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface pt-1 line-clamp-1">"Avión sobre gran ciudad"</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+              Volaba con ventanales infinitos sobre rascacielos iluminados. Sin turbulencia, sensación de liberación tras días de estrés laboral.
+            </p>
+<div class="flex flex-wrap gap-1.5 pt-2">
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Lucidez: Alta</span>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-container/40 font-label-sm text-label-sm text-secondary">Calidad: 92%</span>
+</div>
+</div>
+<div class="pt-6 flex items-center justify-between">
+<a class="font-label-sm text-label-sm text-primary hover:underline flex items-center gap-1" data-path="resultado-del-dia" href="#">
+<span>Ver Diagnóstico</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+<button class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Re-analizar">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+</button>
+</div>
+</div>
+<!-- Record Card 2 -->
+<div class="bg-surface-container-low rounded-2xl p-space-lg flex flex-col justify-between hover:bg-surface-container transition-all duration-300 shadow-md">
+<div class="flex flex-col space-y-space-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="font-semibold text-on-surface">27 OCT</span>
+<div class="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px] text-tertiary-fixed-dim">hotel</span>
+<span class="text-on-surface">6h 40m</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface pt-1 line-clamp-1">"La radio y las lechugas"</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+              Un huerto subterráneo donde los vegetales emitían frecuencias de radio antiguas. Estado emocional confuso pero pacífico.
+            </p>
+<div class="flex flex-wrap gap-1.5 pt-2">
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Lucidez: Media</span>
+<span class="px-2.5 py-0.5 rounded-full bg-tertiary-container/20 font-label-sm text-label-sm text-tertiary">Calidad: 74%</span>
+</div>
+</div>
+<div class="pt-6 flex items-center justify-between">
+<a class="font-label-sm text-label-sm text-primary hover:underline flex items-center gap-1" data-path="resultado-del-dia" href="#">
+<span>Ver Diagnóstico</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+<button class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Re-analizar">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+</button>
+</div>
+</div>
+<!-- Record Card 3 -->
+<div class="bg-surface-container-low rounded-2xl p-space-lg flex flex-col justify-between hover:bg-surface-container transition-all duration-300 shadow-md">
+<div class="flex flex-col space-y-space-sm">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span class="font-semibold text-error">25 OCT</span>
+<div class="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px] text-error">warning</span>
+<span class="text-on-surface">5h 15m</span>
+</div>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface pt-1 line-clamp-1">"Pesadilla y fragmentación"</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">
+              Despertares múltiples (3 veces). Sensación de claustrofobia. Correlación directa con café a las 20:00 y discusión antes de acostarse.
+            </p>
+<div class="flex flex-wrap gap-1.5 pt-2">
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container font-label-sm text-label-sm text-on-surface-variant">Lucidez: Baja</span>
+<span class="px-2.5 py-0.5 rounded-full bg-error-container/30 font-label-sm text-label-sm text-error">Calidad: 48%</span>
+</div>
+</div>
+<div class="pt-6 flex items-center justify-between">
+<a class="font-label-sm text-label-sm text-primary hover:underline flex items-center gap-1" data-path="resultado-del-dia" href="#">
+<span>Ver Diagnóstico</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</a>
+<button class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors" title="Re-analizar">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: FAST ACCESS / QUICK LOGIN / PROFILE SYNC PANEL -->
+<section class="max-w-7xl mx-auto px-6 lg:px-12 py-16 relative z-10">
+<div class="bg-gradient-to-r from-surface-container-low via-surface-container to-surface-container-low rounded-3xl p-8 lg:p-12 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8">
+<div class="flex items-center gap-6">
+<div class="w-20 h-20 rounded-2xl bg-primary flex items-center justify-center text-on-primary shadow-[0_0_24px_rgba(0,229,255,0.4)] shrink-0">
+<span class="material-symbols-outlined text-[40px]">person_check</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-headline-md text-headline-md text-on-surface">Bienvenida de nuevo, Maruja</span>
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl">
+              Tienes 1 reporte matutino pendiente de revisión con IA. ¿Quieres registrar el descanso de anoche o revisar las recomendaciones de tu cena?
+            </p>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-space-md shrink-0">
+<a class="px-space-lg py-space-md rounded-xl bg-primary-container text-on-primary-container font-label-lg text-label-lg shadow-md hover:bg-primary transition-colors" data-path="registro-diario" href="#">
+            Registrar Noche
+          </a>
+<a class="px-space-lg py-space-md rounded-xl bg-surface-container-high text-on-surface font-label-lg text-label-lg hover:bg-surface-container-highest transition-colors" data-path="perfil" href="#">
+            Ajustes de Perfil
+          </a>
+</div>
+</div>
+</section>
+</div>
+<!-- INTERACTIVE MODAL: DEMO DE ANÁLISIS ONÍRICO (LIGHTWEIGHT EMBEDDED MODAL) -->
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md" id="demoModal">
+<div class="relative w-full max-w-2xl bg-surface-container-low rounded-2xl p-6 lg:p-8 shadow-2xl flex flex-col space-y-6">
+<!-- Modal Header -->
+<div class="flex items-center justify-between pb-2">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container text-[24px]">auto_awesome</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Motor Neuronal Eusomnia (Simulación)</h3>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Ejemplo de interpretación simultánea</span>
+</div>
+</div>
+<button class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface-variant hover:text-on-surface" onclick="document.getElementById('demoModal').classList.add('hidden')">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Demo Case Comparison -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-surface-container p-4 rounded-xl space-y-2">
+<span class="font-label-sm text-label-sm text-primary uppercase font-bold">1. Datos Somáticos Ingresados</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            • Cena: 22:30 (Pizza + Té negro)<br/>
+            • Frecuencia cardíaca: 78 bpm reposo<br/>
+            • Pantalla móvil hasta las 00:15
+          </p>
+</div>
+<div class="bg-surface-container p-4 rounded-xl space-y-2">
+<span class="font-label-sm text-label-sm text-secondary uppercase font-bold">2. Narrativa Onírica</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            "Buscaba mi equipaje en una terminal de trenes infinita y los andenes cambiaban de hora constantemente."
+          </p>
+</div>
+</div>
+<!-- AI Synthesis Output -->
+<div class="bg-surface-container-high p-4 rounded-xl flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container text-[24px] shrink-0 mt-1">neurology</span>
+<div class="space-y-1">
+<div class="font-label-md text-label-md text-primary font-bold">Veredicto Neuro-Onírico Unificado:</div>
+<p class="font-body-sm text-body-sm text-on-surface">
+            La pérdida de control en la terminal refleja la sobreactivación del locus coeruleus provocada por digestión tardía y teína. El cerebro traduce la incapacidad física de relajar la temperatura central en una búsqueda infructuosa en el sueño.
+          </p>
+</div>
+</div>
+<div class="flex justify-end gap-3 pt-2">
+<button class="px-space-md py-space-sm rounded-lg bg-surface-container text-on-surface-variant font-label-md text-label-md hover:text-on-surface" onclick="document.getElementById('demoModal').classList.add('hidden')">
+          Cerrar
+        </button>
+<a class="px-space-md py-space-sm rounded-lg bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold" data-path="registro-diario" href="#">
+          Probar con mis propios datos
+        </a>
+</div>
+</div>
+</div>
+<script>
+    // Micro-interactions and shell navigation hooks
+    document.querySelectorAll('[data-path]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        // Prevent generic anchor jump
+        e.preventDefault();
+        const targetPath = link.getAttribute('data-path');
+        console.log(`Navigating to ${targetPath}`);
+        // If integrated into single-page router, dispatch route event:
+        window.dispatchEvent(new CustomEvent('eusomnia-nav', { detail: { path: targetPath } }));
+      });
+    });
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest/80 backdrop-blur-md shadow-[0_-1px_16px_rgba(0,0,0,0.2)] mt-auto"><div class="max-w-7xl mx-auto px-6 lg:px-12 py-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-left">© 2026 Eusomnia - TechLab 4Geeks Academy</div><div class="flex items-center gap-space-lg"><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="contacto" href="#">Contacto</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="privacidad" href="#">Privacidad</a></div></div></footer></body></html>
