@@ -26,8 +26,12 @@ def analyze_daily_entry(entry_id):
         UserPreferences.user_id == current_user_id)
     prefs = db.session.execute(stmt).scalar_one_or_none()
 
-    custom_key = prefs.custom_api_key if prefs and prefs.custom_api_key else None
-    selected_model = prefs.selected_model if prefs and prefs.selected_model else None
+    if prefs is None:
+        custom_key = None
+        selected_model = None
+    else:
+        custom_key = prefs.custom_api_key or None
+        selected_model = prefs.selected_model or None
 
     entry_data = entry.serialize()
     analysis_data = run_unified_ai_analysis(
