@@ -8,12 +8,12 @@ import MessageToast from "../components/MessageToast.jsx"; // Importar el compon
 
 export const Layout = () => {
   return (
-    <>
+    <div className="min-vh-100 d-flex flex-column position-relative">
       <Navbar />
       <Login loginModal="loginModal" />
       <Signup signupModal="signupModal" />
 
-      <main className="d-flex align-items-start">
+      <main className="flex-grow-1 d-flex flex-column position-relative">
         {/* Mostrar el mensaje global de manera persistente sobre todo el contenido */}
         <MessageToast />
         <Sidebar />
@@ -22,6 +22,6 @@ export const Layout = () => {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 };

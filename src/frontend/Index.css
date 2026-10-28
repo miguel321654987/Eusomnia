@@ -1,0 +1,332 @@
+/* ==========================================================================
+   Eusomnia Design System — "Nocturne Synapse" Theme
+   Built on Bootstrap 5 foundations with custom dark clinical aesthetic.
+   ========================================================================== */
+
+:root {
+  /* Color Palette */
+  --eusomnia-bg: #0a1322;
+  --eusomnia-surface-lowest: #060e1d;
+  --eusomnia-surface-low: #131c2b;
+  --eusomnia-surface: #17202f;
+  --eusomnia-surface-high: #222a3a;
+  --eusomnia-surface-highest: #2c3545;
+
+  --eusomnia-primary: #00e5ff;
+  --eusomnia-primary-light: #c3f5ff;
+  --eusomnia-on-primary: #00363d;
+  --eusomnia-primary-container: rgba(0, 229, 255, 0.15);
+
+  --eusomnia-secondary: #abc9f1;
+  --eusomnia-secondary-container: #2b486a;
+
+  --eusomnia-tertiary: #ffe9d2;
+  --eusomnia-tertiary-container: #ffc67e;
+  --eusomnia-tertiary-dark: #7d4f00;
+
+  --eusomnia-error: #ffb4ab;
+  --eusomnia-error-container: rgba(147, 0, 10, 0.3);
+
+  --eusomnia-text: #dae2f8;
+  --eusomnia-text-muted: #bac9cc;
+  --eusomnia-outline: #849396;
+  --eusomnia-outline-variant: #3b494c;
+}
+
+body {
+  background-color: var(--eusomnia-bg);
+  background-image: 
+    linear-gradient(rgba(16, 36, 68, 0.60), rgba(10, 24, 46, 0.78)),
+    url("../assets/sleep-health-tech-background.jpg");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--eusomnia-text);
+  font-family: "Manrope", sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Typography Helpers */
+.font-headline {
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.font-body {
+  font-family: "Manrope", sans-serif;
+}
+
+.font-label {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+/* Atmospheric Ambient Canvas */
+.eusomnia-canvas {
+  background-color: transparent;
+  color: var(--eusomnia-text);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.glow-orb-primary {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 750px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.12) 0%, rgba(10, 19, 34, 0) 70%);
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow-orb-secondary {
+  position: absolute;
+  top: 350px;
+  left: -120px;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(43, 72, 106, 0.25) 0%, rgba(10, 19, 34, 0) 70%);
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Text Gradient */
+.text-gradient-cyan {
+  background: linear-gradient(135deg, var(--eusomnia-primary-light) 0%, var(--eusomnia-primary) 50%, var(--eusomnia-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Cards */
+.eusomnia-card {
+  background-color: var(--eusomnia-surface-low);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.eusomnia-card:hover {
+  background-color: var(--eusomnia-surface);
+  border-color: rgba(0, 229, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+/* HUD Synapse Card */
+.eusomnia-hud-card {
+  background: rgba(19, 28, 43, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 229, 255, 0.22);
+  border-radius: 1.25rem;
+  box-shadow: 0 16px 40px rgba(0, 15, 35, 0.6);
+  position: relative;
+}
+
+.eusomnia-hud-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.3), transparent 60%, rgba(171, 201, 241, 0.2));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Buttons */
+.btn.btn-primary {
+  background-color: var(--eusomnia-primary) !important;
+  color: var(--eusomnia-on-primary) !important;
+  border: none !important;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  box-shadow: 0 0 24px rgba(0, 229, 255, 0.45);
+  transition: all 0.25s ease-in-out;
+}
+
+.btn.btn-primary:hover,
+.btn.btn-primary:focus {
+  background-color: #38eaff !important;
+  color: var(--eusomnia-on-primary) !important;
+  box-shadow: 0 0 32px rgba(0, 229, 255, 0.75);
+  transform: translateY(-2px);
+}
+
+.btn-eusomnia-secondary {
+  background-color: var(--eusomnia-surface-high);
+  color: var(--eusomnia-text);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.25s ease-in-out;
+}
+
+.btn-eusomnia-secondary:hover {
+  background-color: var(--eusomnia-surface-highest);
+  color: #ffffff;
+  border-color: rgba(0, 229, 255, 0.3);
+}
+
+/* Badges and Chips */
+.badge-eusomnia-cyan {
+  background-color: rgba(0, 229, 255, 0.12);
+  color: var(--eusomnia-primary);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.badge-eusomnia-amber {
+  background-color: rgba(255, 198, 126, 0.15);
+  color: var(--eusomnia-tertiary-container);
+  border: 1px solid rgba(255, 198, 126, 0.3);
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.badge-eusomnia-error {
+  background-color: rgba(255, 180, 171, 0.15);
+  color: var(--eusomnia-error);
+  border: 1px solid rgba(255, 180, 171, 0.3);
+  font-family: "Space Grotesk", sans-serif;
+}
+
+.badge-eusomnia-neutral {
+  background-color: var(--eusomnia-surface);
+  color: var(--eusomnia-text-muted);
+  font-family: "Space Grotesk", sans-serif;
+}
+
+/* Pulsing Dots */
+.pulse-dot-cyan {
+  width: 8px;
+  height: 8px;
+  background-color: var(--eusomnia-primary);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 10px var(--eusomnia-primary);
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 4px var(--eusomnia-primary);
+  }
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 0 14px var(--eusomnia-primary);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 4px var(--eusomnia-primary);
+  }
+}
+
+/* Modal Overlay */
+.eusomnia-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: rgba(6, 14, 29, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.eusomnia-modal-container {
+  width: 100%;
+  max-width: 680px;
+  background-color: var(--eusomnia-surface-low);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  border-radius: 1.25rem;
+  box-shadow: 0 24px 60px rgba(0, 10, 25, 0.7);
+  animation: modal-appear 0.25s ease-out;
+}
+
+@keyframes modal-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Navbar & Header Styles */
+.eusomnia-navbar {
+  background: rgba(10, 19, 34, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.12);
+  box-shadow: 0 4px 24px rgba(0, 229, 255, 0.06);
+  z-index: 1030;
+  transition: all 0.3s ease;
+}
+
+.eusomnia-nav-pills-container {
+  background: rgba(6, 14, 29, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.75rem;
+  padding: 4px;
+}
+
+.eusomnia-nav-link {
+  color: var(--eusomnia-text-muted);
+  padding: 6px 14px;
+  border-radius: 0.5rem;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.eusomnia-nav-link:hover {
+  color: var(--eusomnia-text);
+  background: rgba(23, 32, 47, 0.7);
+}
+
+.eusomnia-nav-link.active {
+  background: var(--eusomnia-surface-high);
+  color: var(--eusomnia-primary) !important;
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+}
+
+/* Footer Styles */
+.eusomnia-footer {
+  background: rgba(6, 14, 29, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.hover-cyan {
+  transition: color 0.2s ease;
+}
+
+.hover-cyan:hover {
+  color: var(--eusomnia-primary) !important;
+}
+
+
