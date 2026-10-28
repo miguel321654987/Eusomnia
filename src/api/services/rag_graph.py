@@ -65,7 +65,8 @@ def _openrouter_generate(
 ) -> dict[str, Any]:
     api_key = custom_key or os.getenv("OPENROUTER_API_KEY")
     if not api_key:
-        raise APIException("AI provider API key is not configured", status_code=500)
+        raise APIException(
+            "AI provider API key is not configured", status_code=500)
 
     # Seleccionamos el modelo de OpenRouter. El valor por defecto es el router gratuito
     # "openrouter/free", que delega al modelo libre disponible. Puede sobrescribirse
@@ -109,13 +110,21 @@ def _openrouter_generate(
     # pasando explícitamente el parámetro `model`.
     # ---------------------------------------------------------------------
     fallback_models = [
-        "nvidia/nemotron-3.5-super-vl:free",
-        "nvidia/nemotron-3.5-lightning:free",
-        "meta-llama/llama-3.2-11b-vision-instruct:free",
-        "meta-llama/llama-3.2-90b-vision-instruct:free",
-        "google/gemini-pro-vision:free",
-        "mistralai/mistral-large:free",
-        "mistralai/mistral-medium:free",
+        # 1️⃣  Mejor razonamiento y calidad JSON
+        "recursive/flint:free",
+        # 2️⃣  Buen equilibrio rapidez‑calidad
+        "xingchen-agi/xing4.0-29b-a4b:free",
+        # 3️⃣  Fallback ultra‑rápido, bajo consumo
+        "liquidai/lfm2.5-2.6b:free",
+        "liquidai/lfm2.5-embedding-350m:free",
+        "nvidia/nemotron-3.5-embed-1b:free",
+        "nvidia/nemotron-3.5-embed-8b:free",
+        "nvidia/nemotron-3.5-rerank-8b:free",
+        "nvidia/nemotron-3.5-content-safety:free",
+        "baseten/mammoth-1:free",
+        "baseten/elephant-1:free",
+        "heygen/heygen-voice-turbo:free",
+        "openrouter/free",
     ]
 
     if selected_model:
@@ -291,7 +300,8 @@ def _openrouter_generate(
                 if isinstance(raw, dict):
                     return raw
                 if isinstance(raw, str):
-                    match = re.search(r"```json\s*(\{.*?\})\s*```", raw, re.DOTALL)
+                    match = re.search(
+                        r"```json\s*(\{.*?\})\s*```", raw, re.DOTALL)
                     if not match:
                         match = re.search(r"(\{.*\})", raw, re.DOTALL)
                     if match:
@@ -405,7 +415,8 @@ def _openrouter_generate(
                     return raw_response
                 # Caso contrario, intentamos extraer JSON del texto
                 if isinstance(raw_response, str):
-                    match = re.search(r"```json\s*(\{.*?\})\s*```", raw_response, re.DOTALL)
+                    match = re.search(
+                        r"```json\s*(\{.*?\})\s*```", raw_response, re.DOTALL)
                     if not match:
                         match = re.search(r"(\{.*\})", raw_response, re.DOTALL)
                     if match:
@@ -430,6 +441,7 @@ def _openrouter_generate(
         "All OpenRouter model attempts failed. Check API key, quota, and model compatibility.",
         status_code=502,
     )
+
 
 def build_dream_rag_graph(
     service: DreamRetrievalService | None = None,
