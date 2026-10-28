@@ -61,7 +61,7 @@ export const getActions = (store, dispatch) => {
 
       try {
         const response = await fetch(
-          `${BACKEND_URL}/api/favorites/user/${userId}/favorites`,
+          apiUrl(`/api/favorites/user/${userId}/favorites`),
           { headers: getAuthHeaders() },
         );
         if (!response.ok)
@@ -89,7 +89,7 @@ export const getActions = (store, dispatch) => {
         const idSeguro = encodeURIComponent(String(pokemon.id).trim());
 
         const response = await fetch(
-          `${BACKEND_URL}/api/favorites/user/${userId}/favorites/${idSeguro}`,
+          apiUrl(`/api/favorites/user/${userId}/favorites/${idSeguro}`),
           {
             method: "POST",
             headers: { ...getAuthHeaders() }, // ✨ Escalabilidad: podrían agregarse otros headers
@@ -120,7 +120,7 @@ export const getActions = (store, dispatch) => {
         const idSeguro = encodeURIComponent(String(pokemonId).trim());
 
         const response = await fetch(
-          `${BACKEND_URL}/api/favorites/user/${userId}/favorites/${idSeguro}`,
+          apiUrl(`/api/favorites/user/${userId}/favorites/${idSeguro}`),
           {
             method: "DELETE",
             headers: { ...getAuthHeaders() },

@@ -75,12 +75,11 @@ class SleepAnalysis(db.Model):
             "id": self.id,
             "entry_id": self.entry_id,
             "interpretation": self.interpretation,
-            "predominant_emotions": self.predominant_emotions,
-            "detected_symbols": self.detected_symbols,
+            "predominant_emotions": json.loads(self.predominant_emotions or "[]"),
+            "detected_symbols": json.loads(self.detected_symbols or "[]"),
             "habits_reading": self.habits_reading,
             "patterns_detected": self.patterns_detected,
-            "recommendations": self.recommendations,
-            "alerts": self.alerts,
+            "recommendations": json.loads(self.recommendations or "[]"),
+            "alerts": json.loads(self.alerts or "[]"),
             "created_at": self.created_at.isoformat() if self.created_at else None
         }
-

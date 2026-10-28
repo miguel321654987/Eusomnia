@@ -2,8 +2,7 @@ import { useReducer, useEffect } from "react";
 import storeReducer, { initialStore } from "../store.js";
 import { getActions } from "./actions.js";
 import { StoreContext } from "./useGlobalReducer.jsx";
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+import { apiUrl } from "../api.js";
 
 /* StoreProvider es el corazón del estado global: se encarga de crear el estado, 
 modificarlo, sincronizarlo con tu base de datos y distribuirlo a toda la aplicación */
@@ -44,11 +43,6 @@ export function StoreProvider({ children }) {
           type: "LOGIN_SUCCESS",
           payload: { token, user: profile },
         });
-
-        if (profile && profile.id) {
-          dispatch({ type: "CLEAR_FAVORITES" }); // Limpia favoritos antes de cargar los nuevos
-          await actions.cargarFavoritosBackend(profile.id);
-        }
       } catch (error) {
         console.error("Error al sincronizar sesión con el servidor:", error);
       }

@@ -14,7 +14,10 @@ from api.blueprints.daily_entries_bp.models import DailyEntry, SleepReport, Habi
 def get_user_entries():
     current_user_id = int(get_jwt_identity())
     stmt = select(DailyEntry).where(DailyEntry.user_id ==
-                                    current_user_id).order_by(DailyEntry.entry_date.desc())
+                                    current_user_id).order_by(
+                                        DailyEntry.entry_date.desc(),
+                                        DailyEntry.created_at.desc()
+                                    )
     entries = db.session.scalars(stmt).all()
 
     return jsonify({

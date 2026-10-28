@@ -10,19 +10,7 @@ import { router } from "./routes.jsx";
 import { StoreProvider } from "./hooks/StoreProvider.jsx";
 import { ToastContainer } from "react-toastify";
 
-import { BackendURL } from "./components/BackendURL.jsx";
-
 export const Main = () => {
-  if (
-    !import.meta.env.VITE_BACKEND_URL ||
-    import.meta.env.VITE_BACKEND_URL == ""
-  )
-    return (
-      <React.StrictMode>
-        <BackendURL />
-      </React.StrictMode>
-    );
-
   return (
     <React.StrictMode>
       {/* Provide global state to all components */}

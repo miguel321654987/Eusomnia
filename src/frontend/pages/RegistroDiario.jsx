@@ -8,8 +8,7 @@ import { StepIncidents } from "../components/daily_entry/StepIncidents.jsx";
 import { StepNutrition } from "../components/daily_entry/StepNutrition.jsx";
 import { StepDreamJournal } from "../components/daily_entry/StepDreamJournal.jsx";
 import { SuccessScreen } from "../components/daily_entry/SuccessScreen.jsx";
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+import { apiUrl } from "../api.js";
 
 const STEP_TITLES = {
   1: "Hábitos y Actividad física",
@@ -21,10 +20,12 @@ const STEP_TITLES = {
 
 export const RegistroDiario = () => {
   const { store } = useGlobalReducer();
+  const hasSession = Boolean(store.token || localStorage.getItem("jwt-token"));
 
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [savedEntryId, setSavedEntryId] = useState(null);
   const [statusMessage, setStatusMessage] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -34,6 +35,7 @@ export const RegistroDiario = () => {
     screenTime: "< 1 hora (Filtro cálido)",
     incidents: ["🕊️ Día tranquilo y neutro"],
     nutrition: ["Cena ligera / temprana"],
+    foodDescription: "",
     dreamNarrative: "",
   });
 
@@ -89,6 +91,10 @@ export const RegistroDiario = () => {
     });
   };
 
+  const handleFoodDescriptionChange = (foodDescription) => {
+    setFormData((prev) => ({ ...prev, foodDescription }));
+  };
+
   // Step 5: Dream Narrative
   const handleNarrativeChange = (textOrFn) => {
     setFormData((prev) => ({
@@ -112,8 +118,17 @@ export const RegistroDiario = () => {
   const handleSubmit = async () => {
     if (!formData.dreamNarrative.trim()) return;
 
-    setIsSubmitting(true);
     const token = store.token || localStorage.getItem("jwt-token");
+    if (!token) {
+      setStatusMessage({
+        type: "error",
+        text: "Inicia sesión para guardar el registro y generar el análisis.",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    setStatusMessage(null);
 
     const payload = {
       date: new Date().toISOString().split("T")[0],
@@ -127,13 +142,13 @@ export const RegistroDiario = () => {
         bedtime_mood: formData.sleepQuality,
         screen_time: formData.screenTime,
         incidents: formData.incidents.join(", "),
-        food_notes: `Horas de descanso: ${formData.sleepHours}`,
+        sleep_hours: formData.sleepHours,
+        nutrition_query: formData.foodDescription.trim() || null,
       },
     };
 
     try {
-      if (token) {
-        const response = await fetch(`${BACKEND_URL}/api/daily_entries`, {
+      const response = await fetch(apiUrl("/api/entries"), {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -142,45 +157,27 @@ export const RegistroDiario = () => {
           body: JSON.stringify(payload),
         });
 
-        if (!response.ok) {
-          throw new Error("Error al guardar la entrada en el servidor.");
-        }
-      } else {
-        // Guest mode fallback
-        localStorage.setItem(
-          "eusomnia_guest_daily_entry",
-          JSON.stringify(payload)
-        );
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "No se pudo guardar el registro.");
       }
 
+      const entryId = data.results?.id;
+      if (!entryId) {
+        throw new Error("El servidor no devolvió el ID del registro guardado.");
+      }
+
+      setSavedEntryId(entryId);
       setIsSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
-      console.error("Submission error:", error);
-      // Fallback local persistence
-      localStorage.setItem(
-        "eusomnia_guest_daily_entry",
-        JSON.stringify(payload)
-      );
-      setIsSubmitted(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      setStatusMessage({
+        type: "error",
+        text: error.message || "No se pudo guardar el registro en el servidor.",
+      });
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleReset = () => {
-    setFormData({
-      physicalActivity: "Media (Ejercicio regular)",
-      sleepHours: 7.5,
-      sleepQuality: "Profundo",
-      screenTime: "< 1 hora (Filtro cálido)",
-      incidents: ["🕊️ Día tranquilo y neutro"],
-      nutrition: ["Cena ligera / temprana"],
-      dreamNarrative: "",
-    });
-    setCurrentStep(1);
-    setIsSubmitted(false);
   };
 
   return (
@@ -190,13 +187,35 @@ export const RegistroDiario = () => {
       <div className="glow-orb-secondary" />
 
       <div className="container position-relative" style={{ maxWidth: "860px", zIndex: 1 }}>
+        {!hasSession && !isSubmitted && (
+          <div className="alert alert-warning d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <span>Inicia sesión para guardar entradas y generar análisis reales.</span>
+            <button
+              type="button"
+              className="btn btn-sm btn-eusomnia-secondary"
+              data-bs-toggle="modal"
+              data-bs-target="#loginModal"
+            >
+              Iniciar sesión
+            </button>
+          </div>
+        )}
         {statusMessage && (
           <div
-            className="alert alert-info py-2 px-3 mb-4 rounded-3 text-center font-label small"
+            className={`alert ${statusMessage.type === "error" ? "alert-danger" : "alert-info"} py-2 px-3 mb-4 rounded-3 text-center font-label small`}
             style={{
-              background: "rgba(0, 229, 255, 0.15)",
-              color: "var(--eusomnia-primary)",
-              border: "1px solid rgba(0, 229, 255, 0.3)",
+              background:
+                statusMessage.type === "error"
+                  ? "rgba(255, 180, 171, 0.15)"
+                  : "rgba(0, 229, 255, 0.15)",
+              color:
+                statusMessage.type === "error"
+                  ? "var(--eusomnia-error)"
+                  : "var(--eusomnia-primary)",
+              border:
+                statusMessage.type === "error"
+                  ? "1px solid rgba(255, 180, 171, 0.3)"
+                  : "1px solid rgba(0, 229, 255, 0.3)",
             }}
           >
             {statusMessage.text}
@@ -212,7 +231,7 @@ export const RegistroDiario = () => {
 
         {/* Success or Active Steps */}
         {isSubmitted ? (
-          <SuccessScreen onReset={handleReset} />
+          <SuccessScreen entryId={savedEntryId} />
         ) : (
           <div className="d-flex flex-column gap-3">
             {/* Summary of completed steps with Edit action */}
@@ -257,6 +276,8 @@ export const RegistroDiario = () => {
               <StepNutrition
                 selectedNutrition={formData.nutrition}
                 onToggleNutrition={handleToggleNutrition}
+                foodDescription={formData.foodDescription}
+                onChangeFoodDescription={handleFoodDescriptionChange}
                 onBack={() => setCurrentStep(3)}
                 onNext={() => setCurrentStep(5)}
               />
@@ -300,4 +321,3 @@ export const RegistroDiario = () => {
     </div>
   );
 };
-

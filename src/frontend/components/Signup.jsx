@@ -2,6 +2,7 @@ import { useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { closeModalSafely } from "../utils.js";
 import { toast } from "react-toastify";
+import { apiUrl } from "../api.js";
 
 export const Signup = ({ signupModal }) => {
   const { dispatch } = useGlobalReducer();

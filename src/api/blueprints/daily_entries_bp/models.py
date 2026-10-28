@@ -115,7 +115,7 @@ class HabitLog(db.Model):
     entry_id: Mapped[int] = mapped_column(ForeignKey(
         "daily_entries.id"), unique=True, nullable=False)
     physical_activity: Mapped[str] = mapped_column(String(50), nullable=True)
-    dinner_type: Mapped[str] = mapped_column(String(50), nullable=True)
+    dinner_type: Mapped[str] = mapped_column(String(255), nullable=True)
     bedtime_mood: Mapped[str] = mapped_column(String(50), nullable=True)
     screen_time: Mapped[str] = mapped_column(String(50), nullable=True)
     incidents: Mapped[str] = mapped_column(String(255), nullable=True)

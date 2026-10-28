@@ -75,8 +75,24 @@ def _parse_manual(body: dict) -> dict[str, float | None]:
 def analyze_nutrition():
     """Analyze a single free-text food query (not persisted)."""
     body = request.get_json()
-    if body is None or not body.get("query"):
-        raise APIException("Food query is required", status_code=400)
+    if (
+        body is None
+        or not isinstance(body.get("query"), str)
+        or not body["query"].strip()
+        or not isinstance(body.get("entry_id"), int)
+        or isinstance(body.get("entry_id"), bool)
+    ):
+        raise APIException(
+            "Food query and daily entry ID are required", status_code=400)
+
+    query = body["query"].strip()
+    current_user_id = int(get_jwt_identity())
+    entry = db.session.get(DailyEntry, body["entry_id"])
+    if entry is None or entry.user_id != current_user_id:
+        raise APIException("Daily entry not found", status_code=404)
+    if not entry.habit_log or entry.habit_log.nutrition_query != query:
+        raise APIException(
+            "Food query must match the saved daily entry", status_code=400)
 
     query = str(body.get("query")).strip()
     params = load_sleep_params()
