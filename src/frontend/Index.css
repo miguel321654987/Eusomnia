@@ -329,4 +329,100 @@ body {
   color: var(--eusomnia-primary) !important;
 }
 
+/* ==========================================================================
+   Registro Diario — Interactive Stepper & Guided Protocol Styles
+   ========================================================================== */
+
+.daily-option-chip {
+  background-color: var(--eusomnia-surface-low);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.85rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+  width: 100%;
+}
+
+.daily-option-chip:hover {
+  background-color: var(--eusomnia-surface);
+  border-color: rgba(0, 229, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.daily-option-chip.active-chip {
+  background-color: var(--eusomnia-surface-high) !important;
+  border-color: var(--eusomnia-primary) !important;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.22);
+}
+
+.daily-multichip {
+  background-color: var(--eusomnia-surface-low);
+  color: var(--eusomnia-text);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50rem;
+  padding: 0.55rem 1.15rem;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.daily-multichip:hover {
+  background-color: var(--eusomnia-surface);
+  border-color: rgba(0, 229, 255, 0.3);
+  color: #ffffff;
+}
+
+.daily-multichip.active-multichip {
+  background-color: var(--eusomnia-surface-high);
+  border-color: var(--eusomnia-primary);
+  color: var(--eusomnia-primary);
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.18);
+}
+
+.summary-capsule {
+  background-color: rgba(19, 28, 43, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.summary-capsule:hover {
+  background-color: var(--eusomnia-surface-low);
+  border-color: rgba(0, 229, 255, 0.2);
+}
+
+.stepper-progress-fill {
+  height: 100%;
+  border-radius: 50rem;
+  background: linear-gradient(90deg, #00daf3 0%, #00e5ff 100%);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pulse-recording {
+  animation: recording-glow 1.5s infinite;
+}
+
+@keyframes recording-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 80, 80, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(255, 80, 80, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 80, 80, 0);
+  }
+}
+
+
 
