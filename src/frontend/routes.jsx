@@ -8,6 +8,7 @@ import {
 import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
 import { RegistroDiario } from "./pages/RegistroDiario";
+import { ResultadoDelDia } from "./pages/ResultadoDelDia";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,6 +23,7 @@ export const router = createBrowserRouter(
       {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
       <Route path="/" element={<Home />} />
       <Route path="/registro-diario" element={<RegistroDiario />} />
+      <Route path="/resultado-del-dia" element={<ResultadoDelDia />} />
     </Route>,
   ),
 );

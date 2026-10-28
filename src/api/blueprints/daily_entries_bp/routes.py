@@ -14,7 +14,10 @@ from api.blueprints.daily_entries_bp.models import DailyEntry, SleepReport, Habi
 def get_user_entries():
     current_user_id = int(get_jwt_identity())
     stmt = select(DailyEntry).where(DailyEntry.user_id ==
-                                    current_user_id).order_by(DailyEntry.entry_date.desc())
+                                    current_user_id).order_by(
+                                        DailyEntry.entry_date.desc(),
+                                        DailyEntry.created_at.desc()
+                                    )
     entries = db.session.scalars(stmt).all()
 
     return jsonify({
@@ -78,7 +81,9 @@ def create_daily_entry():
             bedtime_mood=habits_data.get("bedtime_mood"),
             screen_time=habits_data.get("screen_time"),
             incidents=habits_data.get("incidents"),
-            food_notes=habits_data.get("food_notes")
+            food_notes=habits_data.get("food_notes"),
+            nutrition_query=habits_data.get("nutrition_query"),
+            sleep_hours=habits_data.get("sleep_hours"),
         )
         db.session.add(habit_log)
 

@@ -1,5 +1,5 @@
 from datetime import datetime, date
-from sqlalchemy import String, Integer, ForeignKey, Text, Date, DateTime
+from sqlalchemy import String, Integer, ForeignKey, Text, Date, DateTime, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from api.extensions import db
 
@@ -80,11 +80,13 @@ class HabitLog(db.Model):
     entry_id: Mapped[int] = mapped_column(ForeignKey(
         "daily_entries.id"), unique=True, nullable=False)
     physical_activity: Mapped[str] = mapped_column(String(50), nullable=True)
-    dinner_type: Mapped[str] = mapped_column(String(50), nullable=True)
+    dinner_type: Mapped[str] = mapped_column(String(255), nullable=True)
     bedtime_mood: Mapped[str] = mapped_column(String(50), nullable=True)
     screen_time: Mapped[str] = mapped_column(String(50), nullable=True)
     incidents: Mapped[str] = mapped_column(String(255), nullable=True)
     food_notes: Mapped[str] = mapped_column(Text, nullable=True)
+    nutrition_query: Mapped[str] = mapped_column(Text, nullable=True)
+    sleep_hours: Mapped[float] = mapped_column(Float, nullable=True)
 
     daily_entry: Mapped["DailyEntry"] = relationship(
         "DailyEntry", back_populates="habit_log")
@@ -98,5 +100,7 @@ class HabitLog(db.Model):
             "bedtime_mood": self.bedtime_mood,
             "screen_time": self.screen_time,
             "incidents": self.incidents,
-            "food_notes": self.food_notes
+            "food_notes": self.food_notes,
+            "nutrition_query": self.nutrition_query,
+            "sleep_hours": self.sleep_hours,
         }

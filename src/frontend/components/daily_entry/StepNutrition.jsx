@@ -1,4 +1,11 @@
-export const StepNutrition = ({ selectedNutrition, onToggleNutrition, onBack, onNext }) => {
+export const StepNutrition = ({
+  selectedNutrition,
+  onToggleNutrition,
+  foodDescription,
+  onChangeFoodDescription,
+  onBack,
+  onNext,
+}) => {
   const nutritionItems = [
     {
       title: "Cena ligera / temprana",
@@ -96,6 +103,27 @@ export const StepNutrition = ({ selectedNutrition, onToggleNutrition, onBack, on
         })}
       </div>
 
+      <div className="mb-4">
+        <label
+          htmlFor="food-description"
+          className="font-label small fw-bold text-light d-block mb-2"
+        >
+          Alimentos y cantidades para el análisis Edamam
+        </label>
+        <textarea
+          id="food-description"
+          className="form-control"
+          rows="3"
+          value={foodDescription}
+          onChange={(event) => onChangeFoodDescription(event.target.value)}
+          placeholder="Ej.: 150 g de arroz, 1 huevo y una taza de café"
+          maxLength={1000}
+        />
+        <p className="font-body small text-secondary mt-2 mb-0">
+          Describe alimentos y cantidades. Si lo dejas vacío, no se solicitará un análisis nutricional.
+        </p>
+      </div>
+
       {/* Navigation Buttons */}
       <div className="d-flex align-items-center justify-content-between pt-2 border-top border-secondary border-opacity-10">
         <button
@@ -119,4 +147,3 @@ export const StepNutrition = ({ selectedNutrition, onToggleNutrition, onBack, on
     </section>
   );
 };
-

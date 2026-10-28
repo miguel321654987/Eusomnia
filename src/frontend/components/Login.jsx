@@ -2,6 +2,7 @@ import { useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { closeModalSafely, switchModals } from "../utils.js";
 import { toast } from "react-toastify";
+import { apiUrl } from "../api.js";
 
 export const Login = ({ loginModal, signupModal }) => {
   const { dispatch } = useGlobalReducer();
@@ -39,14 +40,11 @@ export const Login = ({ loginModal, signupModal }) => {
     }
 
     try {
-      const resp = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        },
-      );
+      const resp = await fetch(apiUrl("/api/users/login"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
       if (!resp.ok) {
         const datosError = await resp.json();

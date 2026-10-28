@@ -424,5 +424,90 @@ body {
   }
 }
 
+/* ==========================================================================
+   Resultado del Día — Clinical Telemetry & Dream Decoding Styles
+   ========================================================================== */
 
+.symbol-accordion-item {
+  background-color: var(--eusomnia-surface-low);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.85rem;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
 
+.symbol-accordion-item:hover {
+  border-color: rgba(0, 229, 255, 0.2);
+}
+
+.symbol-accordion-header {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0.9rem 1rem;
+  color: var(--eusomnia-text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  transition: background-color 0.2s ease;
+}
+
+.symbol-accordion-header:hover {
+  background-color: rgba(34, 42, 58, 0.5);
+}
+
+.symbol-accordion-header .icon-toggle {
+  transition: transform 0.25s ease;
+}
+
+.symbol-accordion-header.expanded .icon-toggle {
+  transform: rotate(180deg);
+}
+
+.symbol-accordion-body {
+  padding: 0.5rem 1rem 1rem 1rem;
+  background-color: rgba(6, 14, 29, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--eusomnia-text-muted);
+}
+
+.prescription-card {
+  background-color: rgba(34, 42, 58, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0.85rem;
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.prescription-card:hover {
+  background-color: rgba(34, 42, 58, 0.8);
+  border-color: rgba(0, 229, 255, 0.2);
+}
+
+.prescription-number {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: var(--eusomnia-primary);
+  color: var(--eusomnia-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.rem-bar-item {
+  width: 14px;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.4s ease;
+}
