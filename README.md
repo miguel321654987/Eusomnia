@@ -24,7 +24,7 @@
   <!-- IA & vectores -->
   <img src="https://img.shields.io/badge/OpenRouter-AI-6B46C1?style=flat-square&logo=openai&logoColor=white" alt="OpenRouter"/>
   <img src="https://img.shields.io/badge/Qdrant-Vector%20DB-DC244C?style=flat-square&logo=qdrant&logoColor=white" alt="Qdrant"/>
-  <img src="https://img.shields.io/badge/sentence--transformers-NLP-FF6F00?style=flat-square&logo=huggingface&logoColor=white" alt="sentence-transformers"/>
+  <img src="https://img.shields.io/badge/LangChain-Embeddings-1C3C3C?style=flat-square&logo=langchain&logoColor=white" alt="LangChain Embeddings"/>
   <!-- Infraestructura -->
   <img src="https://img.shields.io/badge/Docker-Compose-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker"/>
   <img src="https://img.shields.io/badge/Gunicorn-WSGI-499848?style=flat-square&logo=gunicorn&logoColor=white" alt="Gunicorn"/>
@@ -46,15 +46,68 @@ El valor diferencial de Eusomnia es la **integración**: el sueño y los hábito
 
 ## Características principales
 
-| Módulo                      | Descripción                                                                                                    |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| 📖 **Diario de sueños**     | Registro diario de texto libre del sueño + bloque de hábitos del día                                           |
-| 🥗 **Análisis nutricional** | Enriquecimiento automático con calorías, cafeína y azúcar vía CalorieNinjas                                    |
-| 🔍 **Motor RAG**            | Búsqueda semántica de símbolos oníricos con `sentence-transformers` + Qdrant                                   |
-| 🤖 **Interpretación IA**    | Un único JSON de OpenRouter: interpretación, emociones, símbolos, hábitos, patrones, recomendaciones y alertas |
-| 📊 **Historial**            | Consulta de todos los registros diarios con su análisis completo                                               |
-| 👤 **Perfil privado**       | JWT + Bcrypt; el diario es estrictamente privado por usuario autenticado                                       |
-| 🔔 **Alertas**              | Avisos automáticos ante patrones de riesgo (cafeína tardía, hábitos recurrentes...)                            |
+| Módulo                      | Descripción                                                          |
+| --------------------------- | -------------------------------------------------------------------- |
+| 📖 **Diario de sueños**     | Registro diario de texto libre del sueño + bloque de hábitos del día |
+| 🥗 **Análisis nutricional** | Enriquecimiento automático con calorías, cafeína y azúcar vía Edamam |
+
+<!-- Added API documentation for nutrition endpoints -->
+
+## API Endpoints – Nutrición
+
+Los siguientes endpoints permiten analizar alimentos/recetas, registrar el análisis en una entrada diaria y evaluar el impacto sobre el sueño.
+
+| Método | Ruta                            | Descripción                                                                                                                                                                                        |
+| ------ | ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST` | `/nutrition/analyze`            | Analiza una única consulta de alimento (texto libre) sin persistir. Espera `{ "query": "string", "meal_type": "breakfast"?, "caffeine_mg": number?, "alcohol_g": number?, "omega3_mg": number? }`. |
+| `POST` | `/nutrition/analyze-recipe`     | Analiza una receta completa a partir de una lista de ingredientes. Espera `{ "ingredients": ["line1", "line2", ...], "title": "...", "meal_type": "lunch"?, ... }`.                                |
+| `POST` | `/nutrition/log`                | Guarda el resultado del análisis asociado a una entrada diaria (`entry_id`). Payload incluye los mismos campos que en `/analyze-recipe` más `entry_id`.                                            |
+| `GET`  | `/nutrition/log/<int:entry_id>` | Recupera el registro de nutrición guardado para la entrada indicada.                                                                                                                               |
+| `POST` | `/nutrition/evaluate`           | Evalúa el log contra los parámetros de sueño (cafeína, alcohol, omega‑3, etc.) y devuelve una valoración de impacto.                                                                               |
+| `GET`  | `/nutrition/parameters`         | Devuelve los límites y rangos de referencia definidos en `src/config/nutrition_sleep_parameters.json`.                                                                                             |
+
+### Ejemplos cURL
+
+```bash
+# Analizar una sola comida
+curl -X POST http://localhost:3000/nutrition/analyze \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <JWT>" \
+  -d '{"query": "espresso", "meal_type": "breakfast"}'
+
+# Analizar una receta completa
+curl -X POST http://localhost:3000/nutrition/analyze-recipe \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <JWT>" \
+  -d '{
+    "title": "Ensalada mediterránea",
+    "ingredients": ["2 tomates", "100g queso feta", "1 cucharada de aceite de oliva"],
+    "meal_type": "lunch"
+  }'
+
+# Guardar el análisis en una entrada diaria (suponiendo entry_id=42)
+curl -X POST http://localhost:3000/nutrition/log \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <JWT>" \
+  -d '{
+    "entry_id": 42,
+    "title": "Ensalada mediterránea",
+    "ingredients": ["2 tomates", "100g queso feta", "1 cucharada de aceite de oliva"],
+    "meal_type": "lunch"
+  }'
+
+# Evaluar el impacto de la nutrición registrada
+curl -X POST http://localhost:3000/nutrition/evaluate \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <JWT>" \
+  -d '{"entry_id": 42, "weight_kg": 70}'
+```
+
+| 🔍 **Motor RAG** | Búsqueda semántica de símbolos oníricos con `LangGraph` + Qdrant |
+| 🤖 **Interpretación IA** | Un único JSON de OpenRouter: interpretación, emociones, símbolos, hábitos, patrones, recomendaciones y alertas |
+| 📊 **Historial** | Consulta de todos los registros diarios con su análisis completo |
+| 👤 **Perfil privado** | JWT + Bcrypt; el diario es estrictamente privado por usuario autenticado |
+| 🔔 **Alertas** | Avisos automáticos ante patrones de riesgo (cafeína tardía, hábitos recurrentes...) |
 
 ---
 
@@ -84,9 +137,9 @@ El valor diferencial de Eusomnia es la **integración**: el sueño y los hábito
 ### Inteligencia Artificial & Datos
 
 - **OpenRouter** — orquestación IA (modelo configurable)
-- **sentence-transformers** (`all-MiniLM-L6-v2`) — vectorización semántica
+- **LangChain OpenAI embeddings** (`text-embedding-3-small`) — vectorización semántica
 - **Qdrant** — motor de búsqueda vectorial para el diccionario onírico
-- **CalorieNinjas API** — enriquecimiento nutricional (proxy desde Flask)
+- **Edamam API** — enriquecimiento nutricional (proxy desde Flask)
 
 ### Infraestructura
 
@@ -104,7 +157,7 @@ Usuario (relato del sueño + hábitos + comida)
         ▼
 ┌─────────────────────────────────────────────┐
 │          FASE 1 · RETRIEVAL (RAG)           │
-│  sentence-transformers → vector del sueño   │
+│  LangGraph → vector del sueño   │
 │  Qdrant → símbolos oníricos más cercanos    │
 └────────────────────┬────────────────────────┘
                      │ contexto simbólico
@@ -166,7 +219,7 @@ FLASK_APP=src/app
 FLASK_DEBUG=1
 
 OPENROUTER_API_KEY=    # Clave de OpenRouter
-CALORIE_NINJAS_KEY=    # Clave de CalorieNinjas
+CALORIE_NINJAS_KEY=    # Clave de Edamam
 QDRANT_URL=http://localhost:6333
 ```
 
@@ -203,6 +256,74 @@ npm run start
 docker run -p 6333:6333 qdrant/qdrant
 ```
 
+### Ingestión de datos en Qdrant
+
+**Variables de entorno** (añada al `.env`):
+
+```dotenv
+QDRANT_URL=https://<your-cluster>.eu-west-1-0.aws.cloud.qdrant.io
+QDRANT_API_KEY=<your-api-key>
+QDRANT_COLLECTION=Eusomnia
+```
+
+**Ingestión rápida (sin embeddings)**
+
+Para cargar el CSV de ejemplo sin generar embeddings (útil cuando no hay acceso a OpenAI), ejecute el script ad‑hoc siguiente:
+
+```bash
+python - <<'PY'
+import csv, os
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, VectorParams, PointStruct
+
+url = os.getenv('QDRANT_URL')
+api_key = os.getenv('QDRANT_API_KEY')
+collection = os.getenv('QDRANT_COLLECTION') or 'Eusomnia'
+
+client = QdrantClient(url=url, api_key=api_key, check_compatibility=False)
+if not client.collection_exists(collection):
+    client.create_collection(
+        collection_name=collection,
+        vectors_config=VectorParams(size=10, distance=Distance.COSINE),
+    )
+
+csv_path = 'data/diccionario.csv'
+points = []
+with open(csv_path, newline='', encoding='utf-8') as f:
+    for idx, row in enumerate(csv.DictReader(f)):
+        vector = [0.0] * 10
+        payload = {
+            'meaning': row.get('meaning', ''),
+            'symbol': row.get('symbol', ''),
+            'context': row.get('context', ''),
+        }
+        points.append(PointStruct(id=idx, vector=vector, payload=payload))
+
+# Upsert en lotes de 64
+for i in range(0, len(points), 64):
+    client.upsert(collection_name=collection, points=points[i:i+64])
+print('Ingestión completada. Puntos totales:', client.get_collection(collection).points_count)
+PY
+```
+
+**Ingestión con embeddings reales**
+
+Si dispone de acceso a OpenRouter/OpenAI, use el script oficial que genera embeddings:
+
+```bash
+python scripts/bootstrap_ingest.py
+```
+
+**Verificación**
+
+Compruebe que la colección contiene los documentos esperados:
+
+```bash
+curl -H "api-key: $QDRANT_API_KEY" "$QDRANT_URL/collections/$QDRANT_COLLECTION"
+```
+
+El campo `points_count` debe coincidir con el número de filas del CSV (≈ 8 010).
+
 ---
 
 ## Migraciones de base de datos
@@ -228,7 +349,7 @@ eusomnia/
 │   └── api/
 │       ├── user.py      # Blueprint: autenticación y perfil
 │       ├── entries.py   # Blueprint: CRUD del diario diario
-│       ├── nutrition.py # Blueprint: proxy CalorieNinjas
+│       ├── nutrition.py # Blueprint: proxy Edamam
 │       └── analysis.py  # Blueprint: orquestación RAG + IA
 ├── src/front/
 │   ├── js/
@@ -256,7 +377,7 @@ eusomnia/
 - [ ] Modelos SQLAlchemy y migraciones
 - [ ] Autenticación JWT + hashing de contraseñas con Bcrypt
 - [ ] Blueprints y endpoints del backend
-- [ ] Motor RAG (sentence-transformers + Qdrant)
+- [ ] Motor RAG (LangGraph + Qdrant)
 - [ ] Orquestación IA con OpenRouter
 - [ ] SPA React (Home, Diario, Resultado, Historial, Perfil)
 - [ ] Despliegue en producción (Render + PostgreSQL)
