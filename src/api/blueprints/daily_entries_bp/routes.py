@@ -91,7 +91,10 @@ def create_daily_entry():
             bedtime_mood=habits_data.get("bedtime_mood"),
             screen_time=habits_data.get("screen_time"),
             incidents=habits_data.get("incidents"),
-            food_notes=habits_data.get("food_notes"),
+            food_notes=(
+                habits_data.get("nutrition_query")
+                or habits_data.get("food_notes")
+            ),
             total_sleep_hours=total_sleep_hours,
             sleep_quality=habits_data.get("sleep_quality")
         )

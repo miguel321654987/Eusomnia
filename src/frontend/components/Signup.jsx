@@ -54,14 +54,11 @@ export const Signup = ({ signupModal }) => {
     }
 
     try {
-      const resp = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/users/signup`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password, name, last_name }),
-        },
-      );
+      const resp = await fetch(apiUrl("/api/users/signup"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, name, last_name }),
+      });
 
       if (resp.status === 409) {
         dispatch({

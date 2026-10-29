@@ -229,7 +229,7 @@ def test_analyze_foods_translates_input_before_edamam(monkeypatch):
 
     def translate(texts, target_language, custom_key=None):
         calls.append((texts, target_language, custom_key))
-        return ["1 hamburger"] if target_language == "English" else list(texts)
+        return ["1 cup of coffee"] if target_language == "English" else list(texts)
 
     requested_ingredients = []
     monkeypatch.setattr(services, "translate_texts", translate)
@@ -251,14 +251,14 @@ def test_analyze_foods_translates_input_before_edamam(monkeypatch):
 
     services.analyze_foods(
         "Comida",
-        ["1 hamburguesa"],
+        ["1 cafe"],
         "lunch",
         {},
         custom_key="user-key",
     )
 
-    assert requested_ingredients == ["1 hamburger"]
-    assert calls == [(["1 hamburguesa"], "English", "user-key")]
+    assert requested_ingredients == ["1 cup of coffee"]
+    assert calls == [(["1 cafe"], "English", "user-key")]
 
 
 def test_analyze_foods_rejects_empty_edamam_results(monkeypatch):
@@ -347,6 +347,8 @@ def test_translation_request_instructs_openrouter_to_translate_food_names(monkey
     system_prompt = request["json"]["messages"][0]["content"]
     assert "food names" in system_prompt
     assert "Translate all natural-language text" in system_prompt
+    assert "'1 cafe' or '1 café'" in system_prompt
+    assert "'1 cup of coffee'" in system_prompt
 
 
 def test_get_edamam_credentials_missing(monkeypatch):

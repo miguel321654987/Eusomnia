@@ -40,9 +40,12 @@ def translate_texts(
         "Translate every string in the provided JSON array into "
         f"{target_language}. Translate all natural-language text, including "
         "food names and descriptions. Preserve numbers, quantities, units, "
-        "and line breaks. If a string is already in the target language, keep "
-        "it unchanged. Return only a JSON object with a 'translations' array "
-        "containing exactly one translated string for each input string."
+        "and line breaks. Use standard food names and phrasing that nutrition "
+        "databases recognize instead of literal transliterations; for example, "
+        "translate '1 cafe' or '1 café' into English as '1 cup of coffee'. "
+        "If a string is already in the target language, keep it unchanged. "
+        "Return only a JSON object with a 'translations' array containing "
+        "exactly one translated string for each input string."
     )
     response = None
     try:

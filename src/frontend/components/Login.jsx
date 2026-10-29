@@ -40,14 +40,11 @@ export const Login = ({ loginModal, signupModal }) => {
     }
 
     try {
-      const resp = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/users/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        },
-      );
+      const resp = await fetch(apiUrl("/api/users/login"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
       if (!resp.ok) {
         const datosError = await resp.json();
@@ -61,11 +58,15 @@ export const Login = ({ loginModal, signupModal }) => {
       }
 
       const data = await resp.json();
-      const token = data.access_token || data.token;
-      localStorage.setItem("jwt-token", token);
+      const accessToken = data.access_token;
+      if (typeof accessToken !== "string" || !accessToken.trim()) {
+        throw new Error("El servidor no devolvió un token válido.");
+      }
+
+      localStorage.setItem("jwt-token", accessToken);
       dispatch({
         type: "LOGIN_SUCCESS",
-        payload: { token: token, user: data.user || null },
+        payload: { token: accessToken, user: data.user || null },
       });
       dispatch({
         type: "SET_MESSAGE",
@@ -83,12 +84,13 @@ export const Login = ({ loginModal, signupModal }) => {
         setEmail("");
         setPassword("");
       }, 300);
-    } catch {
+    } catch (error) {
+      const message = error.message || "Error de conexión";
       dispatch({
         type: "SET_MESSAGE",
-        payload: { msg: "Error de conexión", status: 500 },
+        payload: { msg: message, status: 500 },
       });
-      toast.error("Error de conexión");
+      toast.error(message);
     }
   };
 

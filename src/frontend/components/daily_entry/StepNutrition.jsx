@@ -120,8 +120,7 @@ export const StepNutrition = ({
           maxLength={1000}
         />
         <p className="font-body small text-secondary mt-2 mb-0">
-          Escribe los alimentos y cantidades en español. Se traducirán para
-          analizarlos y los datos recibidos se mostrarán en español.
+          Describe alimentos y cantidades. Si lo dejas vacío, no se solicitará un análisis nutricional.
         </p>
       </div>
 

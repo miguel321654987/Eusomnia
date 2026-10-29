@@ -1,3 +1,5 @@
+import json
+
 from datetime import datetime, timezone
 from sqlalchemy import String, Integer, ForeignKey, Text, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -71,6 +73,13 @@ class SleepAnalysis(db.Model):
     daily_entry: Mapped["DailyEntry"] = relationship("DailyEntry", back_populates="analysis")
 
     def serialize(self):
+        try:
+            patterns_detected = json.loads(self.patterns_detected or "")
+        except json.JSONDecodeError:
+            patterns_detected = self.patterns_detected
+        if not isinstance(patterns_detected, (list, dict)):
+            patterns_detected = self.patterns_detected
+
         return {
             "id": self.id,
             "entry_id": self.entry_id,
@@ -78,7 +87,7 @@ class SleepAnalysis(db.Model):
             "predominant_emotions": json.loads(self.predominant_emotions or "[]"),
             "detected_symbols": json.loads(self.detected_symbols or "[]"),
             "habits_reading": self.habits_reading,
-            "patterns_detected": self.patterns_detected,
+            "patterns_detected": patterns_detected,
             "recommendations": json.loads(self.recommendations or "[]"),
             "alerts": json.loads(self.alerts or "[]"),
             "created_at": self.created_at.isoformat() if self.created_at else None

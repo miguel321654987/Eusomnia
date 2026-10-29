@@ -36,6 +36,25 @@ def test_create_and_retrieve_daily_entry(client, auth_header, app):
     assert entry["sleep_report"]["raw_text"] == "Dormí ocho horas"
 
 
+def test_create_daily_entry_preserves_nutrition_query(
+    client, auth_header
+):
+    payload = {
+        "sleep": {"raw_text": "Relato de prueba"},
+        "habits": {
+            "nutrition_query": "1 hamburguesa y una ensalada",
+        },
+    }
+
+    response = client.post("/daily", json=payload, headers=auth_header)
+
+    assert response.status_code == 201
+    assert (
+        response.get_json()["results"]["habit_log"]["food_notes"]
+        == "1 hamburguesa y una ensalada"
+    )
+
+
 def test_daily_entry_access_control(client, auth_header, app):
     # Use a different user token to ensure 404 is raised for unauthorized access
     from flask_jwt_extended import create_access_token

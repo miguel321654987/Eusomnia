@@ -23,7 +23,7 @@ export function StoreProvider({ children }) {
       const actions = getActions(store, dispatch);
 
       try {
-        const userResponse = await fetch(`${BACKEND_URL}/api/users/profile`, {
+        const userResponse = await fetch(apiUrl("/api/users/profile"), {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -31,7 +31,7 @@ export function StoreProvider({ children }) {
           },
         });
 
-        if (userResponse.status === 401) {
+        if (userResponse.status === 401 || userResponse.status === 422) {
           actions.handleLogout();
           return;
         }
