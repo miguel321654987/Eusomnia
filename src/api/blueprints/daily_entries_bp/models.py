@@ -20,6 +20,7 @@ class DailyEntry(db.Model):
         ForeignKey("users.id"), nullable=False)
     entry_date: Mapped[date] = mapped_column(
         Date, default=date.today, nullable=False)
+    original_entry_date: Mapped[date] = mapped_column(Date, nullable=False)
     # Use timezone‑aware UTC timestamps
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
@@ -44,6 +45,11 @@ class DailyEntry(db.Model):
             "id": self.id,
             "user_id": self.user_id,
             "entry_date": self.entry_date.isoformat() if self.entry_date else None,
+            "original_entry_date": (
+                self.original_entry_date.isoformat()
+                if self.original_entry_date
+                else None
+            ),
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
             "sleep_report": self.sleep_report.serialize() if self.sleep_report else None,
@@ -55,7 +61,13 @@ class DailyEntry(db.Model):
     # ---------------------------------------------------------------------
     # Custom constructor
     # ---------------------------------------------------------------------
-    def __init__(self, user_id: int, entry_date: date | None = None, **kwargs):
+    def __init__(
+        self,
+        user_id: int,
+        entry_date: date | None = None,
+        original_entry_date: date | None = None,
+        **kwargs,
+    ):
         """Create a ``DailyEntry`` ensuring type‑checked arguments.
 
         SQLAlchemy's ``Model`` constructor accepts arbitrary keyword arguments
@@ -70,14 +82,18 @@ class DailyEntry(db.Model):
 
         Args:
             user_id: Identifier of the user that owns the entry.
-            entry_date: Optional entry date; defaults to ``date.today()``.
+            entry_date: Current entry date; defaults to ``date.today()``.
+            original_entry_date: Immutable initial entry date; defaults to
+                ``entry_date``.
             **kwargs: Additional attributes that may be added later.
         """
         # Initialise the base model without column‑specific arguments.
         super().__init__(**kwargs)
         # Explicitly set known columns.
         self.user_id = user_id
-        self.entry_date = entry_date or date.today()
+        current_entry_date = entry_date or date.today()
+        self.entry_date = current_entry_date
+        self.original_entry_date = original_entry_date or current_entry_date
 
 
 class SleepReport(db.Model):

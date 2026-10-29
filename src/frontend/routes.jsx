@@ -9,6 +9,7 @@ import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
 import { RegistroDiario } from "./pages/RegistroDiario";
 import { ResultadoDelDia } from "./pages/ResultadoDelDia";
+import { Historial } from "./pages/Historial";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,6 +25,7 @@ export const router = createBrowserRouter(
       <Route path="/" element={<Home />} />
       <Route path="/registro-diario" element={<RegistroDiario />} />
       <Route path="/resultado-del-dia" element={<ResultadoDelDia />} />
+      <Route path="/historial" element={<Historial />} />
     </Route>,
   ),
 );

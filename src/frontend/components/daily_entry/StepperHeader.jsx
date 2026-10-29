@@ -1,4 +1,9 @@
-export const StepperHeader = ({ currentStep, onStepClick, stepTitles }) => {
+export const StepperHeader = ({
+  currentStep,
+  onStepClick,
+  stepTitles,
+  isEditing = false,
+}) => {
   const percentage = Math.round((currentStep / 5) * 100);
 
   const stepsMeta = [
@@ -37,7 +42,9 @@ export const StepperHeader = ({ currentStep, onStepClick, stepTitles }) => {
       {/* Main Title */}
       <h1 className="font-headline display-6 fw-bold text-light mb-2 d-flex align-items-center justify-content-center gap-2">
         <span style={{ color: "var(--eusomnia-tertiary-container)" }}>🌙</span>
-        <span>Registro Diario Integral</span>
+        <span>
+          {isEditing ? "Editar Registro Diario" : "Registro Diario Integral"}
+        </span>
       </h1>
 
       <p className="font-body text-secondary small mb-0" style={{ maxWidth: "560px" }}>
@@ -134,4 +141,3 @@ export const StepperHeader = ({ currentStep, onStepClick, stepTitles }) => {
     </header>
   );
 };
-

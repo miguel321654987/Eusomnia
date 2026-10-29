@@ -23,9 +23,10 @@ _(Agrupados por el Blueprint al que pertenecen)_
 
 | Método   | Ruta                | Descripción                                                                                         |
 | -------- | ------------------- | --------------------------------------------------------------------------------------------------- |
-| **GET**  | `/` _(sin prefijo)_ | Lista todas las `DailyEntry` del usuario actual, ordenadas por fecha descendente.                   |
-| **GET**  | `/<int:entry_id>`   | Obtiene una entrada diaria concreta (solo del propietario).                                         |
-| **POST** | `/` _(sin prefijo)_ | Crea una nueva `DailyEntry` con su `SleepReport` y `HabitLog`. Valida cuerpo JSON y datos de sueño. |
+| **GET**    | `/` _(sin prefijo)_ | Lista todas las `DailyEntry` del usuario actual, ordenadas por fecha efectiva descendente. Incluye `entry_date` (fecha efectiva) y `original_entry_date` (fecha inicial inmutable). |
+| **GET**    | `/<int:entry_id>`   | Obtiene una entrada diaria concreta (solo del propietario), incluyendo fecha efectiva e inicial. |
+| **POST**   | `/` _(sin prefijo)_ | Crea una nueva `DailyEntry` con su `SleepReport` y `HabitLog`. Inicializa la fecha original con la fecha indicada en `date`. |
+| **PUT/PATCH** | `/<int:entry_id>` | Actualiza relato, hábitos y fecha efectiva (`date`, formato ISO `YYYY-MM-DD`); conserva `original_entry_date`. Solo el propietario. |
 
 ---
 

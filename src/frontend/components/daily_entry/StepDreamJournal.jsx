@@ -7,6 +7,8 @@ export const StepDreamJournal = ({
   onSaveDraft,
   onSubmit,
   isSubmitting,
+  submitLabel = "Guardar y Analizar con IA",
+  submitProgressLabel = "Procesando con IA...",
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const recognitionRef = useRef(null);
@@ -256,12 +258,12 @@ export const StepDreamJournal = ({
             {isSubmitting ? (
               <>
                 <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
-                <span>Procesando con IA...</span>
+                <span>{submitProgressLabel}</span>
               </>
             ) : (
               <>
                 <span className="material-symbols-outlined fs-5">auto_awesome</span>
-                <span>Guardar y Analizar con IA</span>
+                <span>{submitLabel}</span>
               </>
             )}
           </button>
@@ -270,4 +272,3 @@ export const StepDreamJournal = ({
     </section>
   );
 };
-
