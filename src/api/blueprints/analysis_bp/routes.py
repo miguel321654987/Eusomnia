@@ -39,11 +39,29 @@ def analyze_daily_entry(entry_id):
     if prefs is None:
         custom_key = None
         selected_model = "nvidia/nemotron-3.5-super-vl:free"
+        interpretation_framework = "jungian"
+        report_depth = "standard"
+        include_nutrition = True
     else:
         custom_key = prefs.custom_api_key or None
-        selected_model = "nvidia/nemotron-3.5-super-vl:free"
+        selected_model = prefs.selected_model
+        interpretation_framework = prefs.interpretation_framework
+        report_depth = prefs.report_depth
+        include_nutrition = prefs.include_nutrition_in_analysis
 
     entry_data = entry.serialize()
+    if not include_nutrition:
+        entry_data["nutrition_log"] = None
+        if entry_data.get("habit_log"):
+            entry_data["habit_log"] = {
+                key: value
+                for key, value in entry_data["habit_log"].items()
+                if key != "food_notes"
+            }
+    entry_data["_profile_preferences"] = {
+        "interpretation_framework": interpretation_framework,
+        "report_depth": report_depth,
+    }
     analysis_data = run_unified_ai_analysis(
         entry_data, custom_key=custom_key, model=selected_model)
 

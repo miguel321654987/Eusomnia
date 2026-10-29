@@ -8,6 +8,7 @@ from api.blueprints.daily_entries_bp import daily_entries_bp
 from api.blueprints.daily_entries_bp.models import DailyEntry
 from api.blueprints.nutrition_bp import nutrition_bp
 from api.blueprints.analysis_bp import analysis_bp
+from api.blueprints.exports_bp import exports_bp
 
 api = Blueprint('api', __name__)
 
@@ -19,6 +20,8 @@ api.register_blueprint(daily_entries_bp, url_prefix='/entries')
 api.register_blueprint(nutrition_bp, url_prefix='/nutrition')
 # /api/analysis/...
 api.register_blueprint(analysis_bp, url_prefix='/analysis')
+# /api/exports/...
+api.register_blueprint(exports_bp, url_prefix='/exports')
 
 
 @api.route("/recent-logs", methods=["GET"])

@@ -10,6 +10,7 @@ import { Home } from "./pages/Home";
 import { RegistroDiario } from "./pages/RegistroDiario";
 import { ResultadoDelDia } from "./pages/ResultadoDelDia";
 import { Historial } from "./pages/Historial";
+import { Perfil } from "./pages/Perfil";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,6 +27,7 @@ export const router = createBrowserRouter(
       <Route path="/registro-diario" element={<RegistroDiario />} />
       <Route path="/resultado-del-dia" element={<ResultadoDelDia />} />
       <Route path="/historial" element={<Historial />} />
+      <Route path="/perfil" element={<Perfil />} />
     </Route>,
   ),
 );
