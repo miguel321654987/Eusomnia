@@ -103,7 +103,11 @@ export const Login = ({ loginModal, signupModal }) => {
       tabIndex="-1"
     >
       <div className="modal-dialog modal-dialog-centered">
-        <form className="modal-content" onSubmit={handleLogin}>
+        <form
+          className="modal-content"
+          onSubmit={handleLogin}
+          autoComplete="on"
+        >
           <div className="modal-header">
             <h2 className="modal-title fs-5">Login</h2>
             {/* 🔥 Eliminamos data-bs-dismiss="modal" y dejamos que nuestro helper */}
@@ -124,19 +128,27 @@ export const Login = ({ loginModal, signupModal }) => {
             <input
               className="form-control mb-2"
               type="email"
+              name="email"
               placeholder="Email"
               autoComplete="email"
+              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <input
               className="form-control mb-2"
               type="password"
+              name="password"
               placeholder="Contraseña"
               autoComplete="current-password"
+              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <p className="small text-secondary mb-0" role="note">
+              Tu navegador puede ofrecerte guardar la contraseña. Eusomnia no
+              la almacena.
+            </p>
           </div>
           <div className="modal-footer d-flex flex-column gap-2">
             <button type="submit" className="btn btn-success w-100">

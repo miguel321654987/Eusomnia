@@ -11,10 +11,11 @@ _(Agrupados por el Blueprint al que pertenecen)_
 | **POST**   | `/signup`           | Crea una cuenta de usuario. Valida que el cuerpo JSON incluya `email`, `password`, `name` y `last_name`. Genera la contraseña encriptada, persiste el usuario y crea sus `UserPreferences` por defecto.                             |
 | **POST**   | `/login`            | Autentica al usuario. Requiere `email` y `password` en el cuerpo JSON, verifica credenciales y devuelve un _access token_ JWT junto con los datos del usuario.                                                                      |
 | **GET**    | `/profile`          | Devuelve la información del usuario autenticado (según el token JWT) y sus preferencias asociadas (`UserPreferences`).                                                                                                              |
-| **PUT**    | `/profile`          | Actualiza parcialmente las preferencias del usuario autenticado (`ai_provider`, `custom_api_key`, `selected_model`, `timezone`). Si el registro de preferencias no existía, lo crea con valores por defecto.                        |
+| **PUT**    | `/profile`          | Actualiza parcialmente los datos personales (`name`, `last_name`, `email`, `birth_year`, `chronotype`) y las preferencias de IA, zona horaria y rutinas. Valida los valores y nunca devuelve la clave API. |
+| **POST**   | `/profile/password` | Cambia la contraseña del usuario autenticado. Requiere `current_password` y `new_password`; valida la contraseña actual y la longitud de la nueva. |
 | **GET**    | `/` _(sin prefijo)_ | Lista todos los usuarios registrados (paginado). Parámetros opcionales `page` y `per_page`. Solo requiere que el solicitante esté autenticado con JWT.                                                                              |
 | **GET**    | `/<int:user_id>`    | Obtiene la información de un usuario concreto a partir de su **ID**. Requiere autenticación JWT.                                                                                                                                    |
-| **DELETE** | `/<int:user_id>`    | Elimina la cuenta del usuario especificado. El cuerpo JSON debe contener `current_password` para confirmar la acción. Solo el propio usuario (el ID del JWT) puede eliminarse; de lo contrario se devuelve `403 Permission denied`. |
+| **DELETE** | `/<int:user_id>`    | Elimina la cuenta autenticada y sus preferencias, entradas y detalles relacionados. Requiere `current_password`; solo el titular del JWT puede eliminarse. |
 |  |
 
 ---
@@ -52,6 +53,20 @@ _(Agrupados por el Blueprint al que pertenecen)_
 | **`DELETE /nutrition/log/<entry_id>`**                                      | Elimina el log asociado a una `DailyEntry`.                                                                                                                                                              | Permite al usuario **borrar** datos erróneos o reiniciar el registro de un día.                                                                        |
 | **`POST /nutrition/evaluate`**                                              | **Toma** un `NutritionLog` ya guardado y lo **compara** con los parámetros de referencia del usuario (requerimientos calóricos, macro‑nutrientes, etc.) y devuelve una **puntuación / recomendaciones**. | Provee la **capa de valor**: no solo muestra datos crudos, sino que interpreta si la ingesta está dentro de los rangos recomendados y sugiere ajustes. |
 | **`GET /nutrition/parameters`**                                             | Devuelve los **parámetros de referencia** (rangos de macronutrientes, límites de cafeína, etc.) que se usan tanto en el análisis como en la evaluación.                                                  | Permite a la UI **mostrar** esos valores al usuario y también a los demás endpoints para validar `meal_type` y otros campos.                           |
+
+---
+
+### **5️⃣ exports_bp** _(exportación de datos propios)_
+
+| Método | Ruta | Descripción |
+| --- | --- | --- |
+| **GET** | `/exports/json` | Devuelve las entradas guardadas del usuario autenticado en JSON. |
+| **GET** | `/exports/csv` | Descarga las entradas guardadas del usuario autenticado en CSV. |
+| **GET** | `/exports/pdf` | Descarga un informe PDF construido con los datos guardados del usuario autenticado. |
+
+Las tres rutas aceptan `start_date` y `end_date` opcionales (formato `YYYY-MM-DD`). Se deben enviar ambas para filtrar un intervalo inclusivo; si se omiten las dos, se exportan todos los registros. No se generan métricas ni datos que Eusomnia no almacena.
+
+Las preferencias de perfil admiten `interpretation_framework` (`jungian`, `neuroscientific`, `holistic`), `report_depth` (`concise`, `standard`, `clinical`), `include_nutrition_in_analysis` y las preferencias de habilitación/hora para los recordatorios `morning`, `caffeine` y `winddown`. Los avisos configurados se muestran dentro de la aplicación mientras está abierta; no se envían por push ni email.
 
 ---
 

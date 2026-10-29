@@ -38,10 +38,9 @@ export function StoreProvider({ children }) {
 
         const userData = await userResponse.json();
         const profile = userData.results || userData;
-
         dispatch({
           type: "LOGIN_SUCCESS",
-          payload: { token, user: profile },
+          payload: { token, user: profile.user || profile },
         });
       } catch (error) {
         console.error("Error al sincronizar sesión con el servidor:", error);

@@ -77,7 +77,33 @@ def _openrouter_generate(
         or os.getenv("OPENROUTER_MODEL")
         or "nvidia/nemotron-3.5-super-vl:free"
     )
+    profile_preferences = (entry_payload or {}).get("_profile_preferences") or {}
+    framework_guidance = {
+        "jungian": (
+            "Use a Jungian-inspired reflective lens, considering symbols and "
+            "archetypes as exploratory possibilities rather than objective facts."
+        ),
+        "neuroscientific": (
+            "Use a neuroscience-informed lens focused on sleep, memory, emotion, "
+            "and habits; avoid claiming that a dream reveals a medical condition."
+        ),
+        "holistic": (
+            "Use a holistic reflective lens connecting reported habits, emotions, "
+            "and personal meaning without presenting speculation as fact."
+        ),
+    }
+    depth_guidance = {
+        "concise": "Keep the interpretation concise and limit it to one paragraph.",
+        "standard": "Give a balanced interpretation with moderate detail.",
+        "clinical": (
+            "Give a detailed, structured interpretation while avoiding diagnoses "
+            "or treatment claims."
+        ),
+    }
+    framework = profile_preferences.get("interpretation_framework", "jungian")
+    report_depth = profile_preferences.get("report_depth", "standard")
     enriched_payload = dict(entry_payload or {})
+    enriched_payload.pop("_profile_preferences", None)
     if contexts:
         enriched_payload["_rag_context"] = contexts
 
@@ -92,7 +118,9 @@ def _openrouter_generate(
         "must be written in Spanish; do not leave English phrases untranslated. "
         "Keep the JSON keys exactly as specified and return only a valid JSON object with "
         "keys: interpretation, predominant_emotions, detected_symbols, habits_reading, "
-        "patterns_detected, recommendations, alerts."
+        "patterns_detected, recommendations, alerts. "
+        f"{framework_guidance.get(framework, framework_guidance['jungian'])} "
+        f"{depth_guidance.get(report_depth, depth_guidance['standard'])}"
     )
     # ---------------------------------------------------------------------
     # Configuración de logging (se usará en todo el módulo)

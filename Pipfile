@@ -30,6 +30,8 @@ langchain = "*"
 langchain-core = "*"
 langchain-openai = "*"
 qdrant-client = "*"
+fpdf2 = "*"
+
 [requires]
 python_version = "3.13"
 
