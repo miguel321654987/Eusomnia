@@ -28,10 +28,10 @@ def analyze_daily_entry(entry_id):
 
     if prefs is None:
         custom_key = None
-        selected_model = None
+        selected_model = "nvidia/nemotron-3.5-super-vl:free"
     else:
         custom_key = prefs.custom_api_key or None
-        selected_model = prefs.selected_model or None
+        selected_model = "nvidia/nemotron-3.5-super-vl:free"
 
     entry_data = entry.serialize()
     analysis_data = run_unified_ai_analysis(

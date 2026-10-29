@@ -76,7 +76,7 @@ export const ResultadoDelDia = () => {
       let nutritionUpdated = false;
       if (
         currentEntry.habit_log?.nutrition_query &&
-        !currentEntry.nutrition_log
+        !currentEntry.nutrition_log?.analyzed
       ) {
         try {
           await requestApi("/api/nutrition/analyze", token, {
@@ -121,9 +121,18 @@ export const ResultadoDelDia = () => {
   }, [requestedEntryId, token]);
 
   useEffect(() => {
+    let isActive = true;
     if (token) {
-      void Promise.resolve().then(loadEntry);
+      void Promise.resolve().then(() => {
+        if (isActive) {
+          void loadEntry();
+        }
+      });
     }
+
+    return () => {
+      isActive = false;
+    };
   }, [loadEntry, token]);
 
   const handleReanalyze = async () => {

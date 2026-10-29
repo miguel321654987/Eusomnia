@@ -31,7 +31,15 @@ def app(monkeypatch):
         "fetch_edamam_recipe",
         lambda title, lines: {
             "uri": "http://example.com/recipe",
-            "ingredients": [{"text": title, "parsed": []}],
+            "ingredients": [{
+                "text": title,
+                "parsed": [{
+                    "weight": 100.0,
+                    "nutrients": {
+                        "ENERC_KCAL": {"quantity": 100.0},
+                    },
+                }],
+            }],
         },
     )
     monkeypatch.setattr(
@@ -39,10 +47,23 @@ def app(monkeypatch):
         "fetch_edamam_ingredient",
         lambda query: {
             "uri": "http://example.com/ingredient",
-            "ingredients": [{"text": query, "parsed": []}],
+            "ingredients": [{
+                "text": query,
+                "parsed": [{
+                    "weight": 100.0,
+                    "nutrients": {
+                        "ENERC_KCAL": {"quantity": 100.0},
+                    },
+                }],
+            }],
         },
     )
-    monkeypatch.setattr(services, "translate_text", lambda text: text)
+    monkeypatch.setattr(
+        services,
+        "translate_texts",
+        lambda texts, target_language, custom_key=None: list(texts),
+    )
+    monkeypatch.setattr(services, "translate_edamam_response", lambda data, **kwargs: data)
 
     app = Flask(__name__)
     app.config.update(

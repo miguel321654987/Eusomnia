@@ -72,8 +72,10 @@ def _openrouter_generate(
     # "openrouter/free", que delega al modelo libre disponible. Puede sobrescribirse
     # mediante la variable de entorno OPENROUTER_MODEL o pasando explícitamente el
     # parámetro `model`.
-    selected_model = model or os.getenv(
-        "OPENROUTER_MODEL", "openrouter/free"
+    selected_model = (
+        model
+        or os.getenv("OPENROUTER_MODEL")
+        or "nvidia/nemotron-3.5-super-vl:free"
     )
     enriched_payload = dict(entry_payload or {})
     if contexts:
@@ -85,9 +87,12 @@ def _openrouter_generate(
     system_prompt = (
         "You are an expert sleep hygiene and dream analysis assistant for Eusomnia. "
         "Analyze the provided daily log containing sleep narrative, habits and nutrition. "
-        "Respond ONLY in Spanish. Return a valid JSON object with keys: interpretation, "
-        "predominant_emotions, detected_symbols, habits_reading, patterns_detected, "
-        "recommendations, alerts."
+        "Return the entire analysis in Spanish. Every human-readable value, including "
+        "interpretation, emotions, symbols, habits, patterns, recommendations, and alerts, "
+        "must be written in Spanish; do not leave English phrases untranslated. "
+        "Keep the JSON keys exactly as specified and return only a valid JSON object with "
+        "keys: interpretation, predominant_emotions, detected_symbols, habits_reading, "
+        "patterns_detected, recommendations, alerts."
     )
     # ---------------------------------------------------------------------
     # Configuración de logging (se usará en todo el módulo)
@@ -109,31 +114,7 @@ def _openrouter_generate(
     # Se permite sobrescribir mediante la variable de entorno OPENROUTER_MODEL o
     # pasando explícitamente el parámetro `model`.
     # ---------------------------------------------------------------------
-    fallback_models = [
-        # 1️⃣  Mejor razonamiento y calidad JSON
-        "recursive/flint:free",
-        # 2️⃣  Buen equilibrio rapidez‑calidad
-        "xingchen-agi/xing4.0-29b-a4b:free",
-        # 3️⃣  Fallback ultra‑rápido, bajo consumo
-        "liquidai/lfm2.5-2.6b:free",
-        "liquidai/lfm2.5-embedding-350m:free",
-        "nvidia/nemotron-3.5-embed-1b:free",
-        "nvidia/nemotron-3.5-embed-8b:free",
-        "nvidia/nemotron-3.5-rerank-8b:free",
-        "nvidia/nemotron-3.5-content-safety:free",
-        "baseten/mammoth-1:free",
-        "baseten/elephant-1:free",
-        "heygen/heygen-voice-turbo:free",
-        "openrouter/free",
-    ]
-
-    if selected_model:
-        # Dar prioridad al modelo solicitado.
-        if selected_model not in fallback_models:
-            fallback_models.insert(0, selected_model)
-        else:
-            fallback_models.remove(selected_model)
-            fallback_models.insert(0, selected_model)
+    fallback_models = [selected_model]
 
     def _call_model(model_name: str, use_format: bool) -> dict:
         """Realiza la llamada a OpenRouter para *model_name*.

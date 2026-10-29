@@ -320,6 +320,7 @@ export const DailyLog = () => {
     setSubmitting(true);
     setErrors({});
 
+    let nutritionSaveError = "";
     try {
       let targetEntryId = existingEntry?.id;
 
@@ -415,7 +416,9 @@ export const DailyLog = () => {
 
         if (allFoodLines.length > 0 && targetEntryId) {
           try {
-            await fetch(`${BACKEND_URL}/api/nutrition/log`, {
+            const nutritionResponse = await fetch(
+              `${BACKEND_URL}/api/nutrition/log`,
+              {
               method: "POST",
               headers: getAuthHeaders(),
               body: JSON.stringify({
@@ -423,9 +426,19 @@ export const DailyLog = () => {
                 ingredients: allFoodLines,
                 meal_type: "dinner",
               }),
-            });
+              }
+            );
+            if (!nutritionResponse.ok) {
+              const errorData = await nutritionResponse.json().catch(() => null);
+              throw new Error(
+                errorData?.message ||
+                  `Error ${nutritionResponse.status} al guardar la nutrición.`
+              );
+            }
           } catch (nutrErr) {
             console.warn("Error guardando NutritionLog:", nutrErr);
+            nutritionSaveError =
+              nutrErr?.message || "No se pudo guardar el análisis nutricional.";
           }
         }
       }
@@ -449,11 +462,17 @@ export const DailyLog = () => {
         }
       }
 
-      toast.success(
-        mode === "nap"
-          ? "¡Siesta añadida y analizada con éxito!"
-          : "¡Registro completado y analizado!"
-      );
+      if (nutritionSaveError) {
+        toast.warning(
+          `Registro guardado, pero no se pudo guardar la nutrición: ${nutritionSaveError}`
+        );
+      } else {
+        toast.success(
+          mode === "nap"
+            ? "¡Siesta añadida y analizada con éxito!"
+            : "¡Registro completado y analizado!"
+        );
+      }
       dispatch({
         type: "SET_MESSAGE",
         payload: { msg: "✅ Entrada procesada con éxito", status: 200 },

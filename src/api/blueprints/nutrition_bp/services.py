@@ -15,9 +15,12 @@ import unicodedata
 from typing import Any, Literal, cast
 
 import requests
-from deep_translator import GoogleTranslator, MyMemoryTranslator
 
 from api.utils import APIException
+from api.services.translation_service import (
+    translate_edamam_response,
+    translate_texts,
+)
 
 from .loader import load_sleep_params
 from .schemas import (
@@ -160,59 +163,15 @@ def _call_with_timeout(func, timeout_seconds: float):
     return result.get("value")
 
 
-def translate_text(text: str) -> str:  # pragma: no cover
-    """Translate a Spanish ingredient line to English (cache + fallback).
-
-    MyMemory is the primary provider because Google's free endpoint is
-    blocked from datacenter IPs. Note that deep-translator's MyMemory
-    dictionary keys are full language names ("spanish"/"english"), not
-    ISO codes. If every provider fails, the original text is returned so
-    Edamam still gets the chance to parse it.
-
-    Every provider call is bounded by ``_TRANSLATION_TIMEOUT_SECONDS`` to
-    avoid hanging the nutrition request when a translator endpoint stalls.
-    """
+def translate_text(text: str, custom_key: str | None = None) -> str:
+    """Translate a Spanish ingredient line to English through OpenRouter."""
     if not text or not text.strip():
         return text
-
-    with _TRANSLATION_CACHE_LOCK:
-        cached = _TRANSLATION_CACHE.get(text)
-        if cached is not None:
-            return cached
-
-    translated: str | None = None
-
-    try:
-        raw_result = _call_with_timeout(
-            lambda: MyMemoryTranslator(
-                source="spanish", target="english").translate(text),
-            _effective_translation_timeout(),
-        )
-        if isinstance(raw_result, list):
-            translated = " ".join(raw_result)
-        else:
-            translated = raw_result
-    except Exception:  # noqa: BLE001 - provider fallback chain
-        translated = None
-
-    if not translated:
-        try:
-            translated = _call_with_timeout(
-                lambda: GoogleTranslator(
-                    source="es", target="en").translate(text),
-                _effective_translation_timeout(),
-            )
-        except Exception:  # noqa: BLE001 - provider fallback chain
-            translated = None
-
-    if not translated:
-        return text
-
-    with _TRANSLATION_CACHE_LOCK:
-        if len(_TRANSLATION_CACHE) >= 1000:
-            _TRANSLATION_CACHE.clear()
-        _TRANSLATION_CACHE[text] = translated
-    return translated
+    return translate_texts(
+        [text],
+        target_language="English",
+        custom_key=custom_key,
+    )[0]
 
 
 def get_edamam_credentials() -> tuple[str, str]:  # pragma: no cover
@@ -482,6 +441,7 @@ def analyze_foods(
         ingredient_lines: list[str],
         meal_type: str | None,
         manual: dict[str, float | None],
+        custom_key: str | None = None,
 ) -> NormalizedNutrition:  # pragma: no cover
     """Translate, analyze with Edamam and build the normalized payload.
 
@@ -490,7 +450,11 @@ def analyze_foods(
     with a low_quality error (422), each line is parsed individually with
     the GET endpoint and the ingredient lists are merged.
     """
-    translated_lines = [translate_text(line) for line in ingredient_lines]
+    translated_lines = translate_texts(
+        ingredient_lines,
+        target_language="English",
+        custom_key=custom_key,
+    )
     line_pairs = list(zip(ingredient_lines, translated_lines))
 
     if len(translated_lines) == 1:
@@ -540,7 +504,27 @@ def analyze_foods(
                     )
             raw = merged
 
+    raw = translate_edamam_response(raw, custom_key=custom_key)
     nutrients = aggregate_nutrients(raw)
+    if not any(
+        nutrients[field] > 0
+        for field in (
+            "calories",
+            "protein_g",
+            "carbohydrates_g",
+            "sugars_g",
+            "fat_g",
+            "sodium_mg",
+            "vitamin_e_mg",
+            "vitamin_b12_ug",
+            "total_weight_g",
+        )
+    ):
+        raise APIException(
+            "Edamam no pudo identificar el alimento. Escribe el nombre "
+            "en español y añade una cantidad o porción.",
+            status_code=422,
+        )
     supplements = resolve_supplement_values(line_pairs, manual)
 
     return NormalizedNutrition(
@@ -659,7 +643,5 @@ def evaluate_nutrition(
         "excitants": excitants,
         "meal_distribution": distribution,
     }
-
-
 
 
