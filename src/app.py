@@ -2,6 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
+from datetime import timedelta
 from flask import Flask, jsonify
 from flask_migrate import Migrate
 from flask_cors import CORS
@@ -24,6 +25,7 @@ CORS(app)
 # Nota: este fallback es para trabajar en modo local desde VS Code/localhost.
 app.config['JWT_SECRET_KEY'] = os.getenv(
     'JWT_SECRET_KEY', 'local-dev-secret-key')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 
 jwt = JWTManager(app)
 

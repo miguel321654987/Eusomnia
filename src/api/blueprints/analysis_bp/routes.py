@@ -27,11 +27,10 @@ def analyze_daily_entry(entry_id):
     prefs = db.session.execute(stmt).scalar_one_or_none()
 
     custom_key = prefs.custom_api_key if prefs and prefs.custom_api_key else None
-    selected_model = prefs.selected_model if prefs and prefs.selected_model else None
 
     entry_data = entry.serialize()
     analysis_data = run_unified_ai_analysis(
-        entry_data, custom_key=custom_key, model=selected_model)
+        entry_data, custom_key=custom_key)
 
     existing_analysis = entry.analysis
     if existing_analysis:

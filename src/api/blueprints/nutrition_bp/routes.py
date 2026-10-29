@@ -1,6 +1,7 @@
 import json
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy import select
 from api.extensions import db
 
 from api.utils import APIException
@@ -8,6 +9,7 @@ from . import nutrition_bp as bp
 from .services import fetch_nutrition_data
 from api.blueprints.daily_entries_bp.models import DailyEntry
 from api.blueprints.nutrition_bp.models import NutritionLog
+from api.blueprints.user_bp.models import UserPreferences
 
 
 @bp.route("/analyze", methods=["POST"])
@@ -33,7 +35,17 @@ def analyze_nutrition():
         raise APIException(
             "Food query must match the saved daily entry", status_code=400)
 
-    nutrition_results = fetch_nutrition_data(query)
+    preferences = db.session.execute(
+        select(UserPreferences).where(
+            UserPreferences.user_id == current_user_id
+        )
+    ).scalar_one_or_none()
+    custom_key = (
+        preferences.custom_api_key
+        if preferences and preferences.custom_api_key
+        else None
+    )
+    nutrition_results = fetch_nutrition_data(query, custom_key=custom_key)
     nutrition_log = entry.nutrition_log or NutritionLog(entry_id=entry.id)
     nutrition_log.calories = nutrition_results["calories"]
     nutrition_log.fats_g = nutrition_results["fats_g"]

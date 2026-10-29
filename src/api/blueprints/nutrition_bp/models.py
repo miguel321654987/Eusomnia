@@ -30,6 +30,20 @@ class NutritionLog(db.Model):
         "DailyEntry", back_populates="nutrition_log")
 
     def serialize(self):
+        has_nutrition_values = any(
+            value is not None and value > 0
+            for value in (
+                self.calories,
+                self.fats_g,
+                self.protein_g,
+                self.carbs_g,
+                self.sugar_g,
+                self.sodium_mg,
+                self.caffeine_mg,
+                self.vitamin_b12_mcg,
+                self.vitamin_e_mg,
+            )
+        )
         return {
             "id": self.id,
             "entry_id": self.entry_id,
@@ -42,5 +56,6 @@ class NutritionLog(db.Model):
             "sodium_mg": self.sodium_mg,
             "vitamin_b12_mcg": self.vitamin_b12_mcg,
             "vitamin_e_mg": self.vitamin_e_mg,
+            "analyzed": bool(self.raw_response) and has_nutrition_values,
             "created_at": self.created_at.isoformat() if self.created_at else None
         }

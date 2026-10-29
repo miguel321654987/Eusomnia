@@ -38,7 +38,7 @@ class UserPreferences(db.Model):
     ai_provider: Mapped[str] = mapped_column(String(50), default="openrouter", nullable=False)
     custom_api_key: Mapped[str] = mapped_column(String(255), nullable=True)
     selected_model: Mapped[str] = mapped_column(
-        String(100), default="meta-llama/llama-3.3-70b-instruct:free", nullable=False
+        String(100), default="nvidia/nemotron-3.5-super-vl:free", nullable=False
     )
     timezone: Mapped[str] = mapped_column(String(50), default="UTC", nullable=False)
 
