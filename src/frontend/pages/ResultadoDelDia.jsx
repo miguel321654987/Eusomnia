@@ -315,7 +315,7 @@ export const ResultadoDelDia = () => {
         )}
 
         <SomnolenceGauges
-          sleepHours={habitLog.sleep_hours}
+          sleepHours={habitLog.total_sleep_hours ?? habitLog.sleep_hours}
           sleepQuality={habitLog.bedtime_mood}
           caffeineMg={nutrition?.caffeine}
         />

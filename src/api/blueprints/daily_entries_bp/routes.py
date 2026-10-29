@@ -9,6 +9,19 @@ from api.blueprints.daily_entries_bp import daily_entries_bp
 from api.blueprints.daily_entries_bp.models import DailyEntry, SleepReport, HabitLog
 
 
+def _parse_entry_date(value, field_name="date"):
+    if not isinstance(value, str):
+        raise APIException(f"{field_name} must be an ISO date", status_code=400)
+
+    try:
+        return date.fromisoformat(value)
+    except ValueError as exc:
+        raise APIException(
+            f"{field_name} must be an ISO date",
+            status_code=400,
+        ) from exc
+
+
 @daily_entries_bp.route("", methods=["GET"])
 @jwt_required()
 def get_user_entries():
@@ -57,8 +70,11 @@ def create_daily_entry():
             "Sleep narrative raw_text is required", status_code=400)
 
     entry_date_raw = body.get("date")
-    entry_date = date.fromisoformat(
-        entry_date_raw) if entry_date_raw else date.today()
+    entry_date = (
+        _parse_entry_date(entry_date_raw)
+        if entry_date_raw is not None
+        else date.today()
+    )
 
     try:
         new_entry = DailyEntry(user_id=current_user_id, entry_date=entry_date)
@@ -126,7 +142,14 @@ def update_daily_entry(entry_id):
     if body is None:
         raise APIException("JSON body is required", status_code=400)
 
+    updated_entry_date = None
+    if "date" in body:
+        updated_entry_date = _parse_entry_date(body["date"])
+
     try:
+        if updated_entry_date is not None:
+            entry.entry_date = updated_entry_date
+
         sleep_data = body.get("sleep")
         if sleep_data and entry.sleep_report:
             if "raw_text" in sleep_data:

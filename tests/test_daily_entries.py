@@ -33,7 +33,57 @@ def test_create_and_retrieve_daily_entry(client, auth_header, app):
     assert get_resp.status_code == 200
     entry = get_resp.get_json()["results"]
     assert entry["entry_date"] == "2026-10-18"
+    assert entry["original_entry_date"] == "2026-10-18"
     assert entry["sleep_report"]["raw_text"] == "Dormí ocho horas"
+
+
+def test_update_daily_entry_preserves_original_date(client, auth_header, app):
+    from api.blueprints.daily_entries_bp.models import DailyEntry, HabitLog
+    from api.extensions import db
+
+    entry_id = app.extensions["test_entry_id"]
+    with app.app_context():
+        entry = db.session.get(DailyEntry, entry_id)
+        entry.habit_log = HabitLog(
+            entry_id=entry_id,
+            total_sleep_hours=6.5,
+            sleep_quality="Intermedio",
+        )
+        db.session.commit()
+
+    response = client.patch(
+        f"/daily/{entry_id}",
+        json={
+            "date": "2026-10-21",
+            "sleep": {"raw_text": "Relato actualizado"},
+            "habits": {"total_sleep_hours": 7.5, "sleep_quality": "Profundo"},
+        },
+        headers=auth_header,
+    )
+
+    assert response.status_code == 200
+    entry = response.get_json()["results"]
+    assert entry["entry_date"] == "2026-10-21"
+    assert entry["original_entry_date"] == "2026-10-16"
+    assert entry["habit_log"]["total_sleep_hours"] == 7.5
+    assert entry["habit_log"]["sleep_quality"] == "Profundo"
+
+
+def test_update_daily_entry_rejects_invalid_date(client, auth_header, app):
+    entry_id = app.extensions["test_entry_id"]
+
+    response = client.patch(
+        f"/daily/{entry_id}",
+        json={"date": "not-a-date"},
+        headers=auth_header,
+    )
+
+    assert response.status_code == 400
+    entry = client.get(f"/daily/{entry_id}", headers=auth_header).get_json()[
+        "results"
+    ]
+    assert entry["entry_date"] == "2026-10-16"
+    assert entry["original_entry_date"] == "2026-10-16"
 
 
 def test_create_daily_entry_preserves_nutrition_query(
