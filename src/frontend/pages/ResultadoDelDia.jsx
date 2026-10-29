@@ -74,16 +74,19 @@ export const ResultadoDelDia = () => {
 
       let operationError = "";
       let nutritionUpdated = false;
+      const nutritionQuery =
+        currentEntry.habit_log?.nutrition_query ||
+        currentEntry.habit_log?.food_notes;
       if (
-        currentEntry.habit_log?.nutrition_query &&
-        !currentEntry.nutrition_log
+        nutritionQuery &&
+        !currentEntry.nutrition_log?.analyzed
       ) {
         try {
-          await requestApi("/api/nutrition/analyze", token, {
+          await requestApi("/api/nutrition/log", token, {
             method: "POST",
             body: JSON.stringify({
               entry_id: currentEntry.id,
-              query: currentEntry.habit_log.nutrition_query,
+              ingredients: [nutritionQuery],
             }),
           });
           nutritionUpdated = true;
@@ -121,9 +124,18 @@ export const ResultadoDelDia = () => {
   }, [requestedEntryId, token]);
 
   useEffect(() => {
+    let isActive = true;
     if (token) {
-      void Promise.resolve().then(loadEntry);
+      void Promise.resolve().then(() => {
+        if (isActive) {
+          void loadEntry();
+        }
+      });
     }
+
+    return () => {
+      isActive = false;
+    };
   }, [loadEntry, token]);
 
   const handleReanalyze = async () => {
@@ -264,13 +276,13 @@ export const ResultadoDelDia = () => {
   const nutrition = entry.nutrition_log
     ? {
         calories: entry.nutrition_log.calories,
-        fats: entry.nutrition_log.fats_g,
+        fats: entry.nutrition_log.fat_g,
         protein: entry.nutrition_log.protein_g,
-        carbs: entry.nutrition_log.carbs_g,
+        carbs: entry.nutrition_log.carbohydrates_g,
         sugars: entry.nutrition_log.sugar_g,
         sodium: entry.nutrition_log.sodium_mg,
         caffeine: entry.nutrition_log.caffeine_mg,
-        vitB12: entry.nutrition_log.vitamin_b12_mcg,
+        vitB12: entry.nutrition_log.vitamin_b12_ug,
         vitE: entry.nutrition_log.vitamin_e_mg,
       }
     : null;

@@ -1,4 +1,6 @@
 import json
+from typing import Any
+
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import select
@@ -11,6 +13,14 @@ from api.blueprints.analysis_bp.models import SleepAnalysis
 from api.blueprints.analysis_bp.services import run_unified_ai_analysis
 from api.blueprints.daily_entries_bp.models import DailyEntry
 from api.blueprints.user_bp.models import UserPreferences
+
+
+def _serialize_text_field(value: Any) -> str:
+    if isinstance(value, str):
+        return value
+    if value is None:
+        return ""
+    return json.dumps(value, ensure_ascii=False)
 
 
 @bp.route("/<int:entry_id>", methods=["POST"])
@@ -28,10 +38,10 @@ def analyze_daily_entry(entry_id):
 
     if prefs is None:
         custom_key = None
-        selected_model = None
+        selected_model = "nvidia/nemotron-3.5-super-vl:free"
     else:
         custom_key = prefs.custom_api_key or None
-        selected_model = prefs.selected_model or None
+        selected_model = "nvidia/nemotron-3.5-super-vl:free"
 
     entry_data = entry.serialize()
     analysis_data = run_unified_ai_analysis(
@@ -47,9 +57,12 @@ def analyze_daily_entry(entry_id):
         interpretation=analysis_data.get("interpretation", ""),
         predominant_emotions=json.dumps(
             analysis_data.get("predominant_emotions", [])),
-        detected_symbols=json.dumps(analysis_data.get("detected_symbols", [])),
-        habits_reading=analysis_data.get("habits_reading", ""),
-        patterns_detected=analysis_data.get("patterns_detected", ""),
+        detected_symbols=json.dumps(
+            analysis_data.get("detected_symbols", [])),
+        habits_reading=_serialize_text_field(
+            analysis_data.get("habits_reading", "")),
+        patterns_detected=_serialize_text_field(
+            analysis_data.get("patterns_detected", "")),
         recommendations=json.dumps(analysis_data.get("recommendations", [])),
         alerts=json.dumps(analysis_data.get("alerts", [])),
         raw_json_response=json.dumps(analysis_data)

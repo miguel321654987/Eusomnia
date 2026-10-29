@@ -57,7 +57,12 @@ def api_env(monkeypatch):
     monkeypatch.setattr(
         services, "fetch_edamam_ingredient",
         lambda query: FAKE_EDAMAM_RESPONSE)
-    monkeypatch.setattr(services, "translate_text", lambda text: text)
+    monkeypatch.setattr(
+        services,
+        "translate_texts",
+        lambda texts, target_language, custom_key=None: list(texts),
+    )
+    monkeypatch.setattr(services, "translate_edamam_response", lambda data, **kwargs: data)
 
     app = Flask(__name__)
     app.config.update(
@@ -305,5 +310,4 @@ def test_evaluate_returns_404_without_log(api_env):
     )
 
     assert response.status_code == 404
-
 

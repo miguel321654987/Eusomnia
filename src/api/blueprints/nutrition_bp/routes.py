@@ -7,6 +7,7 @@ from sqlalchemy import select
 from api.extensions import db
 from api.utils import APIException
 from api.blueprints.daily_entries_bp.models import DailyEntry
+from api.blueprints.user_bp.models import UserPreferences
 # Import relativo al paquete que ya contiene `nutrition_bp`
 from . import nutrition_bp as bp
 from .loader import load_sleep_params
@@ -70,6 +71,13 @@ def _parse_manual(body: dict) -> dict[str, float | None]:
     return manual
 
 
+def _get_custom_api_key(user_id: int) -> str | None:
+    preferences = db.session.execute(
+        select(UserPreferences).where(UserPreferences.user_id == user_id)
+    ).scalar_one_or_none()
+    return preferences.custom_api_key if preferences else None
+
+
 @bp.route("/analyze", methods=["POST"])
 @jwt_required()
 def analyze_nutrition():
@@ -79,22 +87,23 @@ def analyze_nutrition():
         body is None
         or not isinstance(body.get("query"), str)
         or not body["query"].strip()
-        or not isinstance(body.get("entry_id"), int)
-        or isinstance(body.get("entry_id"), bool)
     ):
         raise APIException(
-            "Food query and daily entry ID are required", status_code=400)
+            "Food query is required", status_code=400)
 
     query = body["query"].strip()
     current_user_id = int(get_jwt_identity())
-    entry = db.session.get(DailyEntry, body["entry_id"])
-    if entry is None or entry.user_id != current_user_id:
-        raise APIException("Daily entry not found", status_code=404)
-    if not entry.habit_log or entry.habit_log.nutrition_query != query:
-        raise APIException(
-            "Food query must match the saved daily entry", status_code=400)
+    entry_id = body.get("entry_id")
+    if entry_id is not None:
+        if not isinstance(entry_id, int) or isinstance(entry_id, bool):
+            raise APIException("entry_id must be an integer", status_code=400)
+        entry = db.session.get(DailyEntry, entry_id)
+        if entry is None or entry.user_id != current_user_id:
+            raise APIException("Daily entry not found", status_code=404)
+        if not entry.habit_log or entry.habit_log.nutrition_query != query:
+            raise APIException(
+                "Food query must match the saved daily entry", status_code=400)
 
-    query = str(body.get("query")).strip()
     params = load_sleep_params()
     meal_type = _validate_meal_type(body.get("meal_type"), params)
 
@@ -103,6 +112,7 @@ def analyze_nutrition():
         ingredient_lines=[query],
         meal_type=meal_type,
         manual=_parse_manual(body),
+        custom_key=_get_custom_api_key(current_user_id),
     )
 
     return jsonify({
@@ -128,6 +138,7 @@ def analyze_recipe():
         ingredient_lines=ingredients,
         meal_type=meal_type,
         manual=_parse_manual(body),
+        custom_key=_get_custom_api_key(int(get_jwt_identity())),
     )
 
     return jsonify({
@@ -165,6 +176,7 @@ def save_nutrition_log():
         ingredient_lines=ingredients,
         meal_type=meal_type,
         manual=manual,
+        custom_key=_get_custom_api_key(current_user_id),
     )
 
     try:
@@ -477,6 +489,4 @@ def evaluate_entry_nutrition():
             **evaluation,
         }
     }), 200
-
-
 

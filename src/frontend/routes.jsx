@@ -7,10 +7,8 @@ import {
 } from "react-router-dom";
 import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
-import { DailyLog } from "./pages/DailyLog";
-import { DailyResult } from "./pages/DailyResult";
-import { History } from "./pages/History";
-import { Profile } from "./pages/Profile";
+import { RegistroDiario } from "./pages/RegistroDiario";
+import { ResultadoDelDia } from "./pages/ResultadoDelDia";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,10 +22,8 @@ export const router = createBrowserRouter(
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
       {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
       <Route path="/" element={<Home />} />
-      <Route path="/daily-log" element={<DailyLog />} />
-      <Route path="/daily-result" element={<DailyResult />} />
-      <Route path="/history" element={<History />} />
-      <Route path="/profile" element={<Profile />} />
+      <Route path="/registro-diario" element={<RegistroDiario />} />
+      <Route path="/resultado-del-dia" element={<ResultadoDelDia />} />
     </Route>,
   ),
 );

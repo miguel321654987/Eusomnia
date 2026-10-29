@@ -6,19 +6,14 @@ import { Login } from "../components/Login.jsx";
 import { Signup } from "../components/Signup.jsx";
 import MessageToast from "../components/MessageToast.jsx"; // Importar el componente de notificación
 
-// Theme imports
-import { ThemeProvider } from "styled-components";
-import { theme, GlobalStyles } from "../theme/theme.js";
-
 export const Layout = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyles />
+    <div className="min-vh-100 d-flex flex-column position-relative">
       <Navbar />
       <Login loginModal="loginModal" />
       <Signup signupModal="signupModal" />
 
-      <main className="app-main d-flex align-items-start">
+      <main className="flex-grow-1 d-flex flex-column position-relative">
         {/* Mostrar el mensaje global de manera persistente sobre todo el contenido */}
         <MessageToast />
         <Sidebar />
@@ -27,6 +22,6 @@ export const Layout = () => {
         </div>
       </main>
       <Footer />
-    </ThemeProvider>
+    </div>
   );
 };

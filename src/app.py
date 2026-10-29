@@ -63,7 +63,7 @@ app.config["EMBEDDING_MODEL"] = os.getenv(
 # Modelo por defecto para OpenRouter. Se utiliza el router gratuito que delega al modelo libre disponible.
 # Puede sobrescribirse mediante la variable de entorno OPENROUTER_MODEL.
 app.config["OPENROUTER_MODEL"] = os.getenv(
-    "OPENROUTER_MODEL", "openrouter/free"
+    "OPENROUTER_MODEL", "nvidia/nemotron-3.5-super-vl:free"
 )
 
 app.url_map.strict_slashes = False

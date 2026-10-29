@@ -53,7 +53,7 @@ class UserPreferences(db.Model):
     ai_provider: Mapped[str] = mapped_column(String(50), default="openrouter", nullable=False)
     custom_api_key: Mapped[str | None] = mapped_column(String(255), nullable=True)
     selected_model: Mapped[str] = mapped_column(
-        String(100), default="meta-llama/llama-3.3-70b-instruct:free", nullable=False
+        String(100), default="nvidia/nemotron-3.5-super-vl:free", nullable=False
     )
     timezone: Mapped[str] = mapped_column(String(50), default="UTC", nullable=False)
 
@@ -62,7 +62,7 @@ class UserPreferences(db.Model):
         user_id: int,
         ai_provider: str = "openrouter",
         custom_api_key: str | None = None,
-        selected_model: str = "meta-llama/llama-3.3-70b-instruct:free",
+        selected_model: str = "nvidia/nemotron-3.5-super-vl:free",
         timezone: str = "UTC",
     ) -> None:
         """Explicit constructor so static type checkers recognize keyword args."""

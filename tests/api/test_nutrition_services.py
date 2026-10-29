@@ -11,7 +11,6 @@ for _path in (SRC_ROOT, PROJECT_ROOT):
 from api.blueprints.nutrition_bp import services  # noqa: E402
 
 import pytest
-from types import SimpleNamespace
 import requests
 
 
@@ -132,7 +131,12 @@ def test_analyze_foods_falls_back_to_get_on_low_quality(monkeypatch):
             }],
         }
 
-    monkeypatch.setattr(services, "translate_text", lambda text: text)
+    monkeypatch.setattr(
+        services,
+        "translate_texts",
+        lambda texts, target_language, custom_key=None: list(texts),
+    )
+    monkeypatch.setattr(services, "translate_edamam_response", lambda data, **kwargs: data)
     monkeypatch.setattr(services, "fetch_edamam_recipe", _reject_recipe)
     monkeypatch.setattr(services, "fetch_edamam_ingredient", _parse_single)
 
@@ -149,7 +153,12 @@ def test_analyze_foods_success_path(monkeypatch):
     and the (mocked) supplement/excitants helpers.
     """
     # Mock the translation to be a no‑op (avoid external calls).
-    monkeypatch.setattr(services, "translate_text", lambda txt: txt)
+    monkeypatch.setattr(
+        services,
+        "translate_texts",
+        lambda texts, target_language, custom_key=None: list(texts),
+    )
+    monkeypatch.setattr(services, "translate_edamam_response", lambda data, **kwargs: data)
 
     # Provide a deterministic raw response that the aggregation logic can
     # consume. It contains two ingredients with a few nutrient codes.
@@ -202,39 +211,144 @@ def test_analyze_foods_success_path(monkeypatch):
     assert result["other_excitants_present"] is False
 
 
-def test_translate_text_caching_and_fallback(monkeypatch):
-    """Ensure the translation routine falls back to Google when MyMemory fails
-    and that subsequent calls hit the in‑memory cache.
-    """
-    calls = SimpleNamespace(my_mem=0, google=0)
+def test_translate_text_uses_openrouter(monkeypatch):
+    calls = []
 
-    class DummyMyMemory:
-        def __init__(self, source, target):
-            pass
-        def translate(self, txt):
-            calls.my_mem += 1
-            raise RuntimeError("simulated failure")
+    def translate(texts, target_language, custom_key=None):
+        calls.append((texts, target_language, custom_key))
+        return ["coffee"]
 
-    class DummyGoogle:
-        def __init__(self, source, target):
-            pass
-        def translate(self, txt):
-            calls.google += 1
-            return f"{txt}_en"
+    monkeypatch.setattr(services, "translate_texts", translate)
 
-    monkeypatch.setattr(services, "MyMemoryTranslator", DummyMyMemory)
-    monkeypatch.setattr(services, "GoogleTranslator", DummyGoogle)
+    assert services.translate_text("café", custom_key="user-key") == "coffee"
+    assert calls == [(["café"], "English", "user-key")]
 
-    # First call triggers the fallback path.
-    result1 = services.translate_text("café")
-    assert result1 == "café_en"
-    assert calls.my_mem == 1
-    assert calls.google == 1
 
-    # Second call should hit the cache – no additional translator calls.
-    result2 = services.translate_text("café")
-    assert result2 == "café_en"
-    assert calls.my_mem == 1 and calls.google == 1
+def test_analyze_foods_translates_input_before_edamam(monkeypatch):
+    calls = []
+
+    def translate(texts, target_language, custom_key=None):
+        calls.append((texts, target_language, custom_key))
+        return ["1 cup of coffee"] if target_language == "English" else list(texts)
+
+    requested_ingredients = []
+    monkeypatch.setattr(services, "translate_texts", translate)
+    monkeypatch.setattr(services, "translate_edamam_response", lambda data, **kwargs: data)
+    monkeypatch.setattr(
+        services,
+        "fetch_edamam_ingredient",
+        lambda query: (
+            requested_ingredients.append(query)
+            or {
+                "totalWeight": 150,
+                "calories": 300,
+                "totalNutrients": {
+                    "ENERC_KCAL": {"quantity": 300},
+                },
+            }
+        ),
+    )
+
+    services.analyze_foods(
+        "Comida",
+        ["1 cafe"],
+        "lunch",
+        {},
+        custom_key="user-key",
+    )
+
+    assert requested_ingredients == ["1 cup of coffee"]
+    assert calls == [(["1 cafe"], "English", "user-key")]
+
+
+def test_analyze_foods_rejects_empty_edamam_results(monkeypatch):
+    monkeypatch.setattr(
+        services,
+        "translate_texts",
+        lambda texts, target_language, custom_key=None: list(texts),
+    )
+    monkeypatch.setattr(services, "translate_edamam_response", lambda data, **kwargs: data)
+    monkeypatch.setattr(
+        services, "fetch_edamam_ingredient", lambda query: {"calories": 0}
+    )
+
+    with pytest.raises(services.APIException) as excinfo:
+        services.analyze_foods("Unknown", ["comida desconocida"], None, {})
+
+    assert excinfo.value.status_code == 422
+
+
+def test_edamam_text_is_translated_without_changing_values(monkeypatch):
+    from api.services import translation_service
+
+    def translate(texts, target_language, custom_key=None):
+        assert target_language == "Spanish"
+        assert custom_key == "user-key"
+        return ["Grasa", "ALTO EN PROTEÍNAS"]
+
+    monkeypatch.setattr(translation_service, "translate_texts", translate)
+    response = {
+        "uri": "https://example.test/recipe",
+        "totalNutrients": {
+            "FAT": {"label": "Fat", "quantity": 21.5, "unit": "g"},
+        },
+        "healthLabels": ["HIGH_PROTEIN"],
+    }
+
+    translated = translation_service.translate_edamam_response(
+        response, custom_key="user-key"
+    )
+
+    assert translated["totalNutrients"]["FAT"] == {
+        "label": "Grasa",
+        "quantity": 21.5,
+        "unit": "g",
+    }
+    assert translated["healthLabels"] == ["ALTO EN PROTEÍNAS"]
+    assert translated["uri"] == "https://example.test/recipe"
+
+
+def test_translation_request_instructs_openrouter_to_translate_food_names(monkeypatch):
+    from api.services import translation_service
+
+    requests_made = []
+
+    class DummyResponse:
+        status_code = 200
+
+        def raise_for_status(self):
+            return None
+
+        def json(self):
+            return {
+                "choices": [{
+                    "message": {
+                        "content": '{"translations":["1 hamburger"]}'
+                    }
+                }]
+            }
+
+    def mock_post(url, **kwargs):
+        requests_made.append((url, kwargs))
+        return DummyResponse()
+
+    monkeypatch.setattr(translation_service.requests, "post", mock_post)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setenv("OPENROUTER_MODEL", "translation-test-model")
+
+    assert translation_service.translate_texts(
+        ["1 hamburguesa"], "English"
+    ) == ["1 hamburger"]
+
+    url, request = requests_made[0]
+    assert url == translation_service.OPENROUTER_URL
+    assert request["json"]["model"] == "translation-test-model"
+    assert request["headers"]["Authorization"] == "Bearer test-key"
+    system_prompt = request["json"]["messages"][0]["content"]
+    assert "food names" in system_prompt
+    assert "Translate all natural-language text" in system_prompt
+    assert "'1 cafe' or '1 café'" in system_prompt
+    assert "'1 cup of coffee'" in system_prompt
 
 
 def test_get_edamam_credentials_missing(monkeypatch):
@@ -340,4 +454,3 @@ def test_evaluate_distributes_meals_by_weight_factor():
     assert dinner["share"] == 0.3333
     # Caffeine for dinner: 250 * (1.5 / 4.5)
     assert abs(dinner["values"]["caffeine_mg"] - 83.33) < 0.02
-

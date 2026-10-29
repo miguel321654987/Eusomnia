@@ -34,7 +34,7 @@ export const BackendURL = () => (
       </li>
     </ol>
     <div className="w-100">
-      {/* Imagen del archivo .env eliminado para evitar referencia a variable no definida */}
+      <img src={envFile} className="w-100" />
     </div>
     <p>
       Note: If you are publishing your website to Heroku, Render.com or any
