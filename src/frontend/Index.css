@@ -103,6 +103,7 @@ body {
 .text-gradient-cyan {
   background: linear-gradient(135deg, var(--eusomnia-primary-light) 0%, var(--eusomnia-primary) 50%, var(--eusomnia-secondary) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -139,6 +140,7 @@ body {
   padding: 1px;
   background: linear-gradient(135deg, rgba(0, 229, 255, 0.3), transparent 60%, rgba(171, 201, 241, 0.2));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
@@ -341,6 +343,7 @@ body {
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: left;
+  color: var(--eusomnia-text);
   width: 100%;
 }
 
@@ -510,4 +513,44 @@ body {
   width: 14px;
   border-radius: 4px 4px 0 0;
   transition: height 0.4s ease;
+}
+
+/* Global contrast fixes for daily entry flow */
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  color: var(--eusomnia-text-muted);
+  opacity: 1;
+}
+
+.form-control,
+.form-select {
+  background-color: var(--eusomnia-surface-high);
+  color: var(--eusomnia-text);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--eusomnia-surface-highest);
+  color: var(--eusomnia-text);
+  border-color: var(--eusomnia-primary);
+  box-shadow: 0 0 0 0.2rem rgba(0, 229, 255, 0.18);
+}
+
+.btn-eusomnia-secondary {
+  color: var(--eusomnia-text) !important;
+}
+
+.btn-eusomnia-secondary:hover,
+.btn-eusomnia-secondary:focus {
+  color: var(--eusomnia-primary) !important;
+}
+
+.daily-multichip {
+  color: var(--eusomnia-text);
+}
+
+.daily-multichip .material-symbols-outlined.text-secondary {
+  color: var(--eusomnia-text-muted);
 }

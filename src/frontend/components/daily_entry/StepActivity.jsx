@@ -1,7 +1,7 @@
-import { useRef } from "react";
-
 export const StepActivity = ({ value, onChange, onNext }) => {
-  const timeoutRef = useRef(null);
+  const handleSelect = (activityTitle) => {
+    onChange(activityTitle);
+  };
 
   const activities = [
     {
@@ -25,14 +25,6 @@ export const StepActivity = ({ value, onChange, onNext }) => {
       icon: "sprint",
     },
   ];
-
-  const handleSelect = (activityTitle) => {
-    onChange(activityTitle);
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    timeoutRef.current = setTimeout(() => {
-      onNext();
-    }, 300);
-  };
 
   return (
     <section className="eusomnia-card p-4 p-sm-5 shadow-lg position-relative">

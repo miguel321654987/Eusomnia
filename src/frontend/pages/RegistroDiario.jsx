@@ -136,6 +136,7 @@ function getFormSnapshot(formData, entryDate) {
     sleepQuality: formData.sleepQuality,
     screenTime: formData.screenTime,
     incidents: formData.incidents,
+    emotionalState: formData.emotionalState,
     mealEntries: getMealEntriesPayload(formData.mealEntries),
     sleepContext: getSleepContextPayload(formData.sleepContext),
     dreamNarrative: formData.dreamNarrative,
@@ -156,6 +157,7 @@ function createDefaultFormData() {
     sleepQuality: "Profundo",
     screenTime: "< 1 hora (Filtro cálido)",
     incidents: ["🕊️ Día tranquilo y neutro"],
+    emotionalState: [],
     mealEntries: createDefaultMealEntries(),
     sleepContext: normalizeSleepContext(),
     dreamNarrative: "",
@@ -286,6 +288,7 @@ export const RegistroDiario = () => {
             habits.sleep_quality || habits.bedtime_mood || "Profundo",
           screenTime: habits.screen_time || "",
           incidents: parseList(habits.incidents),
+          emotionalState: parseList(habits.emotional_state),
           mealEntries: normalizeMealEntries(
             habits.meal_entries,
             habits.food_notes || habits.nutrition_query || "",
@@ -361,6 +364,24 @@ export const RegistroDiario = () => {
           incidents: [...prev.incidents, incident],
         };
       }
+    });
+  };
+
+  // Step 3: Emotional state (multi-select)
+  const handleToggleEmotionalState = (emotion) => {
+    setFormData((prev) => {
+      const exists = prev.emotionalState.includes(emotion);
+      if (exists) {
+        return {
+          ...prev,
+          emotionalState: prev.emotionalState.filter((item) => item !== emotion),
+        };
+      }
+
+      return {
+        ...prev,
+        emotionalState: [...prev.emotionalState, emotion],
+      };
     });
   };
 
@@ -464,6 +485,7 @@ export const RegistroDiario = () => {
         sleep_quality: formData.sleepQuality,
         screen_time: formData.screenTime,
         incidents: formData.incidents.join(", "),
+        emotional_state: formData.emotionalState.join(", "),
         total_sleep_hours: Number(formData.sleepHours),
         food_notes: foodNotes || null,
         meal_entries: mealEntries,
@@ -510,6 +532,8 @@ export const RegistroDiario = () => {
           String(previousHabits.screen_time || "") !== formData.screenTime ||
           normalizedList(previousHabits.incidents) !==
             normalizedList(formData.incidents.join(", ")) ||
+          normalizedList(previousHabits.emotional_state) !==
+            normalizedList(formData.emotionalState.join(", ")) ||
           Number(previousHabits.total_sleep_hours) !==
             Number(formData.sleepHours) ||
           sleepContextChanged;
@@ -820,7 +844,9 @@ export const RegistroDiario = () => {
             {currentStep === 3 && (
               <StepIncidents
                 selectedIncidents={formData.incidents}
+                selectedEmotionalStates={formData.emotionalState}
                 onToggleIncident={handleToggleIncident}
+                onToggleEmotionalState={handleToggleEmotionalState}
                 onBack={() => setCurrentStep(2)}
                 onNext={() => setCurrentStep(4)}
               />

@@ -196,7 +196,7 @@ export const ResultadoDelDia = () => {
   }, [loadEntry, token]);
 
   const handleReanalyze = async () => {
-    if (!entry) return;
+    if (!entry || (entry.analysis && !actionError)) return;
 
     setIsReanalyzing(true);
     setActionError("");
@@ -375,6 +375,7 @@ export const ResultadoDelDia = () => {
           date={date}
           sessionId={`#${entry.id}`}
           isReanalyzing={isReanalyzing}
+          canReanalyze={!entry?.analysis || Boolean(actionError)}
           onReanalyze={handleReanalyze}
         />
 
@@ -411,7 +412,7 @@ export const ResultadoDelDia = () => {
         <HygienicAlertBanner alerts={alerts} />
 
         <div className="row g-4 pt-2">
-          <div className="col-12 col-lg-7">
+          <div className="col-12 col-lg-7" style={{ minWidth: 0 }}>
             <DreamAnalysisSection
               emotions={emotions}
               symbols={symbols}
@@ -423,7 +424,7 @@ export const ResultadoDelDia = () => {
             />
           </div>
 
-          <div className="col-12 col-lg-5">
+          <div className="col-12 col-lg-5" style={{ minWidth: 0 }}>
             <HabitCorrelationsSection
               context={{
                 activity: habitLog.physical_activity,

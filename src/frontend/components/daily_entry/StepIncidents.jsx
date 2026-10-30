@@ -1,12 +1,62 @@
-export const StepIncidents = ({ selectedIncidents, onToggleIncident, onBack, onNext }) => {
-  const options = [
+export const StepIncidents = ({
+  selectedIncidents,
+  onToggleIncident,
+  selectedEmotionalStates,
+  onToggleEmotionalState,
+  onBack,
+  onNext,
+}) => {
+  const incidents = [
     "🎉 Buenas noticias / Logro",
     "💼 Estrés laboral intenso",
     "🗣️ Discusión / Conflicto",
     "⚠️ Accidente o susto repentino",
     "🩺 Malestar físico / Dolor de cabeza",
     "🕊️ Día tranquilo y neutro",
+    "🌧️ Lluvia ruidosa / Tormenta",
+    "📱 Uso intenso de pantallas por la noche",
+    "☕ Café o té por la tarde",
+    "🏃 Actividad física intensa tardía",
   ];
+
+  const emotionalStates = [
+    "😊 Alegre",
+    "😔 Triste",
+    "🙄 Irritado",
+    "😰 Preocupado",
+    "🥰 Ilusionado",
+    "⚡ Motivado",
+    "🫥 Calmado",
+    "😵 Estresado",
+    "😢 Melancólico",
+    "😲 Sorprendido",
+  ];
+
+  const renderChip = (item, isSelected, onClick) => (
+    <button
+      key={item}
+      type="button"
+      className={`daily-multichip ${isSelected ? "active-multichip" : ""}`}
+      onClick={onClick}
+    >
+      <span>{item}</span>
+      {isSelected ? (
+        <span
+          className="material-symbols-outlined"
+          style={{ fontSize: "16px", color: "var(--eusomnia-primary)" }}
+        >
+          done
+        </span>
+      ) : (
+        <span
+          className="material-symbols-outlined text-secondary opacity-50"
+          style={{ fontSize: "16px" }}
+        >
+          add
+        </span>
+      )}
+    </button>
+  );
 
   return (
     <section className="eusomnia-card p-4 p-sm-5 shadow-lg position-relative">
@@ -23,48 +73,55 @@ export const StepIncidents = ({ selectedIncidents, onToggleIncident, onBack, onN
             Incidencias y estado emocional del día
           </h2>
           <p className="font-body text-secondary small mb-0">
-            Selecciona los sucesos que hayan alterado tus niveles de cortisol o adrenalina.
+            Selecciona los sucesos que hayan alterado tus niveles de cortisol
+            o adrenalina y cómo te sentías.
           </p>
         </div>
         <div
           className="rounded-3 d-flex align-items-center justify-content-center p-2 flex-shrink-0"
-          style={{ background: "var(--eusomnia-surface-high)", color: "var(--eusomnia-tertiary-container)" }}
+          style={{
+            background: "var(--eusomnia-surface-high)",
+            color: "var(--eusomnia-tertiary-container)",
+          }}
         >
           <span className="material-symbols-outlined fs-4">psychology</span>
         </div>
       </div>
 
-      {/* Multi-chips Container */}
-      <div className="d-flex flex-wrap gap-2 mb-5">
-        {options.map((item) => {
-          const isSelected = selectedIncidents.includes(item);
+      <div className="mb-5">
+        <h3 className="font-headline h6 fw-bold text-light mb-2">
+          Incidencias
+        </h3>
+        <p className="font-body text-secondary small mb-3">
+          Sucesos del día que pudieron condicionar tu descanso.
+        </p>
+        <div className="d-flex flex-wrap gap-2">
+          {incidents.map((item) =>
+            renderChip(
+              item,
+              selectedIncidents.includes(item),
+              () => onToggleIncident(item),
+            ),
+          )}
+        </div>
+      </div>
 
-          return (
-            <button
-              key={item}
-              type="button"
-              className={`daily-multichip ${isSelected ? "active-multichip" : ""}`}
-              onClick={() => onToggleIncident(item)}
-            >
-              <span>{item}</span>
-              {isSelected ? (
-                <span
-                  className="material-symbols-outlined"
-                  style={{ fontSize: "16px", color: "var(--eusomnia-primary)" }}
-                >
-                  done
-                </span>
-              ) : (
-                <span
-                  className="material-symbols-outlined text-secondary opacity-50"
-                  style={{ fontSize: "16px" }}
-                >
-                  add
-                </span>
-              )}
-            </button>
-          );
-        })}
+      <div className="mb-5">
+        <h3 className="font-headline h6 fw-bold text-light mb-2">
+          Estado emocional
+        </h3>
+        <p className="font-body text-secondary small mb-3">
+          Cómo te sentías principalmente durante el día.
+        </p>
+        <div className="d-flex flex-wrap gap-2">
+          {emotionalStates.map((item) =>
+            renderChip(
+              item,
+              selectedEmotionalStates.includes(item),
+              () => onToggleEmotionalState(item),
+            ),
+          )}
+        </div>
       </div>
 
       {/* Navigation Buttons */}
@@ -90,4 +147,3 @@ export const StepIncidents = ({ selectedIncidents, onToggleIncident, onBack, onN
     </section>
   );
 };
-

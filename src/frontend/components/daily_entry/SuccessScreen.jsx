@@ -26,6 +26,7 @@ export const SuccessScreen = ({ entryId, onStartNew }) => {
 
       <div className="d-flex flex-column flex-sm-row justify-content-center gap-2">
         <Link
+          replace
           to={`/resultado-del-dia?entryId=${entryId}`}
           className="btn btn-primary px-4 py-2 d-inline-flex align-items-center justify-content-center gap-2"
         >
