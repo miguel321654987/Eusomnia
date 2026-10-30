@@ -63,7 +63,7 @@ def translate_texts(
                 ],
                 "response_format": {"type": "json_object"},
             },
-            timeout=30,
+            timeout=12,
         )
         response.raise_for_status()
         content = response.json()["choices"][0]["message"]["content"]

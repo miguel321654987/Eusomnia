@@ -1,5 +1,8 @@
 """Nutrition endpoints: analysis proxies, per-entry logs and evaluation."""
 
+import json
+import re
+
 from flask import request, jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from sqlalchemy import select
@@ -13,6 +16,8 @@ from . import nutrition_bp as bp
 from .loader import load_sleep_params
 from .models import NutritionLog
 from .services import analyze_foods, evaluate_nutrition
+
+TIME_PATTERN = re.compile(r"^\d{2}:\d{2}$")
 
 
 def _percentage(nutrient_g: float, calories: float) -> float | None:
@@ -50,6 +55,183 @@ def _parse_ingredients(body: dict) -> list[str]:
             status_code=400,
         )
     return lines
+
+
+MEAL_LABELS = {
+    "breakfast": "Desayuno",
+    "mid_morning": "Media mañana",
+    "lunch": "Comida",
+    "snack": "Merienda",
+    "dinner": "Cena",
+    "other": "Otros",
+}
+MEAL_TYPE_ALIASES = {
+    "breakfast": "breakfast",
+    "mid_morning": "snack",
+    "lunch": "lunch",
+    "snack": "snack",
+    "dinner": "dinner",
+    "other": "snack",
+}
+MEAL_NUTRIENT_MAP = {
+    "calories": "calories",
+    "protein_g": "protein_g",
+    "carbohydrates_g": "carbohydrates_g",
+    "sugars_g": "sugars_g",
+    "fat_g": "fat_g",
+    "sodium_mg": "sodium_mg",
+    "caffeine_mg": "caffeine_mg",
+    "alcohol_g": "alcohol_g",
+    "omega3_mg": "omega3_mg",
+    "vitamin_e_mg": "vitamin_e_mg",
+    "vitamin_b12_ug": "vitamin_b12_ug",
+    "total_weight_g": "total_weight_g",
+}
+GENERIC_NUTRIENTS = (
+    "calories",
+    "protein_g",
+    "carbohydrates_g",
+    "sugars_g",
+    "fat_g",
+    "sodium_mg",
+)
+
+
+def _analyze_meal_entries(meals, params, custom_key):
+    if not isinstance(meals, dict):
+        raise APIException("meals must be an object", status_code=400)
+    if set(meals) - set(MEAL_LABELS):
+        raise APIException(
+            "meals contains an unknown meal type",
+            status_code=400,
+        )
+
+    estimates = params["generic_meal_estimates"]
+    results = []
+    for meal_id, label in MEAL_LABELS.items():
+        meal = meals.get(meal_id)
+        if meal is None:
+            continue
+        if not isinstance(meal, dict):
+            raise APIException(
+                f"meals.{meal_id} must be an object",
+                status_code=400,
+            )
+
+        size = meal.get("size")
+        if size not in (None, "", "light", "medium", "heavy"):
+            raise APIException(
+                f"meals.{meal_id}.size is invalid", status_code=400)
+        time_value = meal.get("time")
+        foods = meal.get("foods", "")
+        if time_value not in (None, "") and (
+            not isinstance(time_value, str)
+            or not TIME_PATTERN.fullmatch(time_value)
+            or int(time_value[:2]) > 23
+            or int(time_value[3:]) > 59
+        ):
+            raise APIException(
+                f"meals.{meal_id}.time must use HH:MM format",
+                status_code=400,
+            )
+        if not isinstance(foods, str) or len(foods) > 1000:
+            raise APIException(
+                f"meals.{meal_id}.foods must be text up to 1000 characters",
+                status_code=400,
+            )
+        foods = foods.strip()
+        if not foods and not size:
+            continue
+
+        meal_type = MEAL_TYPE_ALIASES[meal_id]
+        if foods:
+            try:
+                analyzed = analyze_foods(
+                    title=label,
+                    ingredient_lines=[foods],
+                    meal_type=meal_type,
+                    manual={
+                        "caffeine_mg": None,
+                        "alcohol_g": None,
+                        "omega3_mg": None,
+                    },
+                    custom_key=custom_key,
+                )
+                values = {
+                    key: analyzed.get(value_key)
+                    for key, value_key in MEAL_NUTRIENT_MAP.items()
+                }
+                source = "edamam"
+                error = None
+            except APIException as exc:
+                values = {key: None for key in MEAL_NUTRIENT_MAP}
+                source = "unavailable"
+                error = exc.message
+        else:
+            estimate = estimates["sizes"][size]
+            values = {
+                key: estimate.get(key) if key in GENERIC_NUTRIENTS else None
+                for key in MEAL_NUTRIENT_MAP
+            }
+            values["total_weight_g"] = estimate["portion_weight_g"]
+            source = "generic"
+            error = None
+
+        results.append({
+            "meal_type": meal_id,
+            "label": label,
+            "time": time_value or None,
+            "size": size or None,
+            "reference_portion_g": (
+                estimates["sizes"][size]["portion_weight_g"]
+                if source == "generic"
+                else None
+            ),
+            "foods": foods,
+            "source": source,
+            "source_label": (
+                "Edamam" if source == "edamam"
+                else estimates["metadata"]["source"] if source == "generic"
+                else "No disponible"
+            ),
+            "reference_note": (
+                estimates["metadata"]["note"] if source == "generic" else None
+            ),
+            "error": error,
+            "values": values,
+        })
+
+    active_results = [
+        item for item in results if item["source"] != "unavailable"
+    ]
+    totals = {}
+    for nutrient in MEAL_NUTRIENT_MAP:
+        values = [item["values"].get(nutrient) for item in active_results]
+        totals[nutrient] = (
+            round(sum(values), 2)
+            if values and all(isinstance(value, (int, float)) for value in values)
+            else None
+        )
+
+    sources = {item["source"] for item in active_results}
+    source_label = (
+        "Fuentes mixtas" if len(sources) > 1
+        else "Edamam" if sources == {"edamam"}
+        else estimates["metadata"]["source"] if sources == {"generic"}
+        else None
+    )
+    warnings = [
+        {"meal_type": item["meal_type"], "message": item["error"]}
+        for item in results if item["error"]
+    ]
+    return {
+        "items": results,
+        "totals": totals,
+        "source": "mixed" if len(sources) > 1 else next(iter(sources), None),
+        "source_label": source_label,
+        "generic_reference": estimates["metadata"],
+        "warnings": warnings,
+    }
 
 
 def _parse_manual(body: dict) -> dict[str, float | None]:
@@ -167,17 +349,45 @@ def save_nutrition_log():
         raise APIException("Daily entry not found", status_code=404)
 
     params = load_sleep_params()
-    meal_type = _validate_meal_type(body.get("meal_type"), params)
-    ingredients = _parse_ingredients(body)
-    manual = _parse_manual(body)
-
-    results = analyze_foods(
-        title=str(body.get("title") or "Meal").strip(),
-        ingredient_lines=ingredients,
-        meal_type=meal_type,
-        manual=manual,
-        custom_key=_get_custom_api_key(current_user_id),
-    )
+    custom_key = _get_custom_api_key(current_user_id)
+    if "meals" in body:
+        meal_breakdown = _analyze_meal_entries(
+            body["meals"], params, custom_key
+        )
+        if not meal_breakdown["items"]:
+            raise APIException(
+                "At least one meal size or food detail is required",
+                status_code=400,
+            )
+        results = {
+            "calories": meal_breakdown["totals"]["calories"],
+            "protein_g": meal_breakdown["totals"]["protein_g"],
+            "carbohydrates_g": meal_breakdown["totals"]["carbohydrates_g"],
+            "sugars_g": meal_breakdown["totals"]["sugars_g"],
+            "fat_g": meal_breakdown["totals"]["fat_g"],
+            "sodium_mg": meal_breakdown["totals"]["sodium_mg"],
+            "caffeine_mg": meal_breakdown["totals"]["caffeine_mg"],
+            "alcohol_g": meal_breakdown["totals"]["alcohol_g"],
+            "omega3_mg": meal_breakdown["totals"]["omega3_mg"],
+            "vitamin_e_mg": meal_breakdown["totals"]["vitamin_e_mg"],
+            "vitamin_b12_ug": meal_breakdown["totals"]["vitamin_b12_ug"],
+            "total_weight_g": meal_breakdown["totals"]["total_weight_g"],
+            "meal_type": None,
+            "other_excitants_present": False,
+            "raw_response": "",
+        }
+    else:
+        meal_type = _validate_meal_type(body.get("meal_type"), params)
+        ingredients = _parse_ingredients(body)
+        manual = _parse_manual(body)
+        results = analyze_foods(
+            title=str(body.get("title") or "Meal").strip(),
+            ingredient_lines=ingredients,
+            meal_type=meal_type,
+            manual=manual,
+            custom_key=custom_key,
+        )
+        meal_breakdown = None
 
     try:
         stmt = select(NutritionLog).where(NutritionLog.entry_id == entry.id)
@@ -190,21 +400,26 @@ def save_nutrition_log():
             log.entry_id = entry.id
             db.session.add(log)
 
-        log.calories = results["calories"]
-        log.protein_g = results["protein_g"]
-        log.carbohydrates_g = results["carbohydrates_g"]
-        log.sugar_g = results["sugars_g"]
-        log.fat_g = results["fat_g"]
-        log.caffeine_mg = results["caffeine_mg"]
-        log.alcohol_g = results["alcohol_g"]
-        log.omega3_mg = results["omega3_mg"]
-        log.sodium_mg = results["sodium_mg"]
-        log.vitamin_e_mg = results["vitamin_e_mg"]
-        log.vitamin_b12_ug = results["vitamin_b12_ug"]
-        log.total_weight_g = results["total_weight_g"]
+        log.calories = results["calories"] or 0
+        log.protein_g = results["protein_g"] or 0
+        log.carbohydrates_g = results["carbohydrates_g"] or 0
+        log.sugar_g = results["sugars_g"] or 0
+        log.fat_g = results["fat_g"] or 0
+        log.caffeine_mg = results["caffeine_mg"] or 0
+        log.alcohol_g = results["alcohol_g"] or 0
+        log.omega3_mg = results["omega3_mg"] or 0
+        log.sodium_mg = results["sodium_mg"] or 0
+        log.vitamin_e_mg = results["vitamin_e_mg"] or 0
+        log.vitamin_b12_ug = results["vitamin_b12_ug"] or 0
+        log.total_weight_g = results["total_weight_g"] or 0
         log.meal_type = results["meal_type"]
         log.other_excitants_present = results["other_excitants_present"]
         log.raw_response = results["raw_response"]
+        log.meal_breakdown = (
+            json.dumps(meal_breakdown, ensure_ascii=False)
+            if meal_breakdown is not None
+            else None
+        )
         db.session.commit()
     except Exception as exc:
         db.session.rollback()
@@ -489,4 +704,3 @@ def evaluate_entry_nutrition():
             **evaluation,
         }
     }), 200
-

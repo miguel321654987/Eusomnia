@@ -33,8 +33,8 @@ export const BackendURL = () => (
         backend sever running at port 3001
       </li>
     </ol>
-    <div className="w-100">
-      <img src={envFile} className="w-100" />
+    <div className="w-100 text-secondary small">
+      Consulta el archivo .env para configurar la URL del backend.
     </div>
     <p>
       Note: If you are publishing your website to Heroku, Render.com or any

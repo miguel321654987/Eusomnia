@@ -23,10 +23,20 @@ export const SummaryCapsules = ({ currentStep, formData, onEdit }) => {
     {
       step: 4,
       title: "4. Nutrición & Crono-factores",
-      value:
-        formData.nutrition.length > 0
-          ? formData.nutrition.join(" • ")
-          : "Cena regular",
+      value: Object.entries(formData.mealEntries || {})
+        .filter(([, meal]) => meal.size || meal.foods)
+        .map(([mealId, meal]) => {
+          const label = {
+            breakfast: "Desayuno",
+            mid_morning: "Media mañana",
+            lunch: "Comida",
+            snack: "Merienda",
+            dinner: "Cena",
+            other: "Otros",
+          }[mealId];
+          return `${label}: ${meal.size || "sin tamaño"}${meal.time ? ` · ${meal.time}` : ""}`;
+        })
+        .join(" • ") || "Sin ingestas detalladas",
     },
   ];
 
@@ -82,4 +92,3 @@ export const SummaryCapsules = ({ currentStep, formData, onEdit }) => {
     </div>
   );
 };
-

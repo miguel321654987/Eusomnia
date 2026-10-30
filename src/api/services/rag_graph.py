@@ -33,6 +33,7 @@ class DreamRagState(TypedDict, total=False):
     analysis: dict[str, Any]
     dream_vector: list[float]
     openrouter_error: bool | None
+    pipeline_diagnostics: list[str]
 
 
 def extract_dream_text(payload: Any) -> str:
@@ -77,7 +78,8 @@ def _openrouter_generate(
         or os.getenv("OPENROUTER_MODEL")
         or "nvidia/nemotron-3.5-super-vl:free"
     )
-    profile_preferences = (entry_payload or {}).get("_profile_preferences") or {}
+    profile_preferences = (entry_payload or {}).get(
+        "_profile_preferences") or {}
     framework_guidance = {
         "jungian": (
             "Use a Jungian-inspired reflective lens, considering symbols and "
@@ -138,11 +140,18 @@ def _openrouter_generate(
         extra_headers["X-Title"] = title
 
     # ---------------------------------------------------------------------
-    # Lista de modelos gratuitos de OpenRouter, ordenados de mayor a menor capacidad.
-    # Se permite sobrescribir mediante la variable de entorno OPENROUTER_MODEL o
-    # pasando explícitamente el parámetro `model`.
+    # Lista de modelos establecida para el análisis IA. El modelo seleccionado
+    # tiene prioridad; si no responde, se continúa con los siguientes en orden.
     # ---------------------------------------------------------------------
-    fallback_models = [selected_model]
+    fallback_models = [
+        selected_model,
+        "nvidia/nemotron-3.5-lightning:free",
+        "respan/span-01-lite:free",
+        "liquidai/lfm2.5-2.6b:free",
+        "google/gemma-4-26b-a4b:free",
+        "google/gemma-4-31b:free",
+        "nvidia/nemotron-3-super:free",
+    ]
 
     def _call_model(model_name: str, use_format: bool) -> dict:
         """Realiza la llamada a OpenRouter para *model_name*.
@@ -168,8 +177,8 @@ def _openrouter_generate(
         }
         headers.update(extra_headers)
 
-        # Reintentos exponenciales (máx. 3 intentos)
-        for attempt in range(3):
+        # Intentos cortos para evitar bloqueos prolongados.
+        for attempt in range(2):
             try:
                 response = requests.post(
                     "https://openrouter.ai/api/v1/chat/completions",
@@ -195,7 +204,7 @@ def _openrouter_generate(
                         status_code=502,
                     )
             except Exception as exc:  # Catch any error, including generic exceptions from mocks
-                if attempt == 2:
+                if attempt == 1:
                     raise APIException(
                         f"OpenRouter request failed for model {model_name}: {exc}",
                         status_code=502,
@@ -217,6 +226,15 @@ def _openrouter_generate(
     # ---------------------------------------------------------------------
     # Bucle principal que intenta cada modelo con y sin ``response_format``.
     # ---------------------------------------------------------------------
+    ordered_models: list[str] = []
+    seen_models: set[str] = set()
+    for candidate in fallback_models:
+        if not candidate or candidate in seen_models:
+            continue
+        seen_models.add(candidate)
+        ordered_models.append(candidate)
+    fallback_models = ordered_models
+    errors: list[str] = []
     for model_name in fallback_models:
         logger.info("Attempting OpenRouter model: %s", model_name)
         try:
@@ -227,6 +245,7 @@ def _openrouter_generate(
                 model_name,
                 err_fmt,
             )
+            errors.append(f"{model_name}: {err_fmt}")
             try:
                 return _call_model(model_name, use_format=False)
             except Exception as err_no_fmt:  # noqa: BLE001
@@ -235,221 +254,15 @@ def _openrouter_generate(
                     model_name,
                     err_no_fmt,
                 )
+                errors.append(f"{model_name}: {err_no_fmt}")
                 continue
 
     # Si llegamos aquí, todos los modelos fallaron.
     logger.error("All OpenRouter model attempts failed.")
-    return {"openrouter_error": True}
-    if referer:
-        extra_headers["Referer"] = referer
-    if title:
-        extra_headers["X-Title"] = title
-
-    # ---------------------------------------------------------------------
-    # Lista de modelos free de OpenRouter ordenados de mayor a menor capacidad
-    # ---------------------------------------------------------------------
-    fallback_models = [
-        "nvidia/nemotron-3.5-super-vl:free",
-        "nvidia/nemotron-3.5-lightning:free",
-        "nvidia/nemotron-3-ultra:free",
-        "nvidia/nemotron-3-nano-omni:free",
-        "nvidia/lama-nemotron-rerank-vl-1b-v2:free",
-        "nvidia/nemotron-3.5-content-safety:free",
-        "nvidia/nemotron-3-embed-1b:free",
-        "nvidia/llama-nemotron-embed-vl-1b-v2:free",
-        "inception/mercury-decide:free",
-        "respan/span-01-lite:free",
-        "liquidai/lfm2.5-embedding-350m:free",
-        "liquidai/lfm2.5-2.6b:free",
-        "thinkingmachines/inkling-small:free",
-        "fish-audio/s2.1-pro-free:free",
-        "poolside/laguna-s-2.1:free",
-        "thinkingmachines/inkling:free",
-        "poolside/laguna-xs-2.1:free",
-        "cohere/north-mini-code:free",
-        "google/gemma-4-26b-a4b:free",
-        "google/gemma-4-31b:free",
-        "nvidia/nemotron-3-super:free",
-        "nvidia/nemotron-3-nano-omni:free",
-    ]
-
-    # Si se especificó un modelo explícito, darle prioridad
-    if selected_model:
-        if selected_model not in fallback_models:
-            fallback_models.insert(0, selected_model)
-        else:
-            fallback_models.remove(selected_model)
-            fallback_models.insert(0, selected_model)
-
-    # ---------------------------------------------------------------------
-    # Función interna que realiza la petición al modelo seleccionado.
-    # ---------------------------------------------------------------------
-    def _call_model(model_name: str, use_format: bool) -> dict:
-        payload = {
-            "model": model_name,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": json.dumps(enriched_payload)},
-            ],
-        }
-        if use_format:
-            payload["response_format"] = {"type": "json_object"}
-
-    # ---------------------------------------------------------------------
-    # Bucle principal que intenta cada modelo con formato, y si falla, sin él.
-    # ---------------------------------------------------------------------
-    for model_name in fallback_models:
-        logger.info("Intentando modelo OpenRouter: %s", model_name)
-        try:
-            return _call_model(model_name, use_format=True)
-        except Exception:
-            # intentar sin response_format
-            try:
-                raw = _call_model(model_name, use_format=False)
-                if isinstance(raw, dict):
-                    return raw
-                if isinstance(raw, str):
-                    match = re.search(
-                        r"```json\s*(\{.*?\})\s*```", raw, re.DOTALL)
-                    if not match:
-                        match = re.search(r"(\{.*\})", raw, re.DOTALL)
-                    if match:
-                        return json.loads(match.group(1))
-            except Exception as e2:
-                logger.error(
-                    "Falló modelo %s (con y sin response_format): %s", model_name, e2
-                )
-                continue
-
-    raise APIException(
-        "All OpenRouter model attempts failed. Check API key, quota, and model compatibility.",
-        status_code=502,
-    )
-
-    # Si el usuario definió un modelo explícito mediante la variable de entorno
-    # o pasó el argumento `model`, lo colocamos al frente de la lista para que
-    # tenga prioridad.
-    if selected_model and selected_model not in fallback_models:
-        fallback_models.insert(0, selected_model)
-    elif selected_model:
-        # Si está ya en la lista, lo movemos al principio
-        fallback_models.remove(selected_model)
-        fallback_models.insert(0, selected_model)
-
-    # Cabeceras opcionales que OpenRouter puede requerir
-    extra_headers = {}
-    referer = os.getenv("OPENROUTER_REFERER")
-    title = os.getenv("OPENROUTER_TITLE")
-    if referer:
-        extra_headers["Referer"] = referer
-    if title:
-        extra_headers["X-Title"] = title
-
-    # ---------------------------------------------------------------------
-    # Función interna para intentar una llamada con/ sin response_format.
-    # ---------------------------------------------------------------------
-    def _call_model(model_name: str, use_format: bool) -> dict:
-        payload = {
-            "model": model_name,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": json.dumps(enriched_payload)},
-            ],
-        }
-        if use_format:
-            payload["response_format"] = {"type": "json_object"}
-
-        headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        }
-        headers.update(extra_headers)
-
-        # Reintentos exponenciales (máx. 3 intentos)
-        for attempt in range(3):
-            try:
-                resp = requests.post(
-                    url,
-                    headers=headers,
-                    json=payload,
-                    timeout=30,
-                )
-                resp.raise_for_status()
-                # Intentamos parsear como JSON directamente
-                return resp.json()
-            except requests.HTTPError as http_err:
-                # Si el código indica que el formato no es soportado, rompemos
-                if resp.status_code in {400, 422, 415} and use_format:
-                    logger.warning(
-                        "Model %s no soporta response_format, cambiando a fallback",
-                        model_name,
-                    )
-                    raise
-                # En otro caso, reintentamos con back‑off
-                logger.error(
-                    "HTTP error on attempt %s for model %s: %s (status %s)",
-                    attempt + 1,
-                    model_name,
-                    http_err,
-                    resp.status_code,
-                )
-                if attempt == 2:
-                    raise
-                time.sleep(2 ** attempt)
-            except (requests.RequestException, json.JSONDecodeError) as exc:
-                logger.error(
-                    "Request error on attempt %s for model %s: %s", attempt + 1, model_name, exc
-                )
-                if attempt == 2:
-                    raise
-                time.sleep(2 ** attempt)
-
-    # ---------------------------------------------------------------------
-    # Bucle principal: probamos cada modelo con response_format, y si falla
-    # intentamos sin él y extraemos JSON manualmente.
-    # ---------------------------------------------------------------------
-    for model_name in fallback_models:
-        logger.info("Attempting OpenRouter model: %s", model_name)
-        try:
-            # Primero con response_format (JSON estructurado)
-            return _call_model(model_name, use_format=True)
-        except Exception as first_err:
-            # Si el error indica incompatibilidad con response_format, probamos sin él
-            try:
-                raw_response = None
-                # Llamada sin response_format
-                raw_response = _call_model(model_name, use_format=False)
-                # Si la respuesta ya es un dict, la devolvemos directamente
-                if isinstance(raw_response, dict):
-                    return raw_response
-                # Caso contrario, intentamos extraer JSON del texto
-                if isinstance(raw_response, str):
-                    match = re.search(
-                        r"```json\s*(\{.*?\})\s*```", raw_response, re.DOTALL)
-                    if not match:
-                        match = re.search(r"(\{.*\})", raw_response, re.DOTALL)
-                    if match:
-                        return json.loads(match.group(1))
-                # Si llega aquí, el fallback también falló; continuamos con el siguiente modelo
-                logger.warning(
-                    "Fallback extraction failed for model %s, moving to next model.",
-                    model_name,
-                )
-            except Exception as second_err:
-                logger.error(
-                    "Both attempts failed for model %s: first_err=%s, second_err=%s",
-                    model_name,
-                    first_err,
-                    second_err,
-                )
-                # Pasamos al siguiente modelo de la lista
-                continue
-
-    # Si agotamos todos los modelos, lanzamos una excepción genérica
-    raise APIException(
-        "All OpenRouter model attempts failed. Check API key, quota, and model compatibility.",
-        status_code=502,
-    )
+    return {
+        "openrouter_error": True,
+        "pipeline_diagnostics": [f"openrouter: {item}" for item in errors],
+    }
 
 
 def build_dream_rag_graph(
@@ -467,12 +280,21 @@ def build_dream_rag_graph(
         The vector is stored under ``dream_vector`` for downstream nodes that may
         need it. The original ``dream_text`` is also ensured in the state.
         """
+        diagnostics = list(state.get("pipeline_diagnostics") or [])
         dream_text = state.get("dream_text") or extract_dream_text(
             state.get("entry_payload")
         )
-        provider = EmbeddingProvider()
-        dream_vector = provider.embed_query(dream_text)
-        return {"dream_text": dream_text, "dream_vector": dream_vector}
+        try:
+            provider = EmbeddingProvider()
+            dream_vector = provider.embed_query(dream_text)
+        except Exception as exc:  # pragma: no cover - depends on remote provider
+            diagnostics.append(f"embedding: {type(exc).__name__}: {exc}")
+            dream_vector = []
+        return {
+            "dream_text": dream_text,
+            "dream_vector": dream_vector,
+            "pipeline_diagnostics": diagnostics,
+        }
 
     def retrieve(state: DreamRagState) -> DreamRagState:
         """Retrieve contextual passages from Qdrant based on the dream text.
@@ -481,6 +303,7 @@ def build_dream_rag_graph(
         operates on raw text, which remains valid. Keeping the signature unchanged
         preserves compatibility with existing tests.
         """
+        diagnostics = list(state.get("pipeline_diagnostics") or [])
         dream_text = state.get("dream_text") or extract_dream_text(
             state.get("entry_payload")
         )
@@ -489,14 +312,24 @@ def build_dream_rag_graph(
         if retrieval_service is None:
             try:
                 retrieval_service = DreamRetrievalService()
-            except Exception:
+            except Exception as exc:  # pragma: no cover - depends on remote provider
                 retrieval_service = None
+                diagnostics.append(
+                    f"qdrant: {type(exc).__name__}: {exc}"
+                )
         if retrieval_service is not None:
             try:
                 contexts = retrieval_service.retrieve_context(dream_text)
-            except Exception:
+            except Exception as exc:  # pragma: no cover - depends on remote provider
                 contexts = []
-        return {"dream_text": dream_text, "contexts": contexts}
+                diagnostics.append(
+                    f"qdrant: {type(exc).__name__}: {exc}"
+                )
+        return {
+            "dream_text": dream_text,
+            "contexts": contexts,
+            "pipeline_diagnostics": diagnostics,
+        }
 
     def assemble(state: DreamRagState) -> DreamRagState:
         payload = dict(state.get("entry_payload") or {})
@@ -504,17 +337,43 @@ def build_dream_rag_graph(
         return {"entry_payload": payload, "contexts": state.get("contexts") or []}
 
     def generate(state: DreamRagState) -> DreamRagState:
+        diagnostics = list(state.get("pipeline_diagnostics") or [])
         # La generación puede devolver un dict con la clave especial
         # ``openrouter_error`` cuando todos los modelos fallan.
-        gen_result = generator(
-            state.get("entry_payload") or {},
-            state.get("contexts") or [],
-            state.get("custom_key", custom_key),
-            state.get("selected_model", selected_model),
-        )
+        try:
+            gen_result = generator(
+                state.get("entry_payload") or {},
+                state.get("contexts") or [],
+                state.get("custom_key", custom_key),
+                state.get("selected_model", selected_model),
+            )
+        except Exception as exc:  # pragma: no cover - depends on remote provider
+            gen_result = {}
+            diagnostics.append(
+                f"openrouter: {type(exc).__name__}: {exc}"
+            )
+            openrouter_error = True
+            return {
+                "analysis": gen_result,
+                "openrouter_error": openrouter_error,
+                "pipeline_diagnostics": diagnostics,
+            }
+        # Propagar los diagnósticos que el generador haya reportado.
+        generator_diagnostics = gen_result.pop("pipeline_diagnostics", [])
+        if isinstance(generator_diagnostics, list):
+            diagnostics.extend(generator_diagnostics)
+
         # Separar la señal de error del análisis real.
         openrouter_error = bool(gen_result.pop("openrouter_error", False))
-        return {"analysis": gen_result, "openrouter_error": openrouter_error}
+        if openrouter_error:
+            diagnostics.append(
+                "openrouter: all models failed to generate a valid analysis"
+            )
+        return {
+            "analysis": gen_result,
+            "openrouter_error": openrouter_error,
+            "pipeline_diagnostics": diagnostics,
+        }
 
     graph = StateGraph(DreamRagState)
     graph.add_node("vectorize", vectorize)
@@ -548,6 +407,7 @@ def run_dream_rag_analysis(
         "entry_payload": entry_payload,
         "custom_key": custom_key,
         "selected_model": model,
+        "pipeline_diagnostics": [],
     }
     result = graph.invoke(initial_state)
     # ``result`` ahora contiene ``analysis`` y opcionalmente ``openrouter_error``.
@@ -556,4 +416,6 @@ def run_dream_rag_analysis(
         # Propagar la señal de error al llamador para que la capa superior pueda
         # incluirla en la respuesta JSON.
         analysis["openrouter_error"] = True
+    analysis["pipeline_diagnostics"] = result.get("pipeline_diagnostics", [])
     return analysis
+

@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timezone
 from sqlalchemy import Boolean, Integer, Float, ForeignKey, Text, DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -35,6 +36,7 @@ class NutritionLog(db.Model):
     total_weight_g: Mapped[float] = mapped_column(
         Float, default=0.0, nullable=False)
     meal_type: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    meal_breakdown: Mapped[str | None] = mapped_column(Text, nullable=True)
     other_excitants_present: Mapped[bool] = mapped_column(
         Boolean, default=False, nullable=False)
     raw_response: Mapped[str] = mapped_column(Text, nullable=True)
@@ -46,6 +48,19 @@ class NutritionLog(db.Model):
         "DailyEntry", back_populates="nutrition_log")
 
     def serialize(self):
+        try:
+            meal_breakdown = json.loads(self.meal_breakdown or "null")
+        except json.JSONDecodeError:
+            meal_breakdown = None
+        totals = (
+            meal_breakdown.get("totals")
+            if isinstance(meal_breakdown, dict)
+            else None
+        )
+
+        def get_total(key, fallback):
+            return totals.get(key, fallback) if totals else fallback
+
         has_nutrition_values = any(
             value is not None and value > 0
             for value in (
@@ -66,20 +81,30 @@ class NutritionLog(db.Model):
         return {
             "id": self.id,
             "entry_id": self.entry_id,
-            "calories": self.calories,
-            "protein_g": self.protein_g,
-            "carbohydrates_g": self.carbohydrates_g,
-            "sugar_g": self.sugar_g,
-            "fat_g": self.fat_g,
-            "caffeine_mg": self.caffeine_mg,
-            "alcohol_g": self.alcohol_g,
-            "omega3_mg": self.omega3_mg,
-            "sodium_mg": self.sodium_mg,
-            "vitamin_e_mg": self.vitamin_e_mg,
-            "vitamin_b12_ug": self.vitamin_b12_ug,
+            "calories": get_total("calories", self.calories),
+            "protein_g": get_total("protein_g", self.protein_g),
+            "carbohydrates_g": get_total(
+                "carbohydrates_g", self.carbohydrates_g
+            ),
+            "sugar_g": get_total("sugars_g", self.sugar_g),
+            "fat_g": get_total("fat_g", self.fat_g),
+            "caffeine_mg": get_total("caffeine_mg", self.caffeine_mg),
+            "alcohol_g": get_total("alcohol_g", self.alcohol_g),
+            "omega3_mg": get_total("omega3_mg", self.omega3_mg),
+            "sodium_mg": get_total("sodium_mg", self.sodium_mg),
+            "vitamin_e_mg": get_total("vitamin_e_mg", self.vitamin_e_mg),
+            "vitamin_b12_ug": get_total(
+                "vitamin_b12_ug", self.vitamin_b12_ug
+            ),
             "total_weight_g": self.total_weight_g,
             "meal_type": self.meal_type,
+            "meal_breakdown": meal_breakdown,
             "other_excitants_present": self.other_excitants_present,
-            "analyzed": bool(self.raw_response) and has_nutrition_values,
+            "analyzed": (
+                bool(self.raw_response) and has_nutrition_values
+            ) or bool(
+                isinstance(meal_breakdown, dict)
+                and meal_breakdown.get("items")
+            ),
             "created_at": self.created_at.isoformat() if self.created_at else None
         }

@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, date, timezone
 from typing import TYPE_CHECKING
 
@@ -136,6 +137,8 @@ class HabitLog(db.Model):
     screen_time: Mapped[str] = mapped_column(String(50), nullable=True)
     incidents: Mapped[str] = mapped_column(String(255), nullable=True)
     food_notes: Mapped[str] = mapped_column(Text, nullable=True)
+    meal_entries: Mapped[str | None] = mapped_column(Text, nullable=True)
+    sleep_context: Mapped[str | None] = mapped_column(Text, nullable=True)
     total_sleep_hours: Mapped[float | None] = mapped_column(Float, nullable=True)
     sleep_quality: Mapped[str] = mapped_column(String(50), nullable=True)
 
@@ -143,6 +146,14 @@ class HabitLog(db.Model):
         "DailyEntry", back_populates="habit_log")
 
     def serialize(self):
+        try:
+            meal_entries = json.loads(self.meal_entries or "{}")
+        except json.JSONDecodeError:
+            meal_entries = {}
+        try:
+            sleep_context = json.loads(self.sleep_context or "{}")
+        except json.JSONDecodeError:
+            sleep_context = {}
         return {
             "id": self.id,
             "entry_id": self.entry_id,
@@ -152,6 +163,8 @@ class HabitLog(db.Model):
             "screen_time": self.screen_time,
             "incidents": self.incidents,
             "food_notes": self.food_notes,
+            "meal_entries": meal_entries,
+            "sleep_context": sleep_context,
             "total_sleep_hours": self.total_sleep_hours,
             "sleep_quality": self.sleep_quality
         }

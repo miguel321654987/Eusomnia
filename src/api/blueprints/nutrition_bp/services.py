@@ -30,7 +30,7 @@ from .schemas import (
     NutrientStatus,
 )
 
-_TIMEOUT_SECONDS = 15
+_TIMEOUT_SECONDS = 12
 _TRANSLATION_CACHE: dict[str, str] = {}
 _TRANSLATION_CACHE_LOCK = threading.Lock()
 _TRANSLATION_TIMEOUT_SECONDS = float(

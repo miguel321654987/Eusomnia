@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { MemoryRouter, useLocation } from "react-router-dom";
+import { createMemoryRouter, RouterProvider, useLocation } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { RegistroDiario } from "./RegistroDiario.jsx";
 
@@ -32,6 +32,13 @@ const existingEntry = {
     screen_time: "< 1 hora (Filtro cálido)",
     incidents: "",
     food_notes: "Una taza de café",
+    sleep_context: {
+      bedtime: "23:00",
+      wake_time: "06:30",
+      last_caffeine_time: "15:00",
+      room_temperature_c: 19,
+      room_light: "dark",
+    },
     total_sleep_hours: 7,
   },
   nutrition_log: { analyzed: true, caffeine_mg: 80 },
@@ -87,12 +94,26 @@ describe("RegistroDiario edit mode", () => {
   });
 
   it("updates the effective date and refreshes changed nutrition and analysis", async () => {
-    render(
-      <MemoryRouter initialEntries={["/registro-diario?entryId=23"]}>
-        <RegistroDiario />
-        <LocationProbe />
-      </MemoryRouter>,
+    const router = createMemoryRouter(
+      [
+        {
+          path: "/registro-diario",
+          element: (
+            <>
+              <RegistroDiario />
+              <LocationProbe />
+            </>
+          ),
+        },
+        {
+          path: "*",
+          element: <LocationProbe />,
+        },
+      ],
+      { initialEntries: ["/registro-diario?entryId=23"] },
     );
+
+    render(<RouterProvider router={router} />);
 
     expect(await screen.findByText("Fecha original")).toBeInTheDocument();
     expect(screen.getByText("27 de octubre de 2026")).toBeInTheDocument();
@@ -119,8 +140,9 @@ describe("RegistroDiario edit mode", () => {
     expect(JSON.parse(patchRequest[1].body)).toMatchObject({
       date: "2026-10-29",
       habits: {
-        total_sleep_hours: 7,
+        total_sleep_hours: 7.5,
         sleep_quality: "Profundo",
+        sleep_context: existingEntry.habit_log.sleep_context,
       },
     });
 
@@ -129,7 +151,12 @@ describe("RegistroDiario edit mode", () => {
     );
     expect(JSON.parse(nutritionRequest[1].body)).toMatchObject({
       entry_id: 23,
-      ingredients: ["Dos tazas de café"],
+      meals: {
+        dinner: {
+          time: null,
+          foods: "Dos tazas de café",
+        },
+      },
     });
     expect(
       fetchMock.mock.calls.some(
