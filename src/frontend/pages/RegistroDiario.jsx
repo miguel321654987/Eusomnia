@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useBlocker,
+  useBeforeUnload,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { StepperHeader } from "../components/daily_entry/StepperHeader.jsx";
 import { SummaryCapsules } from "../components/daily_entry/SummaryCapsules.jsx";
@@ -10,6 +17,7 @@ import { StepNutrition } from "../components/daily_entry/StepNutrition.jsx";
 import { StepDreamJournal } from "../components/daily_entry/StepDreamJournal.jsx";
 import { SuccessScreen } from "../components/daily_entry/SuccessScreen.jsx";
 import { apiUrl } from "../api.js";
+import { getSleepDurationHours } from "../utils/sleepTime.js";
 
 const STEP_TITLES = {
   1: "Hábitos y Actividad física",
@@ -41,6 +49,119 @@ function parseList(value) {
     : [];
 }
 
+function createDefaultMealEntries() {
+  return {
+    breakfast: { size: null, time: "", foods: "", inputMode: "" },
+    mid_morning: { size: null, time: "", foods: "", inputMode: "" },
+    lunch: { size: null, time: "", foods: "", inputMode: "" },
+    snack: { size: null, time: "", foods: "", inputMode: "" },
+    dinner: { size: null, time: "", foods: "", inputMode: "" },
+    other: { size: null, time: "", foods: "", inputMode: "" },
+  };
+}
+
+function normalizeSleepContext(context = {}) {
+  return {
+    bedtime: context.bedtime || "",
+    wake_time: context.wake_time || "",
+    last_caffeine_time: context.last_caffeine_time || "",
+    room_temperature_c:
+      context.room_temperature_c === null ||
+      context.room_temperature_c === undefined
+        ? ""
+        : String(context.room_temperature_c),
+    room_light: context.room_light || "",
+  };
+}
+
+function getSleepContextPayload(context) {
+  const temperature = context.room_temperature_c.trim();
+  return {
+    bedtime: context.bedtime || null,
+    wake_time: context.wake_time || null,
+    last_caffeine_time: context.last_caffeine_time || null,
+    room_temperature_c: temperature ? Number(temperature) : null,
+    room_light: context.room_light || null,
+  };
+}
+
+function normalizeMealEntries(mealEntries, legacyFoodNotes = "") {
+  const defaults = createDefaultMealEntries();
+  if (!mealEntries || typeof mealEntries !== "object") {
+    defaults.dinner.foods = legacyFoodNotes || "";
+    defaults.dinner.inputMode = legacyFoodNotes?.trim()
+      ? "detailed"
+      : defaults.dinner.size
+        ? "generic"
+        : "";
+    return defaults;
+  }
+
+  for (const [mealId, defaultValue] of Object.entries(defaults)) {
+    const savedValue = mealEntries[mealId];
+    if (!savedValue || typeof savedValue !== "object") continue;
+    const foods = typeof savedValue.foods === "string" ? savedValue.foods : "";
+    const size = savedValue.size || null;
+    defaults[mealId] = {
+      ...defaultValue,
+      size,
+      time: Object.hasOwn(savedValue, "time")
+        ? savedValue.time || ""
+        : defaultValue.time,
+      foods,
+      inputMode: foods.trim() ? "detailed" : size ? "generic" : "",
+    };
+  }
+  return defaults;
+}
+
+function getMealEntriesPayload(mealEntries) {
+  return Object.fromEntries(
+    Object.entries(mealEntries).map(([mealId, meal]) => [
+      mealId,
+      {
+        size: meal.inputMode === "generic" ? meal.size || null : null,
+        time: meal.time || null,
+        foods: meal.inputMode === "detailed" ? meal.foods.trim() : "",
+      },
+    ]),
+  );
+}
+
+function getFormSnapshot(formData, entryDate) {
+  return JSON.stringify({
+    entryDate,
+    physicalActivity: formData.physicalActivity,
+    sleepHours: formData.sleepHours,
+    sleepQuality: formData.sleepQuality,
+    screenTime: formData.screenTime,
+    incidents: formData.incidents,
+    mealEntries: getMealEntriesPayload(formData.mealEntries),
+    sleepContext: getSleepContextPayload(formData.sleepContext),
+    dreamNarrative: formData.dreamNarrative,
+  });
+}
+
+function getCombinedFoodNotes(mealEntries) {
+  return Object.entries(mealEntries)
+    .filter(([, meal]) => meal.foods.trim())
+    .map(([mealId, meal]) => `${mealId}: ${meal.foods.trim()}`)
+    .join("\n");
+}
+
+function createDefaultFormData() {
+  return {
+    physicalActivity: "Media (Ejercicio regular)",
+    sleepHours: 7.5,
+    sleepQuality: "Profundo",
+    screenTime: "< 1 hora (Filtro cálido)",
+    incidents: ["🕊️ Día tranquilo y neutro"],
+    mealEntries: createDefaultMealEntries(),
+    sleepContext: normalizeSleepContext(),
+    dreamNarrative: "",
+  };
+}
+
 async function requestApi(path, token, options = {}) {
   const response = await fetch(apiUrl(path), {
     ...options,
@@ -69,6 +190,7 @@ async function requestApi(path, token, options = {}) {
 export const RegistroDiario = () => {
   const { store } = useGlobalReducer();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const entryId = searchParams.get("entryId");
   const token = store.token || localStorage.getItem("jwt-token");
@@ -76,9 +198,13 @@ export const RegistroDiario = () => {
   const hasSession = Boolean(token);
 
   const [currentStep, setCurrentStep] = useState(1);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(
+    Boolean(location.state?.savedEntryId),
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [savedEntryId, setSavedEntryId] = useState(null);
+  const [savedEntryId, setSavedEntryId] = useState(
+    location.state?.savedEntryId || null,
+  );
   const [statusMessage, setStatusMessage] = useState(null);
   const [editingEntry, setEditingEntry] = useState(null);
   const [isLoadingEntry, setIsLoadingEntry] = useState(
@@ -88,15 +214,36 @@ export const RegistroDiario = () => {
   const [entryDate, setEntryDate] = useState(getTodayDate);
   const [originalEntryDate, setOriginalEntryDate] = useState("");
 
-  const [formData, setFormData] = useState({
-    physicalActivity: "Media (Ejercicio regular)",
-    sleepHours: 7.5,
-    sleepQuality: "Profundo",
-    screenTime: "< 1 hora (Filtro cálido)",
-    incidents: ["🕊️ Día tranquilo y neutro"],
-    nutrition: ["Cena ligera / temprana"],
-    foodDescription: "",
-    dreamNarrative: "",
+  const [formData, setFormData] = useState(createDefaultFormData);
+  const [initialSnapshot, setInitialSnapshot] = useState(null);
+  const currentSnapshot = getFormSnapshot(formData, entryDate);
+  const isDirty =
+    !isSubmitted &&
+    !isLoadingEntry &&
+    !isSubmitting &&
+    initialSnapshot !== null &&
+    currentSnapshot !== initialSnapshot;
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      isDirty &&
+      (currentLocation.pathname !== nextLocation.pathname ||
+        currentLocation.search !== nextLocation.search ||
+        currentLocation.hash !== nextLocation.hash),
+  );
+
+  useEffect(() => {
+    if (!isEditing && initialSnapshot === null) {
+      const snapshot = getFormSnapshot(formData, entryDate);
+      void Promise.resolve().then(() => {
+        setInitialSnapshot(snapshot);
+      });
+    }
+  }, [entryDate, formData, isEditing, initialSnapshot]);
+
+  useBeforeUnload((event) => {
+    if (!isDirty) return;
+    event.preventDefault();
+    event.returnValue = "";
   });
 
   useEffect(() => {
@@ -125,25 +272,35 @@ export const RegistroDiario = () => {
 
         const habits = entry.habit_log || {};
         const savedDate = entry.entry_date || getTodayDate();
-        setEditingEntry(entry);
-        setEntryDate(savedDate);
-        setOriginalEntryDate(entry.original_entry_date || savedDate);
-        setFormData({
+        const sleepContext = normalizeSleepContext(habits.sleep_context);
+        const derivedSleepHours = getSleepDurationHours(
+          sleepContext.bedtime,
+          sleepContext.wake_time,
+        );
+        const loadedFormData = {
           physicalActivity: habits.physical_activity || "",
           sleepHours:
-            Number(habits.total_sleep_hours ?? habits.sleep_hours) || 7.5,
+            derivedSleepHours ??
+            (Number(habits.total_sleep_hours ?? habits.sleep_hours) || 7.5),
           sleepQuality:
             habits.sleep_quality || habits.bedtime_mood || "Profundo",
           screenTime: habits.screen_time || "",
           incidents: parseList(habits.incidents),
-          nutrition: parseList(habits.dinner_type),
-          foodDescription:
+          mealEntries: normalizeMealEntries(
+            habits.meal_entries,
             habits.food_notes || habits.nutrition_query || "",
+          ),
+          sleepContext,
           dreamNarrative:
             entry.sleep_report?.final_text ||
             entry.sleep_report?.raw_text ||
             "",
-        });
+        };
+        setEditingEntry(entry);
+        setEntryDate(savedDate);
+        setOriginalEntryDate(entry.original_entry_date || savedDate);
+        setFormData(loadedFormData);
+        setInitialSnapshot(getFormSnapshot(loadedFormData, savedDate));
       } catch (error) {
         if (isActive) {
             setLoadError(error.message || "No se pudo cargar el registro.");
@@ -174,6 +331,20 @@ export const RegistroDiario = () => {
   const handleScreensChange = (screens) => {
     setFormData((prev) => ({ ...prev, screenTime: screens }));
   };
+  const handleSleepContextChange = (changes) => {
+    setFormData((prev) => {
+      const sleepContext = { ...prev.sleepContext, ...changes };
+      const derivedSleepHours = getSleepDurationHours(
+        sleepContext.bedtime,
+        sleepContext.wake_time,
+      );
+      return {
+        ...prev,
+        sleepContext,
+        sleepHours: derivedSleepHours ?? prev.sleepHours,
+      };
+    });
+  };
 
   // Step 3: Incidents (multi-select)
   const handleToggleIncident = (incident) => {
@@ -193,26 +364,23 @@ export const RegistroDiario = () => {
     });
   };
 
-  // Step 4: Nutrition (multi-select)
-  const handleToggleNutrition = (nutr) => {
-    setFormData((prev) => {
-      const exists = prev.nutrition.includes(nutr);
-      if (exists) {
-        return {
-          ...prev,
-          nutrition: prev.nutrition.filter((n) => n !== nutr),
-        };
-      } else {
-        return {
-          ...prev,
-          nutrition: [...prev.nutrition, nutr],
-        };
-      }
-    });
-  };
-
-  const handleFoodDescriptionChange = (foodDescription) => {
-    setFormData((prev) => ({ ...prev, foodDescription }));
+  const handleMealEntryChange = (mealId, changes) => {
+    setFormData((prev) => ({
+      ...prev,
+      mealEntries: {
+        ...prev.mealEntries,
+        [mealId]: {
+          ...prev.mealEntries[mealId],
+          ...changes,
+          ...(changes.inputMode === "generic"
+            ? { foods: "", detailsExpanded: false }
+            : {}),
+          ...(changes.inputMode === "detailed"
+            ? { size: null, detailsExpanded: true }
+            : {}),
+        },
+      },
+    }));
   };
 
   // Step 5: Dream Narrative
@@ -224,9 +392,32 @@ export const RegistroDiario = () => {
     }));
   };
 
+  const persistLocalDraft = () => {
+    localStorage.setItem(
+      "eusomnia_daily_entry_draft",
+      JSON.stringify({
+        version: 1,
+        entryId: editingEntry?.id || null,
+        entryDate,
+        currentStep,
+        formData,
+        savedAt: new Date().toISOString(),
+      }),
+    );
+    setInitialSnapshot(getFormSnapshot(formData, entryDate));
+  };
+
   // Save Draft (Local)
   const handleSaveDraft = () => {
-    localStorage.setItem("eusomnia_daily_entry_draft", JSON.stringify(formData));
+    try {
+      persistLocalDraft();
+    } catch (error) {
+      setStatusMessage({
+        type: "error",
+        text: `No se pudo guardar el borrador local: ${error.message}`,
+      });
+      return;
+    }
     setStatusMessage({
       type: "success",
       text: "Borrador guardado localmente con éxito.",
@@ -257,7 +448,9 @@ export const RegistroDiario = () => {
     setIsSubmitting(true);
     setStatusMessage(null);
 
-    const foodDescription = formData.foodDescription.trim();
+    const mealEntries = getMealEntriesPayload(formData.mealEntries);
+    const foodNotes = getCombinedFoodNotes(formData.mealEntries);
+    const sleepContext = getSleepContextPayload(formData.sleepContext);
     const payload = {
       date: entryDate,
       sleep: {
@@ -266,13 +459,15 @@ export const RegistroDiario = () => {
       },
       habits: {
         physical_activity: formData.physicalActivity,
-        dinner_type: formData.nutrition.join(", "),
+        dinner_type: mealEntries.dinner.size || "",
         bedtime_mood: formData.sleepQuality,
         sleep_quality: formData.sleepQuality,
         screen_time: formData.screenTime,
         incidents: formData.incidents.join(", "),
         total_sleep_hours: Number(formData.sleepHours),
-        food_notes: foodDescription || null,
+        food_notes: foodNotes || null,
+        meal_entries: mealEntries,
+        sleep_context: sleepContext,
       },
     };
 
@@ -287,17 +482,26 @@ export const RegistroDiario = () => {
           },
         );
         const previousHabits = editingEntry.habit_log || {};
-        const previousFood =
-          previousHabits.food_notes || previousHabits.nutrition_query || "";
+        const previousMeals = normalizeMealEntries(
+          previousHabits.meal_entries,
+          previousHabits.food_notes || previousHabits.nutrition_query || "",
+        );
         const foodChanged =
-          previousFood.trim() !== foodDescription;
+          JSON.stringify(getMealEntriesPayload(previousMeals)) !==
+          JSON.stringify(mealEntries);
+        const sleepContextChanged =
+          JSON.stringify(
+            getSleepContextPayload(
+              normalizeSleepContext(previousHabits.sleep_context),
+            ),
+          ) !== JSON.stringify(sleepContext);
         const normalizedList = (value) =>
           parseList(value).join(", ").toLocaleLowerCase("es");
         const habitsChanged =
           String(previousHabits.physical_activity || "") !==
             formData.physicalActivity ||
           normalizedList(previousHabits.dinner_type) !==
-            normalizedList(formData.nutrition.join(", ")) ||
+            normalizedList(mealEntries.dinner.size || "") ||
           String(
             previousHabits.sleep_quality ||
               previousHabits.bedtime_mood ||
@@ -307,7 +511,8 @@ export const RegistroDiario = () => {
           normalizedList(previousHabits.incidents) !==
             normalizedList(formData.incidents.join(", ")) ||
           Number(previousHabits.total_sleep_hours) !==
-            Number(formData.sleepHours);
+            Number(formData.sleepHours) ||
+          sleepContextChanged;
         const sleepChanged =
           (editingEntry.sleep_report?.raw_text ||
             editingEntry.sleep_report?.final_text ||
@@ -318,12 +523,14 @@ export const RegistroDiario = () => {
 
         if (foodChanged) {
           try {
-            if (foodDescription) {
+            if (Object.values(mealEntries).some(
+              (meal) => meal.size || meal.foods,
+            )) {
               await requestApi("/api/nutrition/log", token, {
                 method: "POST",
                 body: {
                   entry_id: editingEntry.id,
-                  ingredients: [foodDescription],
+                  meals: mealEntries,
                 },
               });
             } else if (editingEntry.nutrition_log) {
@@ -383,6 +590,10 @@ export const RegistroDiario = () => {
 
       setSavedEntryId(createdEntryId);
       setIsSubmitted(true);
+      navigate("/registro-diario", {
+        replace: true,
+        state: { savedEntryId: createdEntryId },
+      });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
       setStatusMessage({
@@ -392,6 +603,19 @@ export const RegistroDiario = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleStartNewEntry = () => {
+    const newFormData = createDefaultFormData();
+    setFormData(newFormData);
+    setEntryDate(getTodayDate());
+    setCurrentStep(1);
+    setSavedEntryId(null);
+    setIsSubmitted(false);
+    setStatusMessage(null);
+    setEditingEntry(null);
+    setInitialSnapshot(getFormSnapshot(newFormData, getTodayDate()));
+    navigate("/registro-diario", { replace: true, state: null });
   };
 
   return (
@@ -433,6 +657,70 @@ export const RegistroDiario = () => {
             }}
           >
             {statusMessage.text}
+          </div>
+        )}
+
+        {blocker.state === "blocked" && (
+          <div
+            className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center p-3"
+            style={{ zIndex: 1100, background: "rgba(4, 10, 20, 0.82)" }}
+          >
+            <section
+              className="eusomnia-card p-4 shadow-lg w-100"
+              style={{ maxWidth: "520px" }}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="unsaved-entry-title"
+              aria-describedby="unsaved-entry-description"
+            >
+              <h2
+                id="unsaved-entry-title"
+                className="font-headline h5 text-light"
+              >
+                Tienes cambios sin guardar
+              </h2>
+              <p
+                id="unsaved-entry-description"
+                className="font-body text-secondary"
+              >
+                Puedes seguir editando, conservar un borrador local o salir sin
+                guardar estos cambios.
+              </p>
+              <div className="d-flex flex-column flex-sm-row justify-content-end gap-2">
+                <button
+                  type="button"
+                  className="btn btn-eusomnia-secondary"
+                  onClick={() => blocker.reset()}
+                >
+                  Seguir editando
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline-warning"
+                  onClick={() => {
+                    try {
+                      persistLocalDraft();
+                      blocker.proceed();
+                    } catch (error) {
+                      blocker.reset();
+                      setStatusMessage({
+                        type: "error",
+                        text: `No se pudo guardar el borrador local: ${error.message}`,
+                      });
+                    }
+                  }}
+                >
+                  Guardar borrador y salir
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-outline-danger"
+                  onClick={() => blocker.proceed()}
+                >
+                  Salir sin guardar
+                </button>
+              </div>
+            </section>
           </div>
         )}
 
@@ -492,7 +780,10 @@ export const RegistroDiario = () => {
             />
 
             {isSubmitted ? (
-              <SuccessScreen entryId={savedEntryId} />
+              <SuccessScreen
+                entryId={savedEntryId}
+                onStartNew={handleStartNewEntry}
+              />
             ) : (
               <div className="d-flex flex-column gap-3">
             {/* Summary of completed steps with Edit action */}
@@ -516,6 +807,8 @@ export const RegistroDiario = () => {
                 sleepHours={formData.sleepHours}
                 sleepQuality={formData.sleepQuality}
                 screenTime={formData.screenTime}
+                sleepContext={formData.sleepContext}
+                onChangeSleepContext={handleSleepContextChange}
                 onChangeHours={handleHoursChange}
                 onChangeQuality={handleQualityChange}
                 onChangeScreens={handleScreensChange}
@@ -535,10 +828,11 @@ export const RegistroDiario = () => {
 
             {currentStep === 4 && (
               <StepNutrition
-                selectedNutrition={formData.nutrition}
-                onToggleNutrition={handleToggleNutrition}
-                foodDescription={formData.foodDescription}
-                onChangeFoodDescription={handleFoodDescriptionChange}
+                mealEntries={formData.mealEntries}
+                sleepContext={formData.sleepContext}
+                token={token}
+                onChangeMealEntry={handleMealEntryChange}
+                onChangeSleepContext={handleSleepContextChange}
                 onBack={() => setCurrentStep(3)}
                 onNext={() => setCurrentStep(5)}
               />

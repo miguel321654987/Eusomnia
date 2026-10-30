@@ -37,6 +37,112 @@ def test_create_and_retrieve_daily_entry(client, auth_header, app):
     assert entry["sleep_report"]["raw_text"] == "Dormí ocho horas"
 
 
+def test_daily_entry_persists_structured_meal_entries(client, auth_header):
+    meal_entries = {
+        "breakfast": {"size": "light", "time": "08:15", "foods": ""},
+        "mid_morning": {"size": None, "time": "11:00", "foods": ""},
+        "lunch": {"size": None, "time": "14:00", "foods": "150 g de arroz"},
+        "snack": {"size": None, "time": "17:30", "foods": ""},
+        "dinner": {"size": None, "time": "21:00", "foods": ""},
+        "other": {"size": None, "time": "23:10", "foods": "Un yogur"},
+    }
+    response = client.post(
+        "/daily",
+        json={
+            "sleep": {"raw_text": "Sueño de prueba"},
+            "habits": {"meal_entries": meal_entries},
+        },
+        headers=auth_header,
+    )
+
+    assert response.status_code == 201
+    result = response.get_json()["results"]
+    assert result["habit_log"]["meal_entries"] == meal_entries
+
+    updated_meals = {**meal_entries, "dinner": {
+        "size": None, "time": "22:00", "foods": "Pizza",
+    }}
+    update_response = client.patch(
+        f"/daily/{result['id']}",
+        json={"habits": {"meal_entries": updated_meals}},
+        headers=auth_header,
+    )
+    assert update_response.status_code == 200
+    assert update_response.get_json()["results"]["habit_log"][
+        "meal_entries"
+    ] == updated_meals
+
+
+def test_daily_entry_persists_sleep_context(client, auth_header):
+    sleep_context = {
+        "bedtime": "23:10",
+        "wake_time": "07:05",
+        "last_caffeine_time": "16:00",
+        "room_temperature_c": 18.5,
+        "room_light": "dark",
+    }
+    response = client.post(
+        "/daily",
+        json={
+            "sleep": {"raw_text": "Sueño de prueba"},
+            "habits": {"sleep_context": sleep_context},
+        },
+        headers=auth_header,
+    )
+
+    assert response.status_code == 201
+    result = response.get_json()["results"]
+    assert result["habit_log"]["sleep_context"] == sleep_context
+
+    updated_context = {**sleep_context, "room_light": "dim"}
+    update_response = client.patch(
+        f"/daily/{result['id']}",
+        json={"habits": {"sleep_context": updated_context}},
+        headers=auth_header,
+    )
+    assert update_response.status_code == 200
+    assert update_response.get_json()["results"]["habit_log"][
+        "sleep_context"
+    ] == updated_context
+
+
+def test_daily_entry_rejects_invalid_sleep_context(client, auth_header):
+    response = client.post(
+        "/daily",
+        json={
+            "sleep": {"raw_text": "Sueño de prueba"},
+            "habits": {
+                "sleep_context": {
+                    "bedtime": "25:90",
+                    "room_temperature_c": 41,
+                }
+            },
+        },
+        headers=auth_header,
+    )
+
+    assert response.status_code == 400
+    assert "bedtime" in response.get_json()["message"]
+
+
+def test_daily_entry_rejects_invalid_meal_fields(client, auth_header):
+    response = client.post(
+        "/daily",
+        json={
+            "sleep": {"raw_text": "Sueño de prueba"},
+            "habits": {
+                "meal_entries": {
+                    "dinner": {"size": "huge", "time": "25:90", "foods": ""}
+                }
+            },
+        },
+        headers=auth_header,
+    )
+
+    assert response.status_code == 400
+    assert "size" in response.get_json()["message"]
+
+
 def test_update_daily_entry_preserves_original_date(client, auth_header, app):
     from api.blueprints.daily_entries_bp.models import DailyEntry, HabitLog
     from api.extensions import db

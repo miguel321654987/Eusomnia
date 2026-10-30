@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export const QuickAccessSection = ({ user }) => {
+export const QuickAccessSection = ({ user, pendingAnalysisCount = 0 }) => {
   const userName = user?.name || user?.username || user?.email || null;
 
   return (
@@ -39,8 +39,14 @@ export const QuickAccessSection = ({ user }) => {
             </div>
             <p className="font-body text-secondary small mb-0" style={{ maxWidth: "560px" }}>
               {userName
-                ? "Tienes 1 reporte matutino pendiente de revisión con IA. ¿Quieres registrar el descanso de anoche o revisar las recomendaciones de tu cena?"
-                : "Crea tu cuenta o inicia sesión para sincronizar tus biométricas circadianas, correlacionar tus cenas con la fase REM y desvelar los símbolos de tu subconsciente."}
+                ? pendingAnalysisCount > 0
+                  ? `Tienes ${pendingAnalysisCount} ${
+                      pendingAnalysisCount === 1
+                        ? "registro pendiente de análisis"
+                        : "registros pendientes de análisis"
+                    }. Puedes generar sus resultados o registrar una nueva noche.`
+                  : "Tus registros están al día. Puedes revisar tu historial o añadir una nueva noche."
+                : "Crea tu cuenta o inicia sesión para guardar tus hábitos, analizar tus comidas y explorar las interpretaciones vinculadas a tus relatos."}
             </p>
           </div>
         </div>

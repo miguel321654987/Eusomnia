@@ -1,9 +1,11 @@
 import json
+from datetime import datetime, timezone
 from typing import Any
 
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 
 from api.extensions import db
 from api.utils import APIException
@@ -65,33 +67,77 @@ def analyze_daily_entry(entry_id):
     analysis_data = run_unified_ai_analysis(
         entry_data, custom_key=custom_key, model=selected_model)
 
-    existing_analysis = entry.analysis
-    if existing_analysis:
-        db.session.delete(existing_analysis)
-        db.session.flush()
-
-    new_analysis = SleepAnalysis(
-        entry_id=entry.id,
-        interpretation=analysis_data.get("interpretation", ""),
-        predominant_emotions=json.dumps(
+    analysis_values = {
+        "interpretation": analysis_data.get("interpretation", ""),
+        "predominant_emotions": json.dumps(
             analysis_data.get("predominant_emotions", [])),
-        detected_symbols=json.dumps(
+        "detected_symbols": json.dumps(
             analysis_data.get("detected_symbols", [])),
-        habits_reading=_serialize_text_field(
+        "habits_reading": _serialize_text_field(
             analysis_data.get("habits_reading", "")),
-        patterns_detected=_serialize_text_field(
+        "patterns_detected": _serialize_text_field(
             analysis_data.get("patterns_detected", "")),
-        recommendations=json.dumps(analysis_data.get("recommendations", [])),
-        alerts=json.dumps(analysis_data.get("alerts", [])),
-        raw_json_response=json.dumps(analysis_data)
-    )
+        "recommendations": json.dumps(analysis_data.get("recommendations", [])),
+        "alerts": json.dumps(analysis_data.get("alerts", [])),
+        "raw_json_response": json.dumps(analysis_data),
+    }
 
-    db.session.add(new_analysis)
-    db.session.commit()
+    existing_analysis = db.session.execute(
+        select(SleepAnalysis).where(SleepAnalysis.entry_id == entry.id)
+    ).scalar_one_or_none()
+
+    if existing_analysis is not None:
+        for field, value in analysis_values.items():
+            setattr(existing_analysis, field, value)
+        existing_analysis.created_at = datetime.now(timezone.utc)
+        new_analysis = existing_analysis
+    else:
+        new_analysis = SleepAnalysis(
+            entry_id=entry.id,
+            **analysis_values,
+        )
+        db.session.add(new_analysis)
+
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        existing_analysis = db.session.execute(
+            select(SleepAnalysis).where(SleepAnalysis.entry_id == entry.id)
+        ).scalar_one_or_none()
+        if existing_analysis is None:
+            # Extremely unlikely race: no row visible after rollback. Avoid data loss.
+            new_analysis = SleepAnalysis(
+                entry_id=entry.id,
+                **analysis_values,
+            )
+            db.session.add(new_analysis)
+            db.session.commit()
+        else:
+            for field, value in analysis_values.items():
+                setattr(existing_analysis, field, value)
+            existing_analysis.created_at = datetime.now(timezone.utc)
+            db.session.commit()
+            new_analysis = existing_analysis
+
+    diagnostics = analysis_data.get("pipeline_diagnostics", [])
+    if diagnostics:
+        try:
+            raw_json = json.loads(new_analysis.raw_json_response or "{}")
+        except (TypeError, ValueError):
+            raw_json = {}
+        raw_json.setdefault("pipeline_diagnostics", [])
+        raw_json["pipeline_diagnostics"] = diagnostics
+        new_analysis.raw_json_response = json.dumps(raw_json, ensure_ascii=False)
+        db.session.commit()
+
+    results_payload = new_analysis.serialize()
+    results_payload = results_payload.copy()
+    results_payload["diagnostics"] = diagnostics
 
     return jsonify({
         "message": "Analysis completed successfully",
-        "results": new_analysis.serialize()
+        "results": results_payload
     }), 200
 
 

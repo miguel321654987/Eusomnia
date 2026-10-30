@@ -19,12 +19,12 @@ export const RestArchitectureSection = () => {
               Arquitectura del Descanso
             </span>
             <h2 className="font-headline display-6 fw-bold text-light mb-0">
-              Tu santuario nocturno respaldado por ciencia clínica
+              Ideas sencillas para preparar el descanso
             </h2>
             <p className="font-body text-secondary mb-0" style={{ lineHeight: 1.6 }}>
-              Desde la regulación de luxes ambientales hasta la amortiguación del
-              cortisol nocturno, Eusomnia modela tu entorno óptimo para una fase
-              NREM 3 restauradora y sueños lúcidos no fragmentados.
+              Eusomnia te ayuda a registrar hábitos y revisar patrones personales.
+              Estos consejos son generales: la aplicación no mide la temperatura,
+              la luz ni las fases del sueño de tu habitación.
             </p>
 
             {/* Environmental Metric Pills */}
@@ -41,8 +41,8 @@ export const RestArchitectureSection = () => {
                     thermostat
                   </span>
                   <div>
-                    <div className="font-headline h5 fw-bold text-light mb-0">18.5° C</div>
-                    <div className="font-body small text-secondary">Temp. Óptima Cuarto</div>
+                    <div className="font-headline h5 fw-bold text-light mb-0">Ambiente fresco</div>
+                    <div className="font-body small text-secondary">Consejo general, no medición</div>
                   </div>
                 </div>
               </div>
@@ -59,15 +59,15 @@ export const RestArchitectureSection = () => {
                     wb_twilight
                   </span>
                   <div>
-                    <div className="font-headline h5 fw-bold text-light mb-0">&lt; 10 Lux</div>
-                    <div className="font-body small text-secondary">Luz Azul Cero 60m</div>
+                    <div className="font-headline h5 fw-bold text-light mb-0">Luz tenue</div>
+                    <div className="font-body small text-secondary">Reduce estímulos antes de dormir</div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Architectural Image & HUD Sensor Overlay */}
+          {/* Right Column: Illustrative rest environment */}
           <div className="col-12 col-lg-5">
             <div
               className="position-relative rounded-4 overflow-hidden shadow-lg"
@@ -79,7 +79,7 @@ export const RestArchitectureSection = () => {
                 className="w-100 h-100 object-fit-cover"
                 style={{ objectFit: "cover" }}
               />
-              {/* Sensor Badge Overlay */}
+              {/* General guidance label */}
               <div
                 className="position-absolute bottom-0 start-0 end-0 p-3"
                 style={{
@@ -96,7 +96,7 @@ export const RestArchitectureSection = () => {
                 >
                   <span className="pulse-dot-cyan" />
                   <span className="font-label small fw-semibold text-light">
-                    Sensor de Entorno • Listo para dormir
+                    Recomendación general • Sin sensor conectado
                   </span>
                 </div>
               </div>
@@ -107,4 +107,3 @@ export const RestArchitectureSection = () => {
     </section>
   );
 };
-

@@ -180,6 +180,70 @@ def test_log_upsert_keeps_a_single_row(api_env):
     assert stored.status_code == 200
 
 
+def test_log_calculates_generic_meal_estimates_with_explicit_source(api_env):
+    response = api_env["client"].post(
+        "/nutrition/log",
+        json={
+            "entry_id": api_env["entry_id"],
+            "meals": {
+                "breakfast": {"size": "light", "time": "08:00", "foods": ""},
+                "dinner": {"size": "heavy", "time": "21:30", "foods": ""},
+            },
+        },
+        headers=api_env["auth"],
+    )
+
+    assert response.status_code == 201
+    result = response.get_json()["results"]
+    breakdown = result["meal_breakdown"]
+    assert result["calories"] == 1200
+    assert result["caffeine_mg"] is None
+    assert result["analyzed"] is True
+    assert breakdown["source"] == "generic"
+    assert breakdown["items"][0]["source"] == "generic"
+    assert breakdown["items"][0]["values"]["calories"] == 350
+    assert breakdown["items"][1]["values"]["calories"] == 850
+    assert breakdown["items"][0]["reference_note"]
+
+
+def test_log_keeps_edamam_and_generic_sources_separate(api_env):
+    response = api_env["client"].post(
+        "/nutrition/log",
+        json={
+            "entry_id": api_env["entry_id"],
+            "meals": {
+                "breakfast": {"size": "light", "time": "08:00", "foods": ""},
+                "dinner": {
+                    "size": None,
+                    "time": "21:00",
+                    "foods": "150 g de arroz",
+                },
+            },
+        },
+        headers=api_env["auth"],
+    )
+
+    assert response.status_code == 201
+    result = response.get_json()["results"]
+    breakdown = result["meal_breakdown"]
+    assert breakdown["source"] == "mixed"
+    assert breakdown["items"][0]["source"] == "generic"
+    assert breakdown["items"][1]["source"] == "edamam"
+    assert result["calories"] == 850
+    assert result["caffeine_mg"] is None
+
+
+def test_log_rejects_empty_meal_breakdown(api_env):
+    response = api_env["client"].post(
+        "/nutrition/log",
+        json={"entry_id": api_env["entry_id"], "meals": {}},
+        headers=api_env["auth"],
+    )
+
+    assert response.status_code == 400
+    assert "At least one meal" in response.get_json()["message"]
+
+
 def test_log_rejects_unknown_meal_type(api_env):
     response = api_env["client"].post(
         "/nutrition/log",
@@ -310,4 +374,3 @@ def test_evaluate_returns_404_without_log(api_env):
     )
 
     assert response.status_code == 404
-

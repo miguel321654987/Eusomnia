@@ -18,6 +18,7 @@ export const DreamAnalysisSection = ({
   habitsReading,
   originalDream,
   recordedTime,
+  isGenerating = false,
 }) => {
   const [expandedSymbol, setExpandedSymbol] = useState(null);
   const timeLabel = formatRecordedTime(recordedTime);
@@ -46,7 +47,9 @@ export const DreamAnalysisSection = ({
               Interpretación del sueño
             </h2>
             <p className="font-body small text-secondary mb-0">
-              Resultado guardado del análisis con IA
+              {isGenerating
+                ? "La nutrición se muestra mientras se genera la interpretación."
+                : "Resultado del análisis con IA"}
             </p>
           </div>
         </div>
@@ -95,7 +98,25 @@ export const DreamAnalysisSection = ({
             >
               Símbolos detectados
             </span>
-            {symbols.map((symbol) => {
+            {symbols.some((s) => !s.content && !s.archetype) && (
+              <div className="d-flex flex-wrap gap-2">
+                {symbols.filter((s) => !s.content && !s.archetype).map((symbol) => (
+                  <span
+                    key={symbol.id}
+                    className="badge rounded-pill px-3 py-2 font-label small d-inline-flex align-items-center gap-2"
+                    style={{
+                      background: "rgba(171, 201, 241, 0.12)",
+                      color: "var(--eusomnia-secondary)",
+                      border: "1px solid rgba(255, 255, 255, 0.08)",
+                    }}
+                  >
+                    {symbol.emoji && <span aria-hidden="true">{symbol.emoji}</span>}
+                    <span>{symbol.title}</span>
+                  </span>
+                ))}
+              </div>
+            )}
+            {symbols.filter((s) => s.content || s.archetype).map((symbol) => {
               const isExpanded = expandedSymbol === symbol.id;
               return (
                 <div key={symbol.id} className="symbol-accordion-item">
@@ -131,7 +152,7 @@ export const DreamAnalysisSection = ({
                   </button>
                   {isExpanded && (
                     <div className="symbol-accordion-body font-body">
-                      {symbol.content || "El análisis no incluyó más detalles para este símbolo."}
+                      {symbol.content}
                     </div>
                   )}
                 </div>
@@ -154,7 +175,10 @@ export const DreamAnalysisSection = ({
             Síntesis del análisis
           </span>
           <p className="font-body small text-light mb-0" style={{ lineHeight: 1.6 }}>
-            {synthesis || "El análisis todavía no contiene una interpretación."}
+            {synthesis ||
+              (isGenerating
+                ? "Generando la interpretación del sueño..."
+                : "El análisis todavía no contiene una interpretación.")}
           </p>
           {habitsReading && (
             <p className="font-body small text-secondary mb-0" style={{ lineHeight: 1.6 }}>

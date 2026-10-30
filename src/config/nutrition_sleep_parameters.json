@@ -107,6 +107,43 @@
     }
   },
 
+  "generic_meal_estimates": {
+    "metadata": {
+      "version": "1",
+      "source": "Modelo orientativo interno de Eusomnia",
+      "note": "Perfil interno orientativo con porción estandarizada por tamaño; no describe alimentos concretos ni sustituye un análisis de ingredientes. Revisar estos promedios antes de utilizarlos como referencia clínica."
+    },
+    "sizes": {
+      "light": {
+        "portion_weight_g": 250,
+        "calories": 350,
+        "protein_g": 15,
+        "carbohydrates_g": 45,
+        "sugars_g": 8,
+        "fat_g": 12,
+        "sodium_mg": 500
+      },
+      "medium": {
+        "portion_weight_g": 400,
+        "calories": 600,
+        "protein_g": 25,
+        "carbohydrates_g": 75,
+        "sugars_g": 18,
+        "fat_g": 22,
+        "sodium_mg": 800
+      },
+      "heavy": {
+        "portion_weight_g": 550,
+        "calories": 850,
+        "protein_g": 35,
+        "carbohydrates_g": 105,
+        "sugars_g": 28,
+        "fat_g": 32,
+        "sodium_mg": 1100
+      }
+    }
+  },
+
   "calculation_rules": {
     "protein_per_meal": "protein_g * (meal_weight_factor / sum_of_all_factors)",
     "carbs_per_meal": "total_carbs_g * (meal_weight_factor / sum_of_all_factors)",

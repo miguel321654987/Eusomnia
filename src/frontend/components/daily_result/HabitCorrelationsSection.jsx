@@ -2,8 +2,20 @@ const formatMetric = (value, unit = "") => {
   if (value === null || value === undefined || value === "") {
     return "No informado";
   }
-  return `${value}${unit ? ` ${unit}` : ""}`;
+  const formattedValue =
+    typeof value === "number" ? Number(value.toFixed(1)).toString() : value;
+  return `${formattedValue}${unit ? ` ${unit}` : ""}`;
 };
+
+const MEAL_NUTRIENTS = [
+  { key: "calories", label: "Energía", unit: "kcal" },
+  { key: "protein_g", label: "Proteínas", unit: "g" },
+  { key: "carbohydrates_g", label: "Carbohidratos", unit: "g" },
+  { key: "sugars_g", label: "Azúcares", unit: "g" },
+  { key: "fat_g", label: "Grasas", unit: "g" },
+  { key: "sodium_mg", label: "Sodio", unit: "mg" },
+  { key: "caffeine_mg", label: "Cafeína", unit: "mg" },
+];
 
 export const HabitCorrelationsSection = ({
   context = {},
@@ -27,7 +39,17 @@ export const HabitCorrelationsSection = ({
     { label: "Pantallas", value: context.screens, icon: "devices" },
     { label: "Calidad percibida", value: context.mood, icon: "self_improvement" },
     { label: "Cena registrada", value: context.dinner, icon: "restaurant" },
+    { label: "Hora de acostarse declarada", value: context.bedtime, icon: "bedtime" },
+    { label: "Hora de despertar declarada", value: context.wakeTime, icon: "alarm" },
+    { label: "Última cafeína declarada", value: context.lastCaffeineTime, icon: "coffee" },
+    { label: "Temperatura declarada", value: context.roomTemperature, icon: "thermostat" },
+    { label: "Luz declarada", value: context.roomLight, icon: "light_mode" },
   ];
+  const mealBreakdown = nutrition?.mealBreakdown;
+  const mealItems = Array.isArray(mealBreakdown?.items)
+    ? mealBreakdown.items
+    : [];
+  const nutritionTotals = mealBreakdown?.totals || {};
 
   return (
     <div className="d-flex flex-column gap-4">
@@ -46,7 +68,7 @@ export const HabitCorrelationsSection = ({
           </div>
           <div>
             <h2 className="font-headline h5 fw-bold text-light mb-0">
-              Hábitos y fisiología
+              Hábitos y nutrición
             </h2>
             <p className="font-body small text-secondary mb-0">
               Datos del registro y análisis nutricional persistido
@@ -63,9 +85,17 @@ export const HabitCorrelationsSection = ({
               Nutrición
             </span>
             <span style={{ color: "var(--eusomnia-primary)", fontSize: "0.75rem" }}>
-              Edamam
+              {nutrition?.sourceLabel || "Edamam"}
             </span>
           </div>
+          {mealBreakdown?.generic_reference && (
+            <p className="font-body small text-secondary mb-0">
+              Estimación media genérica definida como referencia interna por
+              Eusomnia: no se calcula a partir de tus alimentos ni es una
+              medición. Añade alimentos y cantidades para un análisis más
+              específico con Edamam.
+            </p>
+          )}
           {nutrition ? (
             <div className="row g-2">
               {nutritionMetrics.map((metric) => (
@@ -91,6 +121,68 @@ export const HabitCorrelationsSection = ({
                 : "Este registro no incluye una descripción de alimentos para analizar."}
             </p>
           )}
+          {mealItems.length > 0 && (
+            <div className="table-responsive">
+              <table className="table table-dark table-sm align-middle mb-0">
+                <caption className="caption-top text-secondary small">
+                  Valores por ingesta y procedencia
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Ingesta</th>
+                    <th scope="col">Fuente</th>
+                    {MEAL_NUTRIENTS.slice(0, 5).map((nutrient) => (
+                      <th scope="col" key={nutrient.key}>
+                        {nutrient.label}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {mealItems.map((meal) => (
+                    <tr key={meal.meal_type}>
+                      <th scope="row">
+                        {meal.label}
+                        {meal.time ? ` · ${meal.time}` : ""}
+                      </th>
+                      <td>
+                        {meal.source === "generic"
+                          ? `Estimación · ${meal.reference_portion_g} g de referencia`
+                          : meal.source === "edamam"
+                            ? "Edamam"
+                            : "No disponible"}
+                        {meal.error && (
+                          <span className="d-block text-warning small">
+                            {meal.error}
+                          </span>
+                        )}
+                      </td>
+                      {MEAL_NUTRIENTS.slice(0, 5).map((nutrient) => (
+                        <td key={nutrient.key}>
+                          {formatMetric(
+                            meal.values?.[nutrient.key],
+                            nutrient.unit,
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                  <tr className="fw-bold">
+                    <th scope="row">Total disponible</th>
+                    <td>{nutrition?.sourceLabel || "—"}</td>
+                    {MEAL_NUTRIENTS.slice(0, 5).map((nutrient) => (
+                      <td key={nutrient.key}>
+                        {formatMetric(
+                          nutritionTotals[nutrient.key],
+                          nutrient.unit,
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         <div className="d-flex flex-column gap-2">
@@ -100,6 +192,9 @@ export const HabitCorrelationsSection = ({
           >
             Contexto registrado
           </span>
+          <p className="font-body small text-secondary mb-0">
+            Hábitos y entorno declarados por ti; no son mediciones de sensores.
+          </p>
           <div className="row g-2 font-body small">
             {contextMetrics.map((metric) => (
               <div

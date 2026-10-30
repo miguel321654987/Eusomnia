@@ -80,6 +80,14 @@ class SleepAnalysis(db.Model):
         if not isinstance(patterns_detected, (list, dict)):
             patterns_detected = self.patterns_detected
 
+        try:
+            raw_json = json.loads(self.raw_json_response or "{}")
+        except (TypeError, ValueError):
+            raw_json = {}
+        diagnostics = raw_json.get("pipeline_diagnostics")
+        if not isinstance(diagnostics, list):
+            diagnostics = []
+
         return {
             "id": self.id,
             "entry_id": self.entry_id,
@@ -90,5 +98,6 @@ class SleepAnalysis(db.Model):
             "patterns_detected": patterns_detected,
             "recommendations": json.loads(self.recommendations or "[]"),
             "alerts": json.loads(self.alerts or "[]"),
+            "diagnostics": diagnostics,
             "created_at": self.created_at.isoformat() if self.created_at else None
         }

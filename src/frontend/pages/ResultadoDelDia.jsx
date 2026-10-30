@@ -6,21 +6,51 @@ import { SomnolenceGauges } from "../components/daily_result/SomnolenceGauges.js
 import { HygienicAlertBanner } from "../components/daily_result/HygienicAlertBanner.jsx";
 import { DreamAnalysisSection } from "../components/daily_result/DreamAnalysisSection.jsx";
 import { HabitCorrelationsSection } from "../components/daily_result/HabitCorrelationsSection.jsx";
+import { RecommendationsPanel } from "../components/daily_result/RecommendationsPanel.jsx";
 import { apiUrl } from "../api.js";
 
 async function requestApi(path, token, options = {}) {
-  const response = await fetch(apiUrl(path), {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      ...options.headers,
-    },
-  });
-  const data = await response.json();
+  const timeoutMs = options.timeout ?? 60000;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  let response;
+  try {
+    response = await fetch(apiUrl(path), {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        ...options.headers,
+      },
+    });
+  } catch (error) {
+    clearTimeout(timer);
+    if (error?.name === "AbortError") {
+      throw new Error(
+        "La solicitud superó el tiempo máximo de espera. Vuelve a intentarlo más tarde.",
+        { cause: error },
+      );
+    }
+    throw error;
+  }
+  clearTimeout(timer);
+
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    if (response.ok) {
+      throw new Error("El servidor devolvió una respuesta no válida.");
+    }
+    throw new Error(`El servidor devolvió un error HTTP ${response.status}.`);
+  }
 
   if (!response.ok) {
-    throw new Error(data.message || "No se pudo completar la solicitud.");
+    throw new Error(
+      data.message ||
+        `No se pudo completar la solicitud (HTTP ${response.status}).`,
+    );
   }
 
   return data.results;
@@ -45,14 +75,18 @@ export const ResultadoDelDia = () => {
   const requestedEntryId = searchParams.get("entryId");
   const [entry, setEntry] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isNutritionLoading, setIsNutritionLoading] = useState(false);
+  const [isAnalysisLoading, setIsAnalysisLoading] = useState(false);
   const [isReanalyzing, setIsReanalyzing] = useState(false);
   const [loadError, setLoadError] = useState("");
   const [actionError, setActionError] = useState("");
+  const [nutritionError, setNutritionError] = useState("");
 
   const loadEntry = useCallback(async () => {
     setIsLoading(true);
     setLoadError("");
     setActionError("");
+    setNutritionError("");
 
     try {
       let currentEntry;
@@ -72,50 +106,73 @@ export const ResultadoDelDia = () => {
         return;
       }
 
-      let operationError = "";
+      setEntry(currentEntry);
+      setIsLoading(false);
       let nutritionUpdated = false;
-      const nutritionQuery =
-        currentEntry.habit_log?.nutrition_query ||
-        currentEntry.habit_log?.food_notes;
+      const habitLog = currentEntry.habit_log || {};
+      const mealEntries = habitLog.meal_entries;
+      const hasMeals =
+        mealEntries &&
+        Object.values(mealEntries).some(
+          (meal) => meal?.size || meal?.foods?.trim(),
+        );
+      const nutritionQuery = habitLog.nutrition_query || habitLog.food_notes;
       if (
-        nutritionQuery &&
-        !currentEntry.nutrition_log?.analyzed
+        !currentEntry.nutrition_log?.analyzed &&
+        (hasMeals || nutritionQuery)
       ) {
+        setIsNutritionLoading(true);
         try {
-          await requestApi("/api/nutrition/log", token, {
+          const nutritionLog = await requestApi("/api/nutrition/log", token, {
             method: "POST",
-            body: JSON.stringify({
-              entry_id: currentEntry.id,
-              ingredients: [nutritionQuery],
-            }),
+            body: JSON.stringify(
+              hasMeals
+                ? { entry_id: currentEntry.id, meals: mealEntries }
+                : {
+                    entry_id: currentEntry.id,
+                    ingredients: [nutritionQuery],
+                  },
+            ),
           });
+          currentEntry = { ...currentEntry, nutrition_log: nutritionLog };
+          setEntry(currentEntry);
           nutritionUpdated = true;
         } catch (error) {
-          operationError = `No se pudo obtener el análisis nutricional: ${error.message}`;
+          setNutritionError(
+            `No se pudo completar el análisis nutricional: ${error.message}`,
+          );
+        } finally {
+          setIsNutritionLoading(false);
         }
       }
 
       if (!currentEntry.analysis || nutritionUpdated) {
+        setIsAnalysisLoading(true);
         try {
-          await requestApi(`/api/analysis/${currentEntry.id}`, token, {
-            method: "POST",
-          });
+          const analysis = await requestApi(
+            `/api/analysis/${currentEntry.id}`,
+            token,
+            {
+              method: "POST",
+            },
+          );
+          setEntry((previousEntry) => ({
+            ...previousEntry,
+            analysis,
+          }));
+          if (analysis?.diagnostics?.length) {
+            setActionError(
+              `El análisis se completó con advertencias: ${analysis.diagnostics.join("; ")}`,
+            );
+          }
         } catch (error) {
-          operationError = [
-            operationError,
+          setActionError(
             `No se pudo generar el análisis onírico: ${error.message}`,
-          ]
-            .filter(Boolean)
-            .join(" ");
+          );
+        } finally {
+          setIsAnalysisLoading(false);
         }
       }
-
-      currentEntry = await requestApi(
-        `/api/entries/${currentEntry.id}`,
-        token,
-      );
-      setEntry(currentEntry);
-      setActionError(operationError);
     } catch (error) {
       setLoadError(error.message || "No se pudo cargar el registro.");
     } finally {
@@ -144,14 +201,16 @@ export const ResultadoDelDia = () => {
     setIsReanalyzing(true);
     setActionError("");
     try {
-      await requestApi(`/api/analysis/${entry.id}`, token, {
+      const analysis = await requestApi(`/api/analysis/${entry.id}`, token, {
         method: "POST",
       });
-      const updatedEntry = await requestApi(
-        `/api/entries/${entry.id}`,
-        token,
-      );
+      const updatedEntry = await requestApi(`/api/entries/${entry.id}`, token);
       setEntry(updatedEntry);
+      if (analysis?.diagnostics?.length) {
+        setActionError(
+          `El análisis se completó con advertencias: ${analysis.diagnostics.join("; ")}`,
+        );
+      }
     } catch (error) {
       setActionError(`No se pudo reanalizar el registro: ${error.message}`);
     } finally {
@@ -166,7 +225,8 @@ export const ResultadoDelDia = () => {
           <div className="eusomnia-card p-4 text-center">
             <h1 className="font-headline h4 text-light">Inicia sesión</h1>
             <p className="text-secondary">
-              El resultado muestra análisis vinculados a tus registros guardados.
+              El resultado muestra análisis vinculados a tus registros
+              guardados.
             </p>
             <button
               type="button"
@@ -186,7 +246,10 @@ export const ResultadoDelDia = () => {
     return (
       <div className="eusomnia-canvas py-5">
         <div className="container text-center text-secondary">
-          <span className="spinner-border spinner-border-sm me-2" role="status" />
+          <span
+            className="spinner-border spinner-border-sm me-2"
+            role="status"
+          />
           Cargando registro y análisis guardados...
         </div>
       </div>
@@ -199,10 +262,13 @@ export const ResultadoDelDia = () => {
         <div className="container" style={{ maxWidth: "760px" }}>
           <div className="eusomnia-card p-4 text-center">
             <h1 className="font-headline h4 text-light">
-              {loadError ? "No se pudo cargar el resultado" : "Aún no hay registros"}
+              {loadError
+                ? "No se pudo cargar el resultado"
+                : "Aún no hay registros"}
             </h1>
             <p className="text-secondary">
-              {loadError || "Guarda un registro diario para generar tu análisis."}
+              {loadError ||
+                "Guarda un registro diario para generar tu análisis."}
             </p>
             <Link to="/registro-diario" className="btn btn-primary">
               Ir al registro diario
@@ -240,7 +306,9 @@ export const ResultadoDelDia = () => {
           ? symbol
           : getText(symbol, ["title", "name", "symbol"]),
       archetype:
-        typeof symbol === "string" ? "" : getText(symbol, ["archetype", "category"]),
+        typeof symbol === "string"
+          ? ""
+          : getText(symbol, ["archetype", "category"]),
       content:
         typeof symbol === "string"
           ? ""
@@ -284,6 +352,8 @@ export const ResultadoDelDia = () => {
         caffeine: entry.nutrition_log.caffeine_mg,
         vitB12: entry.nutrition_log.vitamin_b12_ug,
         vitE: entry.nutrition_log.vitamin_e_mg,
+        sourceLabel: entry.nutrition_log.meal_breakdown?.source_label,
+        mealBreakdown: entry.nutrition_log.meal_breakdown,
       }
     : null;
   const date = entry.entry_date
@@ -313,6 +383,24 @@ export const ResultadoDelDia = () => {
             {actionError}
           </div>
         )}
+        {nutritionError && (
+          <div className="alert alert-warning mb-0" role="alert">
+            {nutritionError}
+          </div>
+        )}
+        {isNutritionLoading && (
+          <div className="alert alert-info mb-0" role="status">
+            <span className="spinner-border spinner-border-sm me-2" />
+            Calculando el resumen nutricional antes de iniciar la
+            interpretación...
+          </div>
+        )}
+        {isAnalysisLoading && (
+          <div className="alert alert-info mb-0" role="status">
+            <span className="spinner-border spinner-border-sm me-2" />
+            Nutrición disponible. Generando la interpretación onírica...
+          </div>
+        )}
 
         <SomnolenceGauges
           sleepHours={habitLog.total_sleep_hours ?? habitLog.sleep_hours}
@@ -331,6 +419,7 @@ export const ResultadoDelDia = () => {
               habitsReading={analysis?.habits_reading}
               originalDream={sleepReport.raw_text}
               recordedTime={sleepReport.created_at}
+              isGenerating={isAnalysisLoading}
             />
           </div>
 
@@ -341,12 +430,31 @@ export const ResultadoDelDia = () => {
                 screens: habitLog.screen_time,
                 mood: habitLog.bedtime_mood,
                 dinner: habitLog.dinner_type,
+                bedtime: habitLog.sleep_context?.bedtime,
+                wakeTime: habitLog.sleep_context?.wake_time,
+                lastCaffeineTime: habitLog.sleep_context?.last_caffeine_time,
+                roomTemperature:
+                  habitLog.sleep_context?.room_temperature_c === null ||
+                  habitLog.sleep_context?.room_temperature_c === undefined
+                    ? null
+                    : `${habitLog.sleep_context.room_temperature_c} °C`,
+                roomLight: {
+                  dark: "Oscura",
+                  dim: "Tenue",
+                  bright: "Luminosa",
+                }[habitLog.sleep_context?.room_light],
               }}
               nutrition={nutrition}
               nutritionQuery={habitLog.nutrition_query}
-              prescriptions={prescriptions}
             />
           </div>
+
+          {/* Recommendations panel: full width below, aligned on both desktop and mobile */}
+          {prescriptions.length > 0 && (
+            <div className="col-12">
+              <RecommendationsPanel prescriptions={prescriptions} />
+            </div>
+          )}
         </div>
       </div>
     </div>

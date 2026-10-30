@@ -11,6 +11,11 @@ def test_rag_stack_imports_and_builds_graph():
     assert hasattr(graph, "invoke")
 
 
+class _InMemoryRetrievalService:
+    def retrieve_context(self, text):
+        return []
+
+
 def test_run_dream_rag_analysis_returns_analysis():
     result = run_dream_rag_analysis(
         {"sleep_report": {"raw_text": "Soñe un felino"}},
@@ -18,8 +23,13 @@ def test_run_dream_rag_analysis_returns_analysis():
             "interpretation": "ok",
             "contexts": contexts,
         },
+        service=_InMemoryRetrievalService(),
     )
-    assert result == {"interpretation": "ok", "contexts": []}
+    assert result == {
+        "interpretation": "ok",
+        "contexts": [],
+        "pipeline_diagnostics": [],
+    }
 
 
 def test_prohibited_sentence_transformers_references_are_absent():
