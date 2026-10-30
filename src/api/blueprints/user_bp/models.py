@@ -13,11 +13,13 @@ class User(db.Model):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(
+        String(120), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(250), nullable=False)
     name: Mapped[str] = mapped_column(String(80), nullable=False)
     last_name: Mapped[str] = mapped_column(String(80), nullable=False)
-    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=True)
+    is_active: Mapped[bool] = mapped_column(
+        Boolean(), nullable=False, default=True)
     birth_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
     chronotype: Mapped[str | None] = mapped_column(String(20), nullable=True)
 
@@ -65,13 +67,17 @@ class UserPreferences(db.Model):
     __tablename__ = "user_preferences"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True, nullable=False)
-    ai_provider: Mapped[str] = mapped_column(String(50), default="openrouter", nullable=False)
-    custom_api_key: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"), unique=True, nullable=False)
+    ai_provider: Mapped[str] = mapped_column(
+        String(50), default="openrouter", nullable=False)
+    custom_api_key: Mapped[str | None] = mapped_column(
+        String(255), nullable=True)
     selected_model: Mapped[str] = mapped_column(
-        String(100), default="nvidia/nemotron-3.5-super-vl:free", nullable=False
+        String(100), default="nvidia/nemotron-3.5-lightning:free", nullable=False
     )
-    timezone: Mapped[str] = mapped_column(String(50), default="UTC", nullable=False)
+    timezone: Mapped[str] = mapped_column(
+        String(50), default="UTC", nullable=False)
     interpretation_framework: Mapped[str] = mapped_column(
         String(30),
         default="jungian",
@@ -120,7 +126,7 @@ class UserPreferences(db.Model):
         user_id: int,
         ai_provider: str = "openrouter",
         custom_api_key: str | None = None,
-        selected_model: str = "nvidia/nemotron-3.5-super-vl:free",
+        selected_model: str = "nvidia/nemotron-3.5-lightning:free",
         timezone: str = "UTC",
         interpretation_framework: str = "jungian",
         report_depth: str = "standard",

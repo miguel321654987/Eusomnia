@@ -39,4 +39,4 @@ def test_only_configured_model_is_used(monkeypatch):
 
     assert result.get("interpretation") == "ok"
     assert result.get("openrouter_error", False) is False
-    assert models == ["nvidia/nemotron-3.5-super-vl:free"]
+    assert models == ["openai/gpt-4o-mini"]

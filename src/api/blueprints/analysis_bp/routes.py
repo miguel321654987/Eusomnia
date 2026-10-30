@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime, timezone
 from typing import Any
 
@@ -40,13 +41,17 @@ def analyze_daily_entry(entry_id):
 
     if prefs is None:
         custom_key = None
-        selected_model = "nvidia/nemotron-3.5-super-vl:free"
+        selected_model = "openai/gpt-4o-mini"
         interpretation_framework = "jungian"
         report_depth = "standard"
         include_nutrition = True
     else:
         custom_key = prefs.custom_api_key or None
         selected_model = prefs.selected_model
+        if selected_model in {"meta-llama/llama-3.3-70b-instruct:free"} or not selected_model:
+            selected_model = os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini")
+            prefs.selected_model = selected_model
+            db.session.commit()
         interpretation_framework = prefs.interpretation_framework
         report_depth = prefs.report_depth
         include_nutrition = prefs.include_nutrition_in_analysis
@@ -128,7 +133,8 @@ def analyze_daily_entry(entry_id):
             raw_json = {}
         raw_json.setdefault("pipeline_diagnostics", [])
         raw_json["pipeline_diagnostics"] = diagnostics
-        new_analysis.raw_json_response = json.dumps(raw_json, ensure_ascii=False)
+        new_analysis.raw_json_response = json.dumps(
+            raw_json, ensure_ascii=False)
         db.session.commit()
 
     results_payload = new_analysis.serialize()
@@ -141,7 +147,7 @@ def analyze_daily_entry(entry_id):
     }), 200
 
 
-@bp.route("/<int:entry_id>", methods=["GET"]) 
+@bp.route("/<int:entry_id>", methods=["GET"])
 @jwt_required()
 def get_entry_analysis(entry_id):
     current_user_id = int(get_jwt_identity())

@@ -7,6 +7,7 @@ from datetime import timedelta
 from flask import Flask, jsonify
 from flask_migrate import Migrate
 from flask_cors import CORS
+import click
 from dotenv import load_dotenv
 
 from api.utils import APIException, generate_sitemap
@@ -63,7 +64,7 @@ app.config["EMBEDDING_MODEL"] = os.getenv(
 # Modelo por defecto para OpenRouter. Se utiliza el router gratuito que delega al modelo libre disponible.
 # Puede sobrescribirse mediante la variable de entorno OPENROUTER_MODEL.
 app.config["OPENROUTER_MODEL"] = os.getenv(
-    "OPENROUTER_MODEL", "nvidia/nemotron-3.5-super-vl:free"
+    "OPENROUTER_MODEL", "openai/gpt-4o-mini"
 )
 
 app.url_map.strict_slashes = False
@@ -87,6 +88,16 @@ MIGRATE = Migrate(app, db)
 db.init_app(app)
 
 setup_admin(app)
+
+
+@app.cli.command("rebuild-dream-collection")
+def rebuild_dream_collection_command():
+    """Rebuild the Qdrant dream dictionary collection."""
+    from api.services.qdrant_service import DreamRetrievalService
+
+    service = DreamRetrievalService()
+    count = service.rebuild_collection_from_csv()
+    click.echo(f"Indexed {count} dream dictionary points with the current embeddings.")
 
 # REGISTRO DE BLUEPRINTS
 app.register_blueprint(api, url_prefix="/api")
