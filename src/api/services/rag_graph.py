@@ -17,6 +17,19 @@ import requests
 
 from langgraph.graph import END, START, StateGraph
 
+_STALE_OPENROUTER_MODELS = {"meta-llama/llama-3.3-70b-instruct:free"}
+_DEFAULT_OPENROUTER_MODEL = "openai/gpt-4o-mini"
+
+
+def _normalize_openrouter_model(model: str | None) -> str:
+    """Return a usable OpenRouter model slug."""
+    if not isinstance(model, str) or not model.strip():
+        return _DEFAULT_OPENROUTER_MODEL
+    normalized = model.strip()
+    if normalized in _STALE_OPENROUTER_MODELS:
+        return _DEFAULT_OPENROUTER_MODEL
+    return normalized
+
 from api.services.qdrant_service import DreamRetrievalService
 from api.services.embedding_provider import EmbeddingProvider
 from api.utils import APIException
@@ -73,10 +86,8 @@ def _openrouter_generate(
     # "openrouter/free", que delega al modelo libre disponible. Puede sobrescribirse
     # mediante la variable de entorno OPENROUTER_MODEL o pasando explícitamente el
     # parámetro `model`.
-    selected_model = (
-        model
-        or os.getenv("OPENROUTER_MODEL")
-        or "nvidia/nemotron-3.5-super-vl:free"
+    selected_model = _normalize_openrouter_model(
+        model or os.getenv("OPENROUTER_MODEL")
     )
     profile_preferences = (entry_payload or {}).get(
         "_profile_preferences") or {}
@@ -145,6 +156,7 @@ def _openrouter_generate(
     # ---------------------------------------------------------------------
     fallback_models = [
         selected_model,
+        _DEFAULT_OPENROUTER_MODEL,
         "nvidia/nemotron-3.5-lightning:free",
         "respan/span-01-lite:free",
         "liquidai/lfm2.5-2.6b:free",
@@ -204,9 +216,17 @@ def _openrouter_generate(
                         status_code=502,
                     )
             except Exception as exc:  # Catch any error, including generic exceptions from mocks
+                detail = str(exc)
+                response = getattr(exc, "response", None)
+                if response is not None:
+                    response_text = getattr(response, "text", "")
+                    detail = (
+                        f"HTTP {getattr(response, 'status_code', '?')}: "
+                        f"{response_text[:300]}"
+                    )
                 if attempt == 1:
                     raise APIException(
-                        f"OpenRouter request failed for model {model_name}: {exc}",
+                        f"OpenRouter request failed for model {model_name}: {detail}",
                         status_code=502,
                     )
                 backoff = 2 ** attempt
@@ -215,7 +235,7 @@ def _openrouter_generate(
                     attempt + 1,
                     model_name,
                     backoff,
-                    exc,
+                    detail,
                 )
                 time.sleep(backoff)
         # Si agotamos los reintentos sin éxito, lanzar una excepción genérica.
@@ -418,4 +438,3 @@ def run_dream_rag_analysis(
         analysis["openrouter_error"] = True
     analysis["pipeline_diagnostics"] = result.get("pipeline_diagnostics", [])
     return analysis
-

@@ -25,7 +25,7 @@ const profileResponse = {
   preferences: {
     timezone: "Europe/Madrid",
     ai_provider: "openrouter",
-    selected_model: "nvidia/nemotron-3.5-super-vl:free",
+    selected_model: "nvidia/nemotron-3.5-lightning:free",
     has_custom_key: false,
     interpretation_framework: "jungian",
     report_depth: "standard",
@@ -114,15 +114,15 @@ describe("Perfil page", () => {
     renderProfile();
     await screen.findByText(/Hola, Ada Lovelace/);
     fireEvent.click(screen.getByRole("button", { name: /motor de ia/i }));
-    fireEvent.click(
-      screen.getByRole("radio", { name: /Neurocientífico/ }),
-    );
+    fireEvent.click(screen.getByRole("radio", { name: /Neurocientífico/ }));
     fireEvent.click(
       screen.getByRole("checkbox", {
         name: /Incluir alimentación registrada/,
       }),
     );
-    fireEvent.click(screen.getByRole("button", { name: "Guardar preferencias" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "Guardar preferencias" }),
+    );
 
     await waitFor(() => {
       expect(fetch).toHaveBeenCalledWith(
@@ -135,7 +135,9 @@ describe("Perfil page", () => {
         }),
       );
     });
-    const request = fetch.mock.calls.find(([, options]) => options?.method === "PUT");
+    const request = fetch.mock.calls.find(
+      ([, options]) => options?.method === "PUT",
+    );
     expect(JSON.parse(request[1].body)).toMatchObject({
       interpretation_framework: "neuroscientific",
       include_nutrition_in_analysis: false,

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import csv
 import os
+from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence, cast
 
 from qdrant_client import QdrantClient
@@ -19,6 +20,15 @@ try:
 except ImportError:
     OpenAIEmbeddings = None
 from pydantic import SecretStr
+
+_DEFAULT_TEXT_COLUMNS = (
+    "interpretation_text",
+    "meaning",
+    "context",
+    "text",
+    "document",
+)
+_DEFAULT_DREAM_CSV_PATH = Path(__file__).resolve().parents[3] / "data" / "diccionario_normalized.csv"
 
 
 class DreamRetrievalService:
@@ -73,8 +83,8 @@ class DreamRetrievalService:
     encode = encode_dream
     embed_text = encode_dream
 
-    def ensure_collection(self, vector_size):
-        """Ensure the configured Qdrant collection exists."""
+    def _current_collection_vector_size(self) -> int | None:
+        """Return the vector size of the existing collection, if any."""
         exists = False
         try:
             exists = bool(
@@ -90,6 +100,41 @@ class DreamRetrievalService:
             exists = False
 
         if not exists:
+            return None
+
+        try:
+            collection = self.client.get_collection(
+                collection_name=self.collection_name)
+        except Exception:
+            return None
+
+        vectors = getattr(collection.config.params, "vectors", None)
+        if isinstance(vectors, (list, tuple)):
+            return getattr(vectors[0], "size", None)
+        return getattr(vectors, "size", None)
+
+    @staticmethod
+    def _resolve_text_column(header, requested=None) -> str | None:
+        """Pick the best text column for semantic embedding."""
+        normalized_header = [str(column).strip() for column in (header or [])]
+        if requested and requested in normalized_header:
+            return requested
+        for column in _DEFAULT_TEXT_COLUMNS:
+            if column in normalized_header:
+                return column
+        return requested or (normalized_header[0] if normalized_header else None)
+
+    def ensure_collection(self, vector_size):
+        """Ensure that the configured collection exists and matches vector_size."""
+        existing_size = self._current_collection_vector_size()
+
+        if existing_size is not None and existing_size != vector_size:
+            try:
+                self.client.delete_collection(collection_name=self.collection_name)
+            except Exception:
+                pass
+
+        if existing_size is None or existing_size != vector_size:
             self.client.create_collection(
                 collection_name=self.collection_name,
                 vectors_config=VectorParams(
@@ -191,12 +236,17 @@ class DreamRetrievalService:
         records = []
         with open(csv_path, newline="", encoding="utf-8-sig") as handle:
             reader = csv.DictReader(handle)
+            resolved_text_column = self._resolve_text_column(
+                reader.fieldnames, text_column
+            )
             for index, row in enumerate(reader):
                 record = dict(row)
                 # Texto que será embeddeado
                 record.setdefault(
-                    "interpretation_text", record.get(text_column, "")
+                    "interpretation_text",
+                    record.get(resolved_text_column or text_column, ""),
                 )
+
 
                 # Determinamos el ID siguiendo la regla descrita arriba.
                 symbol_val = str(record.get("symbol", "")).strip()
@@ -216,7 +266,30 @@ class DreamRetrievalService:
                 records.append(record)
         return self.ingest_documents(records)
 
-    def _search(self, dream_text, top_k):
+    def rebuild_collection_from_csv(self, csv_path=None, text_column=None):
+        """Delete/regenerate the Qdrant collection from the dream CSV."""
+        import csv
+
+        path = Path(csv_path or _DEFAULT_DREAM_CSV_PATH)
+        if not path.exists():
+            raise FileNotFoundError(f"Dream dictionary CSV not found: {path}")
+
+        with path.open(newline="", encoding="utf-8-sig") as handle:
+            reader = csv.DictReader(handle)
+            resolved_text_column = self._resolve_text_column(
+                reader.fieldnames, text_column
+            )
+
+        # ``ingest_documents`` calls ``ensure_collection`` with the current vector
+        # size, so deleting first guarantees a dimension-compatible recreation.
+        try:
+            self.client.delete_collection(collection_name=self.collection_name)
+        except Exception:
+            pass
+
+        return self.ingest_from_csv(str(path), text_column=resolved_text_column)
+
+    def _search(self, dream_text, top_k, _attempted=False):
         query_vector = self.encode_dream(dream_text)
         limit = max(1, int(top_k))
         try:
@@ -250,6 +323,14 @@ class DreamRetrievalService:
                 points = response
             return list(cast(Sequence[Any], points))
         except Exception as exc:
+            if not _attempted and "dimension" in str(exc).lower():
+                try:
+                    self.rebuild_collection_from_csv()
+                except Exception as rebuild_exc:
+                    raise ConnectionError(
+                        f"Qdrant retrieval failed: {exc}; rebuild failed: {rebuild_exc}"
+                    ) from rebuild_exc
+                return self._search(dream_text, top_k, _attempted=True)
             raise ConnectionError(
                 f"Qdrant retrieval failed: {exc}"
             ) from exc

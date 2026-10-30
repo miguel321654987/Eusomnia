@@ -32,7 +32,7 @@ const TIMEZONES = [
 const DEFAULT_PREFERENCES = {
   timezone: "UTC",
   ai_provider: "openrouter",
-  selected_model: "nvidia/nemotron-3.5-super-vl:free",
+  selected_model: "nvidia/nemotron-3.5-lightning:free",
   has_custom_key: false,
   interpretation_framework: "jungian",
   report_depth: "standard",
@@ -171,8 +171,7 @@ export const Perfil = () => {
     const values = {
       interpretation_framework: preferences.interpretation_framework,
       report_depth: preferences.report_depth,
-      include_nutrition_in_analysis:
-        preferences.include_nutrition_in_analysis,
+      include_nutrition_in_analysis: preferences.include_nutrition_in_analysis,
       selected_model: preferences.selected_model,
     };
     if (clearApiKey) values.custom_api_key = null;
@@ -343,7 +342,10 @@ export const Perfil = () => {
                   aria-current={activeTab === tab.id ? "page" : undefined}
                   onClick={() => setActiveTab(tab.id)}
                 >
-                  <span className="material-symbols-outlined" aria-hidden="true">
+                  <span
+                    className="material-symbols-outlined"
+                    aria-hidden="true"
+                  >
                     {tab.icon}
                   </span>
                   {tab.label}
@@ -352,7 +354,10 @@ export const Perfil = () => {
             </nav>
 
             {activeTab === "personal" && (
-              <section className="profile-panel" aria-labelledby="personal-title">
+              <section
+                className="profile-panel"
+                aria-labelledby="personal-title"
+              >
                 <div className="profile-section-heading">
                   <span className="profile-icon">01</span>
                   <div>
@@ -638,26 +643,21 @@ export const Perfil = () => {
                         className="form-select"
                         value={preferences.selected_model}
                         onChange={(event) =>
-                          updatePreference(
-                            "selected_model",
-                            event.target.value,
-                          )
+                          updatePreference("selected_model", event.target.value)
                         }
                       >
                         {![
-                          "nvidia/nemotron-3.5-super-vl:free",
+                          "nvidia/nemotron-3.5-lightning:free",
                           "openrouter/free",
                         ].includes(preferences.selected_model) && (
                           <option value={preferences.selected_model}>
                             {preferences.selected_model}
                           </option>
                         )}
-                        <option value="nvidia/nemotron-3.5-super-vl:free">
+                        <option value="nvidia/nemotron-3.5-lightning:free">
                           Nemotron 3.5 Super VL (free)
                         </option>
-                        <option value="openrouter/free">
-                          OpenRouter Free
-                        </option>
+                        <option value="openrouter/free">OpenRouter Free</option>
                       </select>
                     </label>
                     <label className="profile-field">
@@ -672,9 +672,7 @@ export const Perfil = () => {
                         autoComplete="new-password"
                         maxLength="255"
                         value={apiKeyInput}
-                        onChange={(event) =>
-                          setApiKeyInput(event.target.value)
-                        }
+                        onChange={(event) => setApiKeyInput(event.target.value)}
                         placeholder="No se mostrará después de guardarla"
                       />
                     </label>
@@ -723,10 +721,7 @@ export const Perfil = () => {
 
                 <div className="profile-routine-list">
                   {PROFILE_REMINDERS.map((reminder) => (
-                    <div
-                      className="profile-routine-row"
-                      key={reminder.enabled}
-                    >
+                    <div className="profile-routine-row" key={reminder.enabled}>
                       <label className="profile-toggle">
                         <span className="profile-toggle-copy">
                           <strong>{reminder.title}</strong>
@@ -751,10 +746,7 @@ export const Perfil = () => {
                           value={preferences[reminder.time]}
                           disabled={!preferences[reminder.enabled]}
                           onChange={(event) =>
-                            updatePreference(
-                              reminder.time,
-                              event.target.value,
-                            )
+                            updatePreference(reminder.time, event.target.value)
                           }
                         />
                       </label>
@@ -763,7 +755,10 @@ export const Perfil = () => {
                 </div>
 
                 <div className="profile-inline-notice" role="note">
-                  <span className="material-symbols-outlined" aria-hidden="true">
+                  <span
+                    className="material-symbols-outlined"
+                    aria-hidden="true"
+                  >
                     info
                   </span>
                   <p>
@@ -870,7 +865,10 @@ export const Perfil = () => {
                 </div>
 
                 <div className="profile-inline-notice" role="note">
-                  <span className="material-symbols-outlined" aria-hidden="true">
+                  <span
+                    className="material-symbols-outlined"
+                    aria-hidden="true"
+                  >
                     verified_user
                   </span>
                   <p>

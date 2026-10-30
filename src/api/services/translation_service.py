@@ -7,7 +7,7 @@ import requests
 from api.utils import APIException
 
 
-OPENROUTER_MODEL = "nvidia/nemotron-3.5-super-vl:free"
+OPENROUTER_MODEL = "nvidia/nemotron-3.5-lightning:free"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 NON_TRANSLATABLE_KEYS = {
     "uri",
@@ -59,7 +59,8 @@ def translate_texts(
                 "model": os.getenv("OPENROUTER_MODEL", OPENROUTER_MODEL),
                 "messages": [
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": json.dumps(texts, ensure_ascii=False)},
+                    {"role": "user", "content": json.dumps(
+                        texts, ensure_ascii=False)},
                 ],
                 "response_format": {"type": "json_object"},
             },
