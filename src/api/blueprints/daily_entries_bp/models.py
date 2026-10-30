@@ -105,13 +105,33 @@ class SleepReport(db.Model):
     entry_id: Mapped[int] = mapped_column(ForeignKey(
         "daily_entries.id"), unique=True, nullable=False)
     raw_text: Mapped[str] = mapped_column(Text, nullable=False)
-    final_text: Mapped[str] = mapped_column(Text, nullable=True)
-    audio_url: Mapped[str] = mapped_column(String(500), nullable=True)
+    final_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+    audio_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.utcnow, nullable=False)
 
     daily_entry: Mapped["DailyEntry"] = relationship(
         "DailyEntry", back_populates="sleep_report")
+
+    # ---------------------------------------------------------------------
+    # Custom constructor
+    # ---------------------------------------------------------------------
+    def __init__(
+        self,
+        entry_id: int,
+        raw_text: str,
+        final_text: str | None = None,
+        audio_url: str | None = None,
+        **kwargs,
+    ):
+        # Delegate generic kwargs to the base model.
+        super().__init__(**kwargs)
+        # Explicitly set known columns to keep static analysers happy.
+        self.entry_id = entry_id
+        self.raw_text = raw_text
+        self.final_text = final_text
+        self.audio_url = audio_url
+
 
     def serialize(self):
         return {
@@ -131,19 +151,56 @@ class HabitLog(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     entry_id: Mapped[int] = mapped_column(ForeignKey(
         "daily_entries.id"), unique=True, nullable=False)
-    physical_activity: Mapped[str] = mapped_column(String(50), nullable=True)
-    dinner_type: Mapped[str] = mapped_column(String(255), nullable=True)
-    bedtime_mood: Mapped[str] = mapped_column(String(50), nullable=True)
-    screen_time: Mapped[str] = mapped_column(String(50), nullable=True)
-    incidents: Mapped[str] = mapped_column(String(255), nullable=True)
-    food_notes: Mapped[str] = mapped_column(Text, nullable=True)
+    physical_activity: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    dinner_type: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    bedtime_mood: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    screen_time: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    incidents: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    emotional_state: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    food_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     meal_entries: Mapped[str | None] = mapped_column(Text, nullable=True)
     sleep_context: Mapped[str | None] = mapped_column(Text, nullable=True)
     total_sleep_hours: Mapped[float | None] = mapped_column(Float, nullable=True)
-    sleep_quality: Mapped[str] = mapped_column(String(50), nullable=True)
+    sleep_quality: Mapped[str | None] = mapped_column(String(50), nullable=True)
 
     daily_entry: Mapped["DailyEntry"] = relationship(
         "DailyEntry", back_populates="habit_log")
+
+    # ---------------------------------------------------------------------
+    # Custom constructor
+    # ---------------------------------------------------------------------
+    def __init__(
+        self,
+        entry_id: int,
+        physical_activity: str | None = None,
+        dinner_type: str | None = None,
+        bedtime_mood: str | None = None,
+        screen_time: str | None = None,
+        incidents: str | None = None,
+        emotional_state: str | None = None,
+        food_notes: str | None = None,
+        meal_entries: str | None = None,
+        sleep_context: str | None = None,
+        total_sleep_hours: float | None = None,
+        sleep_quality: str | None = None,
+        **kwargs,
+    ):
+        # Delegate generic kwargs to the base model.
+        super().__init__(**kwargs)
+        # Explicitly set known columns to keep static analysers happy.
+        self.entry_id = entry_id
+        self.physical_activity = physical_activity
+        self.dinner_type = dinner_type
+        self.bedtime_mood = bedtime_mood
+        self.screen_time = screen_time
+        self.incidents = incidents
+        self.emotional_state = emotional_state
+        self.food_notes = food_notes
+        self.meal_entries = meal_entries
+        self.sleep_context = sleep_context
+        self.total_sleep_hours = total_sleep_hours
+        self.sleep_quality = sleep_quality
+
 
     def serialize(self):
         try:
@@ -162,6 +219,7 @@ class HabitLog(db.Model):
             "bedtime_mood": self.bedtime_mood,
             "screen_time": self.screen_time,
             "incidents": self.incidents,
+            "emotional_state": self.emotional_state,
             "food_notes": self.food_notes,
             "meal_entries": meal_entries,
             "sleep_context": sleep_context,

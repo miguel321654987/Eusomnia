@@ -4,6 +4,7 @@ export const TelemetryHeader = ({
   date,
   sessionId,
   isReanalyzing,
+  canReanalyze = true,
   onReanalyze,
 }) => {
   const handleExport = () => {
@@ -65,7 +66,8 @@ export const TelemetryHeader = ({
           type="button"
           className="btn btn-primary px-3 py-2 d-inline-flex align-items-center gap-2 font-label small"
           onClick={onReanalyze}
-          disabled={isReanalyzing}
+          disabled={isReanalyzing || !canReanalyze}
+          title={canReanalyze ? undefined : "El análisis se completó correctamente."}
         >
           {isReanalyzing ? (
             <>

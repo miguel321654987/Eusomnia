@@ -248,6 +248,7 @@ def create_daily_entry():
             bedtime_mood=habits_data.get("bedtime_mood"),
             screen_time=habits_data.get("screen_time"),
             incidents=habits_data.get("incidents"),
+            emotional_state=habits_data.get("emotional_state"),
             food_notes=(
                 habits_data.get("nutrition_query")
                 or habits_data.get("food_notes")
@@ -338,6 +339,7 @@ def update_daily_entry(entry_id):
                 "bedtime_mood",
                 "screen_time",
                 "incidents",
+                "emotional_state",
                 "food_notes",
                 "sleep_quality",
             ]:
