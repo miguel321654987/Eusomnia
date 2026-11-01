@@ -166,6 +166,12 @@ class HabitLog(db.Model):
     daily_entry: Mapped["DailyEntry"] = relationship(
         "DailyEntry", back_populates="habit_log")
 
+    @property
+    def nutrition_query(self) -> str | None:
+        """Compatibility alias for ``food_notes`` on the typed model."""
+        return self.food_notes
+
+
     # ---------------------------------------------------------------------
     # Custom constructor
     # ---------------------------------------------------------------------
@@ -221,6 +227,7 @@ class HabitLog(db.Model):
             "incidents": self.incidents,
             "emotional_state": self.emotional_state,
             "food_notes": self.food_notes,
+            "nutrition_query": self.food_notes,
             "meal_entries": meal_entries,
             "sleep_context": sleep_context,
             "total_sleep_hours": self.total_sleep_hours,

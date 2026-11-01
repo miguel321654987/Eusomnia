@@ -1,13 +1,16 @@
 import json
 import os
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 import requests
 
 from api.utils import APIException
 
 
-OPENROUTER_MODEL = "nvidia/nemotron-3.5-lightning:free"
+# Keep the translation default aligned with the rest of the backend.  The free
+# Nvidia model is unreliable in practice and silently breaks nutrition
+# analysis; the paid (more stable) model below is the canonical default.
+OPENROUTER_MODEL = "openai/gpt-4o-mini"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 NON_TRANSLATABLE_KEYS = {
     "uri",
@@ -124,9 +127,9 @@ def translate_edamam_response(
     )
 
     for (path, _), translated_text in zip(translation_paths, translations):
-        current_value = data
+        current_value: Any = data
         for path_part in path[:-1]:
-            current_value = current_value[path_part]
-        current_value[path[-1]] = translated_text
+            current_value = cast(Any, current_value)[path_part]
+        cast(Any, current_value)[path[-1]] = translated_text
 
     return data
