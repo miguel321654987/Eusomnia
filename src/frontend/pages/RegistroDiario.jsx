@@ -197,6 +197,7 @@ export const RegistroDiario = () => {
   const entryId = searchParams.get("entryId");
   const token = store.token || localStorage.getItem("jwt-token");
   const isEditing = Boolean(entryId);
+  const isSiestaMode = location.state?.mode === "siesta";
   const hasSession = Boolean(token);
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -209,6 +210,8 @@ export const RegistroDiario = () => {
   );
   const [statusMessage, setStatusMessage] = useState(null);
   const [editingEntry, setEditingEntry] = useState(null);
+  const [duplicateEntry, setDuplicateEntry] = useState(null);
+  const [siestaDream, setSiestaDream] = useState("");
   const [isLoadingEntry, setIsLoadingEntry] = useState(
     Boolean(entryId && token),
   );
@@ -450,7 +453,23 @@ export const RegistroDiario = () => {
   const handleSubmit = async () => {
     if (!formData.dreamNarrative.trim()) return;
 
-    if (isEditing && !entryDate) {
+    let entryToEdit = editingEntry;
+    if (!entryToEdit && !isEditing && token) {
+      try {
+        const entries = await requestApi("/api/entries", token);
+        const existing = Array.isArray(entries)
+          ? entries.find((entry) => entry.entry_date === entryDate)
+          : null;
+        if (existing) {
+      setDuplicateEntry(existing);
+      return;
+    }
+      } catch {
+        // Ignore duplicate check errors and let the submit flow validate.
+      }
+    }
+
+    if ((isEditing || editingEntry) && !entryDate) {
       setStatusMessage({
         type: "error",
         text: "Selecciona la fecha efectiva del registro.",
@@ -475,8 +494,12 @@ export const RegistroDiario = () => {
     const payload = {
       date: entryDate,
       sleep: {
-        raw_text: formData.dreamNarrative,
-        final_text: formData.dreamNarrative,
+        raw_text: siestaDream.trim()
+          ? `${formData.dreamNarrative.trim()}\n\nSiesta:\n${siestaDream.trim()}`
+          : formData.dreamNarrative,
+        final_text: siestaDream.trim()
+          ? `${formData.dreamNarrative.trim()}\n\nSiesta:\n${siestaDream.trim()}`
+          : formData.dreamNarrative,
       },
       habits: {
         physical_activity: formData.physicalActivity,
@@ -494,16 +517,16 @@ export const RegistroDiario = () => {
     };
 
     try {
-      if (isEditing && editingEntry) {
+      if (entryToEdit) {
         await requestApi(
-          `/api/entries/${editingEntry.id}`,
+          `/api/entries/${entryToEdit.id}`,
           token,
           {
             method: "PATCH",
             body: payload,
           },
         );
-        const previousHabits = editingEntry.habit_log || {};
+        const previousHabits = entryToEdit.habit_log || {};
         const previousMeals = normalizeMealEntries(
           previousHabits.meal_entries,
           previousHabits.food_notes || previousHabits.nutrition_query || "",
@@ -538,10 +561,10 @@ export const RegistroDiario = () => {
             Number(formData.sleepHours) ||
           sleepContextChanged;
         const sleepChanged =
-          (editingEntry.sleep_report?.raw_text ||
-            editingEntry.sleep_report?.final_text ||
+          (entryToEdit.sleep_report?.raw_text ||
+            entryToEdit.sleep_report?.final_text ||
             "") !== formData.dreamNarrative;
-        const dateChanged = editingEntry.entry_date !== entryDate;
+        const dateChanged = entryToEdit.entry_date !== entryDate;
         const warnings = [];
         let nutritionRefreshFailed = false;
 
@@ -553,13 +576,13 @@ export const RegistroDiario = () => {
               await requestApi("/api/nutrition/log", token, {
                 method: "POST",
                 body: {
-                  entry_id: editingEntry.id,
+                  entry_id: entryToEdit.id,
                   meals: mealEntries,
                 },
               });
-            } else if (editingEntry.nutrition_log) {
+            } else if (entryToEdit.nutrition_log) {
               await requestApi(
-                `/api/nutrition/log/${editingEntry.id}`,
+                `/api/nutrition/log/${entryToEdit.id}`,
                 token,
                 { method: "DELETE" },
               );
@@ -573,12 +596,12 @@ export const RegistroDiario = () => {
         }
 
         if (
-          editingEntry.analysis &&
+          entryToEdit.analysis &&
           (sleepChanged || habitsChanged || foodChanged || dateChanged) &&
           !nutritionRefreshFailed
         ) {
           try {
-            await requestApi(`/api/analysis/${editingEntry.id}`, token, {
+            await requestApi(`/api/analysis/${entryToEdit.id}`, token, {
               method: "POST",
             });
           } catch (error) {
@@ -597,7 +620,7 @@ export const RegistroDiario = () => {
               type: "success",
               text: "El registro se actualizó correctamente.",
             };
-        navigate(`/historial?entryId=${editingEntry.id}`, {
+        navigate(`/historial?entryId=${entryToEdit.id}`, {
           state: { notice },
         });
         return;
@@ -862,6 +885,34 @@ export const RegistroDiario = () => {
                 onBack={() => setCurrentStep(3)}
                 onNext={() => setCurrentStep(5)}
               />
+            )}
+
+            {currentStep === 5 && isSiestaMode && (
+              <div className="mb-4">
+                <label
+                  htmlFor="siestaDream"
+                  className="form-label fw-semibold"
+                >
+                  Sueño de la siesta (opcional)
+                </label>
+                <textarea
+                  id="siestaDream"
+                  className="form-control"
+                  rows={4}
+                  value={siestaDream}
+                  onChange={(event) => setSiestaDream(event.target.value)}
+                  placeholder="Describe el sueño de la siesta..."
+                />
+              </div>
+            )}
+
+            {duplicateEntry && (
+              <div className="alert alert-info py-2 px-3 mb-4 rounded-3 text-center font-label small">
+                Ya existe un registro para esta fecha. ¿Quieres editarlo?
+                <div className="mt-2">
+                  <button type="button" className="btn btn-sm btn-eusomnia-secondary" onClick={() => navigate("/historial?entryId=" + duplicateEntry.id)}>Ir al Historial</button>
+                </div>
+              </div>
             )}
 
             {currentStep === 5 && (

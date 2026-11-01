@@ -385,6 +385,7 @@ export const ResultadoDelDia = () => {
           isReanalyzing={isReanalyzing}
           canReanalyze={!entry?.analysis || Boolean(actionError)}
           onReanalyze={handleReanalyze}
+          entryId={entry?.id ?? null}
         />
 
         {actionError && (

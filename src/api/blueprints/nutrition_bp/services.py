@@ -342,6 +342,27 @@ def _normalize(text: str) -> str:
     return "".join(ch for ch in decomposed if not unicodedata.combining(ch))
 
 
+def _clean_food_text(text: str) -> str:
+    """Remove meal labels/prefixes from a free-text ingredient line.
+
+    The frontend can keep the requested shape (for example, a meal header
+    like ``dinner: 3 cervezas``) while the nutrition provider receives only the
+    actual food text. This does not change the value shown to the user.
+    """
+    if not isinstance(text, str):
+        return ""
+
+    prefix_pattern = re.compile(
+        r"^\s*(breakfast|almuerzo|lunch|comida|cena|dinner|snack|merienda|desayuno|other|otros|cena ligera|cena pesada)\s*:\s*",
+        re.IGNORECASE,
+    )
+    lines = []
+    for raw_line in text.splitlines():
+        cleaned_line = prefix_pattern.sub("", raw_line.strip(), count=1)
+        lines.append(cleaned_line)
+    return "\n".join(lines).strip()
+
+
 def _leading_quantity(line: str) -> float:
     """Return the quantity at the start of a line (default: 1)."""
     match = re.match(r"\s*(\d+(?:[.,]\d+)?)", line)
@@ -465,12 +486,16 @@ def analyze_foods(
     with a low_quality error (422), each line is parsed individually with
     the GET endpoint and the ingredient lists are merged.
     """
+    prepared_lines = []
+    for raw_line in ingredient_lines:
+        candidate = _clean_food_text(raw_line).strip() or str(raw_line)
+        prepared_lines.append(candidate)
     translated_lines = translate_texts(
-        ingredient_lines,
+        prepared_lines,
         target_language="English",
         custom_key=custom_key,
     )
-    line_pairs = list(zip(ingredient_lines, translated_lines))
+    line_pairs = list(zip(prepared_lines, translated_lines))
 
     try:
         # Edamam's canonical recipe endpoint takes the full payload
@@ -521,6 +546,8 @@ def analyze_foods(
 
     raw = translate_edamam_response(raw, custom_key=custom_key)
     nutrients = aggregate_nutrients(raw)
+    supplements = resolve_supplement_values(line_pairs, manual)
+
     if not any(
         nutrients[field] > 0
         for field in (
@@ -534,13 +561,12 @@ def analyze_foods(
             "vitamin_b12_ug",
             "total_weight_g",
         )
-    ):
+    ) and not any(value > 0 for value in supplements.values()):
         raise APIException(
             "Edamam no pudo identificar el alimento. Escribe el nombre "
             "en español y añade una cantidad o porción.",
             status_code=422,
         )
-    supplements = resolve_supplement_values(line_pairs, manual)
 
     return NormalizedNutrition(
         calories=nutrients["calories"],

@@ -6,6 +6,7 @@ export const TelemetryHeader = ({
   isReanalyzing,
   canReanalyze = true,
   onReanalyze,
+  entryId = null,
 }) => {
   const handleExport = () => {
     window.print();
@@ -83,7 +84,12 @@ export const TelemetryHeader = ({
         </button>
 
         <Link
-          to="/registro-diario"
+          to={
+            entryId
+              ? `/registro-diario?entryId=${entryId}`
+              : "/registro-diario"
+          }
+          state={{ mode: "siesta" }}
           className="btn btn-eusomnia-secondary px-3 py-2 d-inline-flex align-items-center gap-2 font-label small text-decoration-none"
         >
           <span className="material-symbols-outlined fs-6" style={{ color: "var(--eusomnia-primary)" }}>

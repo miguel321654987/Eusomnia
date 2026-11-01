@@ -206,6 +206,19 @@ def create_daily_entry():
         if entry_date_raw is not None
         else date.today()
     )
+
+    existing_entry = db.session.scalar(
+        select(DailyEntry).where(
+            DailyEntry.user_id == current_user_id,
+            DailyEntry.entry_date == entry_date,
+        )
+    )
+    if existing_entry is not None:
+        raise APIException(
+            "An entry already exists for this date",
+            status_code=409,
+            payload={"existing_entry_id": existing_entry.id},
+        )
     meal_entries = (
         _parse_meal_entries(habits_data["meal_entries"])
         if "meal_entries" in habits_data
@@ -311,6 +324,24 @@ def update_daily_entry(entry_id):
         else None
     )
 
+    if (
+        updated_entry_date is not None
+        and updated_entry_date != entry.entry_date
+    ):
+        conflicting_entry = db.session.scalar(
+            select(DailyEntry).where(
+                DailyEntry.user_id == current_user_id,
+                DailyEntry.entry_date == updated_entry_date,
+                DailyEntry.id != entry.id,
+            )
+        )
+        if conflicting_entry is not None:
+            raise APIException(
+                "An entry already exists for this date",
+                status_code=409,
+                payload={"existing_entry_id": conflicting_entry.id},
+            )
+
     try:
         if updated_entry_date is not None:
             entry.entry_date = updated_entry_date
@@ -366,3 +397,27 @@ def update_daily_entry(entry_id):
         db.session.rollback()
         raise APIException(
             f"Error updating daily entry: {str(e)}", status_code=500)
+
+@daily_entries_bp.route("/<int:entry_id>", methods=["DELETE"])
+@jwt_required()
+def delete_daily_entry(entry_id):
+    current_user_id = int(get_jwt_identity())
+    entry = db.session.get(DailyEntry, entry_id)
+
+    if entry is None or entry.user_id != current_user_id:
+        raise APIException("Daily entry not found", status_code=404)
+
+    try:
+        db.session.delete(entry)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        raise APIException(
+            "Error deleting daily entry: " + str(e),
+            status_code=500,
+        )
+
+    return jsonify({
+        "message": "Daily entry deleted successfully",
+        "results": {"id": entry_id},
+    }), 200
