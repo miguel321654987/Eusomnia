@@ -18,7 +18,7 @@ export const Home = () => {
   const [reanalyzingEntryId, setReanalyzingEntryId] = useState(null);
 
   const loadHomeSummary = useCallback(async () => {
-    if (!token) {
+    if (!token || !store.user) {
       setHomeSummary(null);
       setIsHomeLoading(false);
       return;
@@ -40,7 +40,7 @@ export const Home = () => {
     } finally {
       setIsHomeLoading(false);
     }
-  }, [token]);
+  }, [token, store.user]);
 
   useEffect(() => {
     let isActive = true;

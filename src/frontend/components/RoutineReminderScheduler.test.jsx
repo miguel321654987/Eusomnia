@@ -4,7 +4,9 @@ import { RoutineReminderScheduler } from "./RoutineReminderScheduler.jsx";
 import { toast } from "react-toastify";
 
 vi.mock("../hooks/useGlobalReducer.jsx", () => ({
-  default: () => ({ store: { token: "reminder-token" } }),
+  default: () => ({
+    store: { token: "reminder-token", user: { id: 8 } },
+  }),
 }));
 
 vi.mock("react-toastify", () => ({
