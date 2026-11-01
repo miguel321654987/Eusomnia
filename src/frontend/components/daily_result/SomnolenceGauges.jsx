@@ -31,7 +31,7 @@ export const SomnolenceGauges = ({
       value:
         caffeineMg === null || caffeineMg === undefined
           ? null
-          : `${caffeineMg} mg`,
+          : `${caffeineMg / 1000} g`,
       icon: "bolt",
       color: "var(--eusomnia-tertiary-container)",
     },

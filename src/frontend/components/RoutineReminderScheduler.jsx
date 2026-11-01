@@ -28,7 +28,7 @@ export const RoutineReminderScheduler = () => {
   const token = store.token || localStorage.getItem("jwt-token");
 
   useEffect(() => {
-    if (!token) return undefined;
+    if (!token || !store.user) return undefined;
     let isActive = true;
     let intervalId;
     let userId;
@@ -114,7 +114,7 @@ export const RoutineReminderScheduler = () => {
       if (intervalId) window.clearInterval(intervalId);
       window.removeEventListener("eusomnia:profile-updated", loadReminders);
     };
-  }, [token]);
+  }, [token, store.user]);
 
   return null;
 };

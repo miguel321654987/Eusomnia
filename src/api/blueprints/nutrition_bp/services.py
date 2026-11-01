@@ -350,6 +350,21 @@ def _leading_quantity(line: str) -> float:
     return float(match.group(1).replace(",", "."))
 
 
+def _leading_serving_quantity(line: str) -> float:
+    """Return a count-like quantity for caffeine/alcohol fallbacks.
+
+    Weight-based prefixes such as ``100 g`` are added automatically for Edamam
+    and must not be interpreted as 100 cups of coffee/wine. Gram/kilogram
+    quantities therefore collapse to a single serving.
+    """
+    normalized = _normalize(line)
+    if re.match(
+            r"\s*\d+(?:[.,]\d+)?\s*(?:g|gr|gramos?|kg|kilo)\b",
+            normalized):
+        return 1.0
+    return _leading_quantity(line)
+
+
 def _extract_grams(line: str) -> float:
     """Return the grams referenced in a line (default: 100 g serving)."""
     normalized = _normalize(line)
@@ -391,7 +406,7 @@ def _scan_line(line: str, nutrient: str) -> float:
         per_unit = _match_keyword(line, ALCOHOL_FALLBACK_G)
     if not per_unit:
         return 0.0
-    return round(per_unit * _leading_quantity(line), 2)
+    return round(per_unit * _leading_serving_quantity(line), 2)
 
 
 def resolve_supplement_values(
