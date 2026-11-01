@@ -457,52 +457,52 @@ def analyze_foods(
     )
     line_pairs = list(zip(ingredient_lines, translated_lines))
 
-    if len(translated_lines) == 1:
-        raw = fetch_edamam_ingredient(translated_lines[0])
-    else:
-        try:
-            raw = fetch_edamam_recipe(title, translated_lines)
-        except APIException as exc:
-            if exc.status_code != 422:
-                raise
-            # Per-ingredient fallback: parse each line individually with the
-            # tolerant GET parser and merge the results.  Individual failures
-            # are skipped so that one unrecognised ingredient does not discard
-            # the nutritional data for the rest of the batch.
-            merged: dict[str, Any] = {"ingredients": []}
-            for line in translated_lines:
-                try:
-                    single = fetch_edamam_ingredient(line)
-                except APIException:
-                    # Skip ingredients that Edamam cannot parse.
-                    continue
-                single_ingredients = single.get("ingredients")
-                if isinstance(single_ingredients, list) and single_ingredients:
-                    merged["ingredients"].extend(single_ingredients)
-                else:
-                    # GET responses expose nutrients in totalNutrients (not in
-                    # ingredients[].parsed[]), so we normalise the structure
-                    # so that aggregate_nutrients can read it uniformly.
-                    nutrients = single.get("totalNutrients")
-                    if not isinstance(nutrients, dict):
-                        nutrients = {}
-                        if single.get("calories") is not None:
-                            nutrients["ENERC_KCAL"] = {
-                                "quantity": single.get("calories")
-                            }
-                    merged["ingredients"].append(
-                        {
-                            "parsed": [
-                                {
-                                    "weight": float(
-                                        single.get("totalWeight") or 0.0
-                                    ),
-                                    "nutrients": nutrients,
-                                }
-                            ]
+    try:
+        # Edamam's canonical recipe endpoint takes the full payload
+        # ``{"title": ..., "ingr": [...]}``; use it even for single food
+        # lines so every request shares the same shape.
+        raw = fetch_edamam_recipe(title, translated_lines)
+    except APIException as exc:
+        if exc.status_code != 422:
+            raise
+        # Per-ingredient fallback: parse each line individually with the
+        # tolerant GET parser and merge the results. Individual failures
+        # are skipped so that one unrecognised ingredient does not discard
+        # the nutritional data for the rest of the batch.
+        merged: dict[str, Any] = {"ingredients": []}
+        for line in translated_lines:
+            try:
+                single = fetch_edamam_ingredient(line)
+            except APIException:
+                # Skip ingredients that Edamam cannot parse.
+                continue
+            single_ingredients = single.get("ingredients")
+            if isinstance(single_ingredients, list) and single_ingredients:
+                merged["ingredients"].extend(single_ingredients)
+            else:
+                # GET responses expose nutrients in totalNutrients (not in
+                # ingredients[].parsed[]), so we normalise the structure
+                # so that aggregate_nutrients can read it uniformly.
+                nutrients = single.get("totalNutrients")
+                if not isinstance(nutrients, dict):
+                    nutrients = {}
+                    if single.get("calories") is not None:
+                        nutrients["ENERC_KCAL"] = {
+                            "quantity": single.get("calories")
                         }
-                    )
-            raw = merged
+                merged["ingredients"].append(
+                    {
+                        "parsed": [
+                            {
+                                "weight": float(
+                                    single.get("totalWeight") or 0.0
+                                ),
+                                "nutrients": nutrients,
+                            }
+                        ]
+                    }
+                )
+        raw = merged
 
     raw = translate_edamam_response(raw, custom_key=custom_key)
     nutrients = aggregate_nutrients(raw)

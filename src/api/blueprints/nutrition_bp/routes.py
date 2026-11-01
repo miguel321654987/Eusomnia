@@ -143,12 +143,20 @@ def _analyze_meal_entries(meals, params, custom_key):
         if not foods and not size:
             continue
 
+        # Edamam needs an explicit quantity to return reliable nutrients.
+        # Meal entries frequently store just the food name ("carne", "café"), so
+        # fall back to 100 g when the user did not enter one (keeping the original
+        # text for display).
+        foods_for_analysis = foods
+        if foods and not foods.lstrip()[:1].isdigit():
+            foods_for_analysis = f"100 g {foods}"
+
         meal_type = MEAL_TYPE_ALIASES[meal_id]
         if foods:
             try:
                 analyzed = analyze_foods(
                     title=label,
-                    ingredient_lines=[foods],
+                    ingredient_lines=[foods_for_analysis],
                     meal_type=meal_type,
                     manual={
                         "caffeine_mg": None,

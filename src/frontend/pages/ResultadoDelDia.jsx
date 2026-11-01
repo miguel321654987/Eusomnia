@@ -322,13 +322,21 @@ export const ResultadoDelDia = () => {
     .filter((symbol) => symbol.title);
   const prescriptions = getList(analysis?.recommendations)
     .filter(Boolean)
-    .map((item, index) => ({
-      num: index + 1,
-      title:
-        getText(item, ["title", "recommendation", "text"]) ||
-        `Recomendación ${index + 1}`,
-      desc: getText(item, ["description", "reason", "details"]),
-    }));
+    .map((item, index) => {
+      const isString = typeof item === "string";
+      const title = isString
+        ? item
+        : getText(item, ["title", "recommendation", "text"]) ||
+          `Recomendación ${index + 1}`;
+      const description = isString
+        ? ""
+        : getText(item, ["description", "reason", "details"]);
+      return {
+        num: index + 1,
+        title,
+        desc: description && description !== title ? description : "",
+      };
+    });
   const alerts = getList(analysis?.alerts)
     .map((item) =>
       getText(item, [

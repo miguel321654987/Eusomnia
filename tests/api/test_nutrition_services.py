@@ -234,6 +234,12 @@ def test_analyze_foods_translates_input_before_edamam(monkeypatch):
     requested_ingredients = []
     monkeypatch.setattr(services, "translate_texts", translate)
     monkeypatch.setattr(services, "translate_edamam_response", lambda data, **kwargs: data)
+
+    def _reject_recipe(title, lines):
+        from api.utils import APIException
+        raise APIException("low_quality", status_code=422)
+
+    monkeypatch.setattr(services, "fetch_edamam_recipe", _reject_recipe)
     monkeypatch.setattr(
         services,
         "fetch_edamam_ingredient",
@@ -268,6 +274,11 @@ def test_analyze_foods_rejects_empty_edamam_results(monkeypatch):
         lambda texts, target_language, custom_key=None: list(texts),
     )
     monkeypatch.setattr(services, "translate_edamam_response", lambda data, **kwargs: data)
+    monkeypatch.setattr(
+        services,
+        "fetch_edamam_recipe",
+        lambda title, lines: {"calories": 0},
+    )
     monkeypatch.setattr(
         services, "fetch_edamam_ingredient", lambda query: {"calories": 0}
     )
