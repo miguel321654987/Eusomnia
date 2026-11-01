@@ -30,6 +30,7 @@ export const HabitCorrelationsSection = ({
     { label: "Carbohidratos", value: nutrition?.carbs, unit: "g" },
     { label: "Azúcares", value: nutrition?.sugars, unit: "g" },
     { label: "Sodio", value: nutrition?.sodium, unit: "mg" },
+    { label: "Alcohol", value: nutrition?.alcohol_g, unit: "g" },
     { label: "Vitamina B12", value: nutrition?.vitB12, unit: "µg" },
     { label: "Vitamina E", value: nutrition?.vitE, unit: "mg" },
   ];

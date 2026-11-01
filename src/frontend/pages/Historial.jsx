@@ -65,6 +65,7 @@ export const Historial = () => {
   const [quality, setQuality] = useState("all");
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(Boolean(token));
+  const [isDeleting, setIsDeleting] = useState(false);
   const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
@@ -102,6 +103,40 @@ export const Historial = () => {
       isActive = false;
     };
   }, [requestedEntryId, token]);
+
+  const handleDeleteEntry = async (entryToDelete) => {
+    if (!entryToDelete) return;
+    const confirmed = window.confirm(
+      "¿Seguro que quieres eliminar este registro? Esta acción no se puede deshacer.",
+    );
+    if (!confirmed) return;
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(apiUrl(`/api/daily/${entryToDelete.id}`), {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        throw new Error("No se pudo eliminar el registro.");
+      }
+      setEntries((previous) =>
+        previous.filter((entry) => entry.id !== entryToDelete.id),
+      );
+      setSelectedEntryId((previousId) => {
+        if (previousId === entryToDelete.id) {
+          const next =
+            entries.find((entry) => entry.id !== entryToDelete.id) || null;
+          return next?.id ?? null;
+        }
+        return previousId;
+      });
+    } catch (error) {
+      window.alert(error.message || "No se pudo eliminar el registro.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const filteredEntries = useMemo(
     () => filterHistoryEntries(entries, { range, quality, search }),
@@ -592,6 +627,14 @@ export const Historial = () => {
                       </span>
                       Editar registro
                     </Link>
+                    <button
+                      type="button"
+                      className="btn btn-outline-danger"
+                      disabled={isDeleting}
+                      onClick={() => handleDeleteEntry(selectedEntry)}
+                    >
+                      Eliminar registro
+                    </button>
                   </div>
                 </article>
               </aside>

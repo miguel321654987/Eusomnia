@@ -15,7 +15,7 @@ from api.blueprints.user_bp.models import UserPreferences
 from . import nutrition_bp as bp
 from .loader import load_sleep_params
 from .models import NutritionLog
-from .services import analyze_foods, evaluate_nutrition
+from .services import analyze_foods, evaluate_nutrition, _clean_food_text
 
 TIME_PATTERN = re.compile(r"^\d{2}:\d{2}$")
 
@@ -144,12 +144,12 @@ def _analyze_meal_entries(meals, params, custom_key):
             continue
 
         # Edamam needs an explicit quantity to return reliable nutrients.
-        # Meal entries frequently store just the food name ("carne", "café"), so
-        # fall back to 100 g when the user did not enter one (keeping the original
-        # text for display).
-        foods_for_analysis = foods
-        if foods and not foods.lstrip()[:1].isdigit():
-            foods_for_analysis = f"100 g {foods}"
+        # Food records may include a persisted meal label such as
+        # ``dinner: 3 cervezas``; remove labels before standardizing
+        # quantities while preserving the original text for display.
+        foods_for_analysis = _clean_food_text(foods)
+        if foods_for_analysis and not foods_for_analysis.lstrip()[:1].isdigit():
+            foods_for_analysis = f"100 g {foods_for_analysis}"
 
         meal_type = MEAL_TYPE_ALIASES[meal_id]
         if foods:

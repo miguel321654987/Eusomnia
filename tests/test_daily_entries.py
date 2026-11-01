@@ -2,6 +2,43 @@ import json
 
 from datetime import date
 
+# keep existing imports
+
+
+def test_create_daily_entry_rejects_duplicate_date(client, auth_header):
+    payload = {
+        "date": "2026-10-19",
+        "sleep": {"raw_text": "Primer relato"},
+    }
+    first = client.post("/daily", json=payload, headers=auth_header)
+    assert first.status_code == 201
+
+    second = client.post(
+        "/daily",
+        json={"date": "2026-10-19", "sleep": {"raw_text": "Segundo"}},
+        headers=auth_header,
+    )
+    assert second.status_code == 409
+    assert (
+        second.get_json()["message"]
+        == "An entry already exists for this date"
+    )
+
+def test_delete_daily_entry_removes_it(client, auth_header):
+    payload = {
+        "date": "2026-10-20",
+        "sleep": {"raw_text": "Relato a borrar"},
+    }
+    response = client.post("/daily", json=payload, headers=auth_header)
+    assert response.status_code == 201
+    entry_id = response.get_json()["results"]["id"]
+
+    delete = client.delete(f"/daily/{entry_id}", headers=auth_header)
+    assert delete.status_code == 200
+
+    missing = client.get(f"/daily/{entry_id}", headers=auth_header)
+    assert missing.status_code == 404
+
 
 def test_create_and_retrieve_daily_entry(client, auth_header, app):
     # Create a new daily entry with sleep and habit data
