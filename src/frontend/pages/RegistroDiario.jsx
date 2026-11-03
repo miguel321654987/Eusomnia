@@ -340,9 +340,11 @@ export const RegistroDiario = () => {
   const handleSleepContextChange = (changes) => {
     setFormData((prev) => {
       const sleepContext = { ...prev.sleepContext, ...changes };
+      const effectiveBedtime = sleepContext.bedtime || "23:00";
+      const effectiveWakeTime = sleepContext.wake_time || "06:30";
       const derivedSleepHours = getSleepDurationHours(
-        sleepContext.bedtime,
-        sleepContext.wake_time,
+        effectiveBedtime,
+        effectiveWakeTime,
       );
       return {
         ...prev,

@@ -5,6 +5,8 @@ import {
 } from "../../utils/sleepTime.js";
 
 const ROOM_TEMPERATURE_SUGGESTION = 20;
+const SUGGESTED_BEDTIME = "23:00";
+const SUGGESTED_WAKE_TIME = "06:30";
 
 const RoomTemperatureStepper = ({ value, onChange }) => {
   const temperature = value === "" ? null : Number(value);
@@ -92,7 +94,6 @@ export const StepSleepHygiene = ({
   screenTime,
   sleepContext,
   onChangeSleepContext,
-  onChangeHours,
   onChangeQuality,
   onChangeScreens,
   onBack,
@@ -111,21 +112,13 @@ export const StepSleepHygiene = ({
     "> 2 horas (Uso continuo)",
   ];
 
+  const effectiveBedtime = sleepContext?.bedtime || SUGGESTED_BEDTIME;
+  const effectiveWakeTime = sleepContext?.wake_time || SUGGESTED_WAKE_TIME;
   const derivedSleepHours = getSleepDurationHours(
-    sleepContext?.bedtime,
-    sleepContext?.wake_time,
+    effectiveBedtime,
+    effectiveWakeTime,
   );
-  const hasBothSleepTimes = Boolean(
-    sleepContext?.bedtime && sleepContext?.wake_time,
-  );
-
-  const handleHours = (delta) => {
-    const nextVal = Math.max(
-      3,
-      Math.min(14, Math.round((sleepHours + delta) * 100) / 100),
-    );
-    onChangeHours(nextVal);
-  };
+  const hasBothSleepTimes = Boolean(effectiveBedtime && effectiveWakeTime);
 
   return (
     <section className="eusomnia-card p-4 p-sm-5 shadow-lg position-relative">
@@ -156,6 +149,38 @@ export const StepSleepHygiene = ({
         </div>
       </div>
 
+      <section
+        className="p-3 p-sm-4 rounded-3 mb-4"
+        style={{ background: "var(--eusomnia-surface)" }}
+        aria-labelledby="sleep-context-heading"
+      >
+        <h3
+          id="sleep-context-heading"
+          className="font-headline h6 fw-bold text-light mb-1"
+        >
+          Horarios y entorno (opcional)
+        </h3>
+        <p className="font-body small text-secondary mb-3">
+          Datos aproximados declarados por ti, no son estimaciones genéricas.
+        </p>
+        <div className="row g-3">
+          <div className="col-12 col-sm-6">
+            <TimeStepper
+              label="Me acosté"
+              value={sleepContext?.bedtime || ""}
+              suggestedValue="23:00"
+              onChange={(bedtime) => onChangeSleepContext({ bedtime })}
+            />
+          </div>
+          <div className="col-12 col-sm-6">
+            <TimeStepper
+              label="Me desperté"
+              value={sleepContext?.wake_time || ""}
+              suggestedValue="06:30"
+              onChange={(wake_time) => onChangeSleepContext({ wake_time })}
+            />
+          </div>
+          <div className="col-12">
       {/* 1. Hours of Sleep Stepper */}
       <div
         className="p-3 p-sm-4 rounded-3 mb-4"
@@ -174,41 +199,7 @@ export const StepSleepHygiene = ({
             </span>
           </div>
 
-          {derivedSleepHours === null && !hasBothSleepTimes ? (
-            <div
-              className="d-flex align-items-center gap-3 p-1 rounded-3"
-              style={{ background: "var(--eusomnia-surface-high)" }}
-            >
-              <button
-                type="button"
-                className="btn btn-sm btn-eusomnia-secondary d-flex align-items-center justify-content-center"
-                style={{ width: "36px", height: "36px" }}
-                onClick={() => handleHours(-0.25)}
-                aria-label="Restar quince minutos"
-              >
-                <span className="material-symbols-outlined fs-6">remove</span>
-              </button>
-
-              <div className="text-center px-3">
-                <span
-                  className="font-headline h3 fw-bold mb-0 text-light d-block"
-                  style={{ color: "var(--eusomnia-primary)" }}
-                >
-                  {formatSleepDuration(sleepHours)}
-                </span>
-              </div>
-
-              <button
-                type="button"
-                className="btn btn-sm btn-eusomnia-secondary d-flex align-items-center justify-content-center"
-                style={{ width: "36px", height: "36px" }}
-                onClick={() => handleHours(0.25)}
-                aria-label="Sumar quince minutos"
-              >
-                <span className="material-symbols-outlined fs-6">add</span>
-              </button>
-            </div>
-          ) : derivedSleepHours !== null ? (
+          {derivedSleepHours !== null ? (
             <div
               className="text-center p-2 rounded-3"
               style={{ background: "var(--eusomnia-surface-high)" }}
@@ -222,14 +213,81 @@ export const StepSleepHygiene = ({
                 Calculado según los horarios indicados
               </span>
             </div>
-          ) : (
+          ) : hasBothSleepTimes ? (
             <p className="small text-danger mb-0" role="alert">
               Los horarios no pueden ser iguales. Ajusta la hora de despertar o
-              borra uno para indicar la duración manualmente.
+              borra uno para calcular la duración automáticamente.
             </p>
+          ) : (
+            <div
+              className="text-center p-2 rounded-3"
+              style={{ background: "var(--eusomnia-surface-high)" }}
+              role="status"
+              aria-live="polite"
+            >
+              <span
+                className="font-headline h4 fw-bold text-light d-block mb-0"
+                style={{ color: "var(--eusomnia-primary)" }}
+              >
+                {formatSleepDuration(sleepHours)}
+              </span>
+              <span className="font-body small text-secondary">
+                Se calculará al confirmar ambos horarios
+              </span>
+            </div>
           )}
         </div>
       </div>
+          </div>
+          <div className="col-12 col-sm-6">
+            <RoomTemperatureStepper
+              value={sleepContext?.room_temperature_c ?? ""}
+              onChange={(room_temperature_c) =>
+                onChangeSleepContext({ room_temperature_c })
+              }
+            />
+          </div>
+          <div className="col-12 col-sm-6">
+            <fieldset className="border-0 p-0 m-0">
+              <legend className="font-label small text-light mb-2">
+                Luz de la habitación
+              </legend>
+              <div
+                className="d-flex flex-wrap gap-2"
+                role="group"
+                aria-label="Luz de la habitación"
+              >
+                {[
+                  { id: "dark", label: "Oscura" },
+                  { id: "dim", label: "Tenue" },
+                  { id: "bright", label: "Luminosa" },
+                ].map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    className={`btn btn-sm rounded-pill ${
+                      sleepContext?.room_light === option.id
+                        ? "btn-primary"
+                        : "btn-eusomnia-secondary"
+                    }`}
+                    aria-pressed={sleepContext?.room_light === option.id}
+                    onClick={() =>
+                      onChangeSleepContext({
+                        room_light:
+                          sleepContext?.room_light === option.id
+                            ? ""
+                            : option.id,
+                      })
+                    }
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          </div>
+        </div>
+      </section>
 
       {/* 2. Sleep Quality Cards */}
       <div className="mb-4">
@@ -317,87 +375,6 @@ export const StepSleepHygiene = ({
           })}
         </div>
       </div>
-
-      <section
-        className="p-3 p-sm-4 rounded-3 mb-4"
-        style={{ background: "var(--eusomnia-surface)" }}
-        aria-labelledby="sleep-context-heading"
-      >
-        <h3
-          id="sleep-context-heading"
-          className="font-headline h6 fw-bold text-light mb-1"
-        >
-          Horarios y entorno (opcional)
-        </h3>
-        <p className="font-body small text-secondary mb-3">
-          Datos aproximados declarados por ti, no son estimaciones genéricas.
-        </p>
-        <div className="row g-3">
-          <div className="col-12 col-sm-6">
-            <TimeStepper
-              label="Me acosté"
-              value={sleepContext?.bedtime || ""}
-              suggestedValue="23:00"
-              onChange={(bedtime) => onChangeSleepContext({ bedtime })}
-            />
-          </div>
-          <div className="col-12 col-sm-6">
-            <TimeStepper
-              label="Me desperté"
-              value={sleepContext?.wake_time || ""}
-              suggestedValue="06:30"
-              onChange={(wake_time) => onChangeSleepContext({ wake_time })}
-            />
-          </div>
-          <div className="col-12 col-sm-6">
-            <RoomTemperatureStepper
-              value={sleepContext?.room_temperature_c ?? ""}
-              onChange={(room_temperature_c) =>
-                onChangeSleepContext({ room_temperature_c })
-              }
-            />
-          </div>
-          <div className="col-12 col-sm-6">
-            <fieldset className="border-0 p-0 m-0">
-              <legend className="font-label small text-light mb-2">
-                Luz de la habitación
-              </legend>
-              <div
-                className="d-flex flex-wrap gap-2"
-                role="group"
-                aria-label="Luz de la habitación"
-              >
-                {[
-                  { id: "dark", label: "Oscura" },
-                  { id: "dim", label: "Tenue" },
-                  { id: "bright", label: "Luminosa" },
-                ].map((option) => (
-                  <button
-                    key={option.id}
-                    type="button"
-                    className={`btn btn-sm rounded-pill ${
-                      sleepContext?.room_light === option.id
-                        ? "btn-primary"
-                        : "btn-eusomnia-secondary"
-                    }`}
-                    aria-pressed={sleepContext?.room_light === option.id}
-                    onClick={() =>
-                      onChangeSleepContext({
-                        room_light:
-                          sleepContext?.room_light === option.id
-                            ? ""
-                            : option.id,
-                      })
-                    }
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </fieldset>
-          </div>
-        </div>
-      </section>
 
       {/* Footer Navigation Buttons */}
       <div className="d-flex align-items-center justify-content-between pt-2 border-top border-secondary border-opacity-10">
