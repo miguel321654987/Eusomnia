@@ -113,7 +113,7 @@ export const Historial = () => {
 
     setIsDeleting(true);
     try {
-      const response = await fetch(apiUrl(`/api/daily/${entryToDelete.id}`), {
+      const response = await fetch(apiUrl(`/api/entries/${entryToDelete.id}`), {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
