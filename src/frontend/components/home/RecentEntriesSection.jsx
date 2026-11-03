@@ -112,7 +112,7 @@ export const RecentEntriesSection = ({
                       {formatEntryDate(item.date)}
                     </span>
                     <span className="text-light">
-                      {formatSleepDuration(item.sleep_hours)}
+                      `Horas de sueño: ${formatSleepDuration(item.sleep_hours)}`
                     </span>
                   </div>
                   <h3 className="font-headline h6 fw-bold text-light mb-0 pt-1">
