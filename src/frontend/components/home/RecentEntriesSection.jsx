@@ -43,7 +43,9 @@ export const RecentEntriesSection = ({
             Registros guardados
           </span>
           <h2 className="font-headline display-6 fw-bold text-light mb-1">
-            Bitácora de {userName}
+            {user?.name || user?.username
+              ? `Bitácora de ${userName}`
+              : "Bitácora"}
           </h2>
           <p className="font-body text-secondary small mb-0">
             Datos declarados por ti y análisis asociados a cada noche.
@@ -68,7 +70,11 @@ export const RecentEntriesSection = ({
         <div className="alert alert-warning d-flex flex-wrap justify-content-between gap-2">
           <span>{error}</span>
           {onRetry && (
-            <button type="button" className="btn btn-sm btn-outline-light" onClick={onRetry}>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-light"
+              onClick={onRetry}
+            >
               Reintentar
             </button>
           )}
@@ -85,7 +91,8 @@ export const RecentEntriesSection = ({
             Aún no hay registros para mostrar
           </h3>
           <p className="font-body small text-secondary mb-3">
-            Guarda una entrada para ver aquí tus horas de sueño declaradas y su análisis.
+            Guarda una entrada para ver aquí tus horas de sueño declaradas y su
+            análisis.
           </p>
           <Link to="/registro-diario" className="btn btn-primary">
             Crear primer registro
@@ -121,14 +128,17 @@ export const RecentEntriesSection = ({
                       lineHeight: 1.5,
                     }}
                   >
-                    {item.excerpt || "No se guardó un relato para esta entrada."}
+                    {item.excerpt ||
+                      "No se guardó un relato para esta entrada."}
                   </p>
                   <div className="d-flex flex-wrap gap-2 pt-2">
                     <span className="badge badge-eusomnia-neutral rounded-pill px-2 py-1 small">
                       Calidad declarada: {item.sleep_quality || "Sin indicar"}
                     </span>
                     <span className="badge badge-eusomnia-cyan rounded-pill px-2 py-1 small">
-                      {item.has_analysis ? "Análisis disponible" : "Análisis pendiente"}
+                      {item.has_analysis
+                        ? "Análisis disponible"
+                        : "Análisis pendiente"}
                     </span>
                   </div>
                 </div>
@@ -140,7 +150,9 @@ export const RecentEntriesSection = ({
                     style={{ color: "var(--eusomnia-primary)" }}
                   >
                     <span>Ver resultado</span>
-                    <span className="material-symbols-outlined fs-6">arrow_forward</span>
+                    <span className="material-symbols-outlined fs-6">
+                      arrow_forward
+                    </span>
                   </Link>
                   {onReanalyze && (
                     <button
@@ -157,9 +169,14 @@ export const RecentEntriesSection = ({
                       onClick={() => onReanalyze(item.id)}
                     >
                       {reanalyzingEntryId === item.id ? (
-                        <span className="spinner-border spinner-border-sm" role="status" />
+                        <span
+                          className="spinner-border spinner-border-sm"
+                          role="status"
+                        />
                       ) : (
-                        <span className="material-symbols-outlined fs-6">refresh</span>
+                        <span className="material-symbols-outlined fs-6">
+                          refresh
+                        </span>
                       )}
                     </button>
                   )}

@@ -20,11 +20,20 @@ const RoomTemperatureStepper = ({ value, onChange }) => {
   };
 
   return (
-    <div className="d-flex flex-column gap-1" role="group" aria-label="Temperatura aproximada de la habitación">
-      <span className="font-label small text-light">Temperatura aprox. (°C)</span>
+    <div
+      className="d-flex flex-column gap-1"
+      role="group"
+      aria-label="Temperatura aproximada de la habitación"
+    >
+      <span className="font-label small text-light">
+        Temperatura aprox. (°C)
+      </span>
       <div
         className="d-inline-flex align-items-center justify-content-between gap-2 p-1 rounded-3"
-        style={{ background: "var(--eusomnia-surface-high)", maxWidth: "220px" }}
+        style={{
+          background: "var(--eusomnia-surface-high)",
+          maxWidth: "220px",
+        }}
       >
         <button
           type="button"
@@ -138,7 +147,10 @@ export const StepSleepHygiene = ({
         </div>
         <div
           className="rounded-3 d-flex align-items-center justify-content-center p-2 flex-shrink-0"
-          style={{ background: "var(--eusomnia-surface-high)", color: "var(--eusomnia-primary)" }}
+          style={{
+            background: "var(--eusomnia-surface-high)",
+            color: "var(--eusomnia-primary)",
+          }}
         >
           <span className="material-symbols-outlined fs-4">bedtime</span>
         </div>
@@ -163,36 +175,39 @@ export const StepSleepHygiene = ({
           </div>
 
           {derivedSleepHours === null && !hasBothSleepTimes ? (
-          <div
-            className="d-flex align-items-center gap-3 p-1 rounded-3"
-            style={{ background: "var(--eusomnia-surface-high)" }}
-          >
-            <button
-              type="button"
-              className="btn btn-sm btn-eusomnia-secondary d-flex align-items-center justify-content-center"
-              style={{ width: "36px", height: "36px" }}
-              onClick={() => handleHours(-0.25)}
-              aria-label="Restar quince minutos"
+            <div
+              className="d-flex align-items-center gap-3 p-1 rounded-3"
+              style={{ background: "var(--eusomnia-surface-high)" }}
             >
-              <span className="material-symbols-outlined fs-6">remove</span>
-            </button>
+              <button
+                type="button"
+                className="btn btn-sm btn-eusomnia-secondary d-flex align-items-center justify-content-center"
+                style={{ width: "36px", height: "36px" }}
+                onClick={() => handleHours(-0.25)}
+                aria-label="Restar quince minutos"
+              >
+                <span className="material-symbols-outlined fs-6">remove</span>
+              </button>
 
-            <div className="text-center px-3">
-              <span className="font-headline h3 fw-bold mb-0 text-light d-block" style={{ color: "var(--eusomnia-primary)" }}>
-                {formatSleepDuration(sleepHours)}
-              </span>
+              <div className="text-center px-3">
+                <span
+                  className="font-headline h3 fw-bold mb-0 text-light d-block"
+                  style={{ color: "var(--eusomnia-primary)" }}
+                >
+                  {formatSleepDuration(sleepHours)}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                className="btn btn-sm btn-eusomnia-secondary d-flex align-items-center justify-content-center"
+                style={{ width: "36px", height: "36px" }}
+                onClick={() => handleHours(0.25)}
+                aria-label="Sumar quince minutos"
+              >
+                <span className="material-symbols-outlined fs-6">add</span>
+              </button>
             </div>
-
-            <button
-              type="button"
-              className="btn btn-sm btn-eusomnia-secondary d-flex align-items-center justify-content-center"
-              style={{ width: "36px", height: "36px" }}
-              onClick={() => handleHours(0.25)}
-              aria-label="Sumar quince minutos"
-            >
-              <span className="material-symbols-outlined fs-6">add</span>
-            </button>
-          </div>
           ) : derivedSleepHours !== null ? (
             <div
               className="text-center p-2 rounded-3"
@@ -239,11 +254,18 @@ export const StepSleepHygiene = ({
                   <div>
                     <span
                       className="font-headline small fw-bold d-block text-light"
-                      style={{ color: isSelected ? "var(--eusomnia-primary)" : "inherit" }}
+                      style={{
+                        color: isSelected
+                          ? "var(--eusomnia-primary)"
+                          : "inherit",
+                      }}
                     >
                       {q.label}
                     </span>
-                    <span className="font-body small text-secondary" style={{ fontSize: "0.75rem" }}>
+                    <span
+                      className="font-body small text-secondary"
+                      style={{ fontSize: "0.75rem" }}
+                    >
                       {q.desc}
                     </span>
                   </div>
@@ -274,7 +296,10 @@ export const StepSleepHygiene = ({
                 >
                   <span
                     className="font-body small text-light"
-                    style={{ color: isSelected ? "var(--eusomnia-primary)" : "inherit", fontSize: "0.82rem" }}
+                    style={{
+                      color: isSelected ? "var(--eusomnia-primary)" : "inherit",
+                      fontSize: "0.82rem",
+                    }}
                   >
                     {opt}
                   </span>
@@ -305,7 +330,7 @@ export const StepSleepHygiene = ({
           Horarios y entorno (opcional)
         </h3>
         <p className="font-body small text-secondary mb-3">
-          Datos aproximados declarados por ti; no se miden con sensores.
+          Datos aproximados declarados por ti, no son estimaciones genéricas.
         </p>
         <div className="row g-3">
           <div className="col-12 col-sm-6">
@@ -337,7 +362,11 @@ export const StepSleepHygiene = ({
               <legend className="font-label small text-light mb-2">
                 Luz de la habitación
               </legend>
-              <div className="d-flex flex-wrap gap-2" role="group" aria-label="Luz de la habitación">
+              <div
+                className="d-flex flex-wrap gap-2"
+                role="group"
+                aria-label="Luz de la habitación"
+              >
                 {[
                   { id: "dark", label: "Oscura" },
                   { id: "dim", label: "Tenue" },

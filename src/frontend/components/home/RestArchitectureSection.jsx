@@ -21,10 +21,14 @@ export const RestArchitectureSection = () => {
             <h2 className="font-headline display-6 fw-bold text-light mb-0">
               Ideas sencillas para preparar el descanso
             </h2>
-            <p className="font-body text-secondary mb-0" style={{ lineHeight: 1.6 }}>
-              Eusomnia te ayuda a registrar hábitos y revisar patrones personales.
-              Estos consejos son generales: la aplicación no mide la temperatura,
-              la luz ni las fases del sueño de tu habitación.
+            <p
+              className="font-body text-secondary mb-0"
+              style={{ lineHeight: 1.6 }}
+            >
+              Eusomnia te ayuda a registrar hábitos y revisar patrones
+              personales. Estos consejos son personalizados en base a tus datos
+              aportados: horarios, temperatura, luz, alimentación, actividad
+              física, emociones o la calidad de tu descanso.
             </p>
 
             {/* Environmental Metric Pills */}
@@ -32,7 +36,10 @@ export const RestArchitectureSection = () => {
               <div className="col-12 col-sm-6">
                 <div
                   className="p-3 rounded-3 d-flex align-items-center gap-3"
-                  style={{ background: "var(--eusomnia-surface)", border: "1px solid rgba(255, 255, 255, 0.05)" }}
+                  style={{
+                    background: "var(--eusomnia-surface)",
+                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                  }}
                 >
                   <span
                     className="material-symbols-outlined fs-2"
@@ -41,8 +48,12 @@ export const RestArchitectureSection = () => {
                     thermostat
                   </span>
                   <div>
-                    <div className="font-headline h5 fw-bold text-light mb-0">Ambiente fresco</div>
-                    <div className="font-body small text-secondary">Consejo general, no medición</div>
+                    <div className="font-headline h5 fw-bold text-light mb-0">
+                      Ambiente fresco
+                    </div>
+                    <div className="font-body small text-secondary">
+                      Consejo general: 18-20°C para dormir mejor
+                    </div>
                   </div>
                 </div>
               </div>
@@ -50,7 +61,10 @@ export const RestArchitectureSection = () => {
               <div className="col-12 col-sm-6">
                 <div
                   className="p-3 rounded-3 d-flex align-items-center gap-3"
-                  style={{ background: "var(--eusomnia-surface)", border: "1px solid rgba(255, 255, 255, 0.05)" }}
+                  style={{
+                    background: "var(--eusomnia-surface)",
+                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                  }}
                 >
                   <span
                     className="material-symbols-outlined fs-2"
@@ -59,8 +73,12 @@ export const RestArchitectureSection = () => {
                     wb_twilight
                   </span>
                   <div>
-                    <div className="font-headline h5 fw-bold text-light mb-0">Luz tenue</div>
-                    <div className="font-body small text-secondary">Reduce estímulos antes de dormir</div>
+                    <div className="font-headline h5 fw-bold text-light mb-0">
+                      Luz tenue
+                    </div>
+                    <div className="font-body small text-secondary">
+                      Reduce estímulos antes de dormir
+                    </div>
                   </div>
                 </div>
               </div>
@@ -83,7 +101,8 @@ export const RestArchitectureSection = () => {
               <div
                 className="position-absolute bottom-0 start-0 end-0 p-3"
                 style={{
-                  background: "linear-gradient(180deg, transparent 0%, rgba(6, 14, 29, 0.9) 100%)",
+                  background:
+                    "linear-gradient(180deg, transparent 0%, rgba(6, 14, 29, 0.9) 100%)",
                 }}
               >
                 <div

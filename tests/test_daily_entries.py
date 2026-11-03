@@ -187,6 +187,8 @@ def test_update_daily_entry_preserves_original_date(client, auth_header, app):
     entry_id = app.extensions["test_entry_id"]
     with app.app_context():
         entry = db.session.get(DailyEntry, entry_id)
+        assert entry is not None
+
         entry.habit_log = HabitLog(
             entry_id=entry_id,
             total_sleep_hours=6.5,
