@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export const PillarsSection = () => {
   return (
     <section className="container py-5 position-relative" style={{ zIndex: 1 }}>
@@ -12,9 +14,13 @@ export const PillarsSection = () => {
         <h2 className="font-headline display-6 fw-bold text-light mb-0">
           Los Tres Pilares de Eusomnia
         </h2>
-        <p className="font-body text-secondary lead mb-0" style={{ maxWidth: "620px" }}>
-          Superamos los diarios manuales tediosos y las apps de música genérica
-          vinculando fisiología real con la psicología profunda de tus sueños.
+        <p
+          className="font-body text-secondary lead mb-0"
+          style={{ maxWidth: "620px" }}
+        >
+          Superamos los diarios manuales tediosos y las apps genéricas mediante
+          modernas herramientas tecnológicas. Nuestra filosofía vincula la
+          fisiología real con la psicología profunda de tus sueños.
         </p>
       </div>
 
@@ -41,18 +47,22 @@ export const PillarsSection = () => {
               <h3 className="font-headline h5 fw-bold text-light mb-0">
                 Registro Rápido Sin Fricción
               </h3>
-              <p className="font-body text-secondary small mb-0" style={{ lineHeight: 1.6 }}>
+              <p
+                className="font-body text-secondary small mb-0"
+                style={{ lineHeight: 1.6 }}
+              >
                 Diseñado para completarse en menos de 2 minutos matutinos.
-                Wizard guiado paso a paso con selectores intuitivos para capturar
-                sueños antes de que la memoria remota se disipe.
+                Wizard guiado paso a paso con selectores intuitivos para
+                capturar sueños antes de que la memoria remota se disipe.
               </p>
             </div>
             <div
               className="pt-4 d-flex align-items-center gap-2 font-label small fw-semibold"
               style={{ color: "var(--eusomnia-primary)" }}
             >
-              <span>Flujo de 4 fases adaptativas</span>
-              <span className="material-symbols-outlined fs-6">arrow_forward</span>
+              <Link to="/registro-diario" className="...">
+                <span>Flujo de 5 fases adaptativas</span>
+              </Link>
             </div>
           </div>
         </div>
@@ -63,10 +73,14 @@ export const PillarsSection = () => {
             className="eusomnia-card h-100 p-4 d-flex flex-column justify-content-between position-relative overflow-hidden"
             style={{
               borderColor: "rgba(0, 229, 255, 0.25)",
-              background: "linear-gradient(180deg, var(--eusomnia-surface) 0%, var(--eusomnia-surface-low) 100%)",
+              background:
+                "linear-gradient(180deg, var(--eusomnia-surface) 0%, var(--eusomnia-surface-low) 100%)",
             }}
           >
-            <div className="d-flex flex-column gap-3 position-relative" style={{ zIndex: 1 }}>
+            <div
+              className="d-flex flex-column gap-3 position-relative"
+              style={{ zIndex: 1 }}
+            >
               <div
                 className="rounded-3 d-flex align-items-center justify-content-center p-3"
                 style={{
@@ -91,10 +105,15 @@ export const PillarsSection = () => {
               <h3 className="font-headline h5 fw-bold text-light mb-0">
                 Causa Somática + Símbolo Onírico
               </h3>
-              <p className="font-body text-secondary small mb-0" style={{ lineHeight: 1.6 }}>
-                El sueño aporta la metáfora; tus hábitos (pantallas, cafeína, cena)
-                la causa biológica. Nuestra IA entrelaza ambos mundos para explicar
-                por qué soñaste lo que soñaste.
+              <p
+                className="font-body text-secondary small mb-0"
+                style={{ lineHeight: 1.6 }}
+              >
+                Eusomnia no “adivina”. El sueño aporta la metáfora y tus hábitos
+                la causa biológica. Nuestra herramienta entrelaza ambos mundos
+                con un motor vectorial RAG que recupera contexto sobre un
+                diccionario onírico de 8.000 símbolos y orquesta el análisis IA.
+                Eusomnia te explica por qué soñaste lo que soñaste.
               </p>
             </div>
             <div
@@ -102,7 +121,6 @@ export const PillarsSection = () => {
               style={{ color: "var(--eusomnia-primary)", zIndex: 1 }}
             >
               <span>Análisis semántico multimodal</span>
-              <span className="material-symbols-outlined fs-6">arrow_forward</span>
             </div>
           </div>
         </div>
@@ -120,18 +138,23 @@ export const PillarsSection = () => {
                   color: "var(--eusomnia-tertiary-container)",
                 }}
               >
-                <span className="material-symbols-outlined fs-3">vital_signs</span>
+                <span className="material-symbols-outlined fs-3">
+                  vital_signs
+                </span>
               </div>
               <span className="badge badge-eusomnia-amber rounded-pill px-3 py-1 small align-self-start">
-                03 • NUTRICIÓN & EDAMAM
+                03 • ANÁLISIS NUTRICIONAL
               </span>
               <h3 className="font-headline h5 fw-bold text-light mb-0">
                 Prescripciones Personalizadas
               </h3>
-              <p className="font-body text-secondary small mb-0" style={{ lineHeight: 1.6 }}>
-                Integración con bases de datos metabólicas para balancear
-                triptófano, magnesio y carbohidratos complejos en tus últimas
-                comidas antes de la fase de reposo profundo.
+              <p
+                className="font-body text-secondary small mb-0"
+                style={{ lineHeight: 1.6 }}
+              >
+                Integración con bases de datos metabólicas para balancear kcal,
+                estimulantes, triptófano, magnesio y carbohidratos complejos en
+                tus comidas antes de la fase de reposo.
               </p>
             </div>
             <div
@@ -139,7 +162,6 @@ export const PillarsSection = () => {
               style={{ color: "var(--eusomnia-tertiary-container)" }}
             >
               <span>Micro-hábitos circadianos</span>
-              <span className="material-symbols-outlined fs-6">arrow_forward</span>
             </div>
           </div>
         </div>
@@ -147,4 +169,3 @@ export const PillarsSection = () => {
     </section>
   );
 };
-

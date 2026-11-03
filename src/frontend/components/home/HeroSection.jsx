@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 
 function formatDuration(hours) {
   const parsedHours = Number(hours);
-  if (!Number.isFinite(parsedHours) || parsedHours <= 0) return "Horas no informadas";
+  if (!Number.isFinite(parsedHours) || parsedHours <= 0)
+    return "Horas no informadas";
   const totalMinutes = Math.round(parsedHours * 60);
   const wholeHours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
@@ -17,7 +18,12 @@ function formatDate(value) {
     : new Intl.DateTimeFormat("es-ES", { dateStyle: "medium" }).format(date);
 }
 
-export const HeroSection = ({ user, summary, isSummaryLoading, onOpenDemo }) => {
+export const HeroSection = ({
+  user,
+  summary,
+  isSummaryLoading,
+  onOpenDemo,
+}) => {
   const userName = user?.name || user?.username || user?.email || null;
   const latestEntry = summary?.recent_entries?.[0];
   const latestInterpretation = latestEntry?.analysis?.interpretation;
@@ -40,18 +46,24 @@ export const HeroSection = ({ user, summary, isSummaryLoading, onOpenDemo }) => 
           >
             <span className="pulse-dot-cyan" />
             <span className="font-label small fw-semibold text-gradient-cyan text-uppercase tracking-wider">
-              Neuro-Monitoreo Circadiano • v2.6 Activa
+              Neuro-Monitoreo Circadiano • v1.0 Activa
             </span>
           </div>
 
           {/* Main Headline */}
-          <h1 className="font-headline display-5 fw-bold text-light mb-0" style={{ lineHeight: 1.15 }}>
+          <h1
+            className="font-headline display-5 fw-bold text-light mb-0"
+            style={{ lineHeight: 1.15 }}
+          >
             Descifra la conexión entre tus días y{" "}
             <span className="text-gradient-cyan">tus sueños</span>
           </h1>
 
           {/* Pitch Text */}
-          <p className="font-body text-secondary lead mb-0" style={{ maxWidth: "580px", color: "var(--eusomnia-text-muted)" }}>
+          <p
+            className="font-body text-secondary lead mb-0"
+            style={{ maxWidth: "580px", color: "var(--eusomnia-text-muted)" }}
+          >
             Reunimos tus hábitos registrados, el contexto nutricional y el
             análisis onírico generativo para ayudarte a explorar patrones entre
             tus días y tus sueños.
@@ -72,7 +84,10 @@ export const HeroSection = ({ user, summary, isSummaryLoading, onOpenDemo }) => 
               onClick={onOpenDemo}
               className="btn btn-eusomnia-secondary d-inline-flex align-items-center justify-content-center gap-2 px-4 py-3"
             >
-              <span className="material-symbols-outlined fs-5" style={{ color: "var(--eusomnia-primary)" }}>
+              <span
+                className="material-symbols-outlined fs-5"
+                style={{ color: "var(--eusomnia-primary)" }}
+              >
                 auto_fix_high
               </span>
               <span>Ver Demo de Análisis</span>
@@ -84,7 +99,10 @@ export const HeroSection = ({ user, summary, isSummaryLoading, onOpenDemo }) => 
             {userName ? (
               <div
                 className="d-flex align-items-center gap-2 px-3 py-1 rounded-pill"
-                style={{ background: "var(--eusomnia-surface-low)", border: "1px solid rgba(255,255,255,0.08)" }}
+                style={{
+                  background: "var(--eusomnia-surface-low)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                }}
               >
                 <span
                   className="material-symbols-outlined"
@@ -93,19 +111,27 @@ export const HeroSection = ({ user, summary, isSummaryLoading, onOpenDemo }) => 
                   verified_user
                 </span>
                 <span className="font-label small text-secondary">
-                  Sesión activa de: <strong className="text-light">{userName}</strong>
+                  Sesión activa de:{" "}
+                  <strong className="text-light">{userName}</strong>
                 </span>
               </div>
             ) : (
               <div
                 className="d-flex align-items-center gap-2 px-3 py-1 rounded-pill"
-                style={{ background: "var(--eusomnia-surface-low)", border: "1px solid rgba(255,255,255,0.08)" }}
+                style={{
+                  background: "var(--eusomnia-surface-low)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                }}
               >
-                <span className="material-symbols-outlined text-secondary" style={{ fontSize: "18px" }}>
+                <span
+                  className="material-symbols-outlined text-secondary"
+                  style={{ fontSize: "18px" }}
+                >
                   account_circle
                 </span>
                 <span className="font-label small text-secondary">
-                  Modo Explorador: <strong className="text-light">Invitado</strong>
+                  Modo Explorador:{" "}
+                  <strong className="text-light">Invitado</strong>
                 </span>
                 <button
                   type="button"
@@ -138,8 +164,13 @@ export const HeroSection = ({ user, summary, isSummaryLoading, onOpenDemo }) => 
                   </span>
                 </div>
                 <div>
-                  <div className="font-label fw-bold text-light lh-1">Sinapsis Nocturna</div>
-                  <div className="font-label small text-secondary" style={{ fontSize: "0.75rem" }}>
+                  <div className="font-label fw-bold text-light lh-1">
+                    Sinapsis Nocturna
+                  </div>
+                  <div
+                    className="font-label small text-secondary"
+                    style={{ fontSize: "0.75rem" }}
+                  >
                     Resumen de tus registros
                   </div>
                 </div>
@@ -153,20 +184,26 @@ export const HeroSection = ({ user, summary, isSummaryLoading, onOpenDemo }) => 
               className="p-3 rounded-3 d-flex align-items-center gap-3"
               style={{ background: "var(--eusomnia-surface)" }}
             >
-              <span className="material-symbols-outlined fs-2" style={{ color: "var(--eusomnia-primary)" }}>
+              <span
+                className="material-symbols-outlined fs-2"
+                style={{ color: "var(--eusomnia-primary)" }}
+              >
                 bedtime
               </span>
               <div>
                 <div className="font-headline fw-semibold text-light">
                   {latestEntry
-                    ? formatDuration(latestEntry.sleep_hours)
+                    ? `Duración del sueño: ${formatDuration(latestEntry.sleep_hours)}`
                     : isSummaryLoading
                       ? "Cargando tus datos..."
                       : "Tu descanso, sin inventar métricas"}
                 </div>
-                <div className="font-body small text-secondary" style={{ fontSize: "0.8rem" }}>
+                <div
+                  className="font-body small text-secondary"
+                  style={{ fontSize: "0.8rem" }}
+                >
                   {latestEntry
-                    ? `Horas declaradas · ${latestEntry.sleep_quality || "calidad no indicada"}`
+                    ? `Calidad del sueño: ${latestEntry.sleep_quality || "calidad no indicada"}`
                     : userName
                       ? "Guarda un registro para ver aquí tu resumen."
                       : "Inicia sesión para consultar tus registros personales."}
@@ -188,7 +225,7 @@ export const HeroSection = ({ user, summary, isSummaryLoading, onOpenDemo }) => 
                   ? latestInterpretation
                   : latestEntry?.excerpt
                     ? latestEntry.excerpt
-                    : "Las horas y la calidad proceden de lo que registras; no se estiman fases de sueño ni datos de sensores."}
+                    : "Las horas y la calidad proceden de lo que registras; no se estiman fases de sueño ni datos simulados."}
               </p>
               {latestEntry && (
                 <Link
@@ -210,7 +247,7 @@ export const HeroSection = ({ user, summary, isSummaryLoading, onOpenDemo }) => 
                 </div>
                 <div className="font-body small text-secondary mt-1">
                   {sleepSummary.current_average_hours !== null
-                    ? `${sleepSummary.current_average_hours} h en ${sleepSummary.current_sample_size} ${
+                    ? `Media de ${sleepSummary.current_average_hours} h de sueño a partir de ${sleepSummary.current_sample_size} ${
                         sleepSummary.current_sample_size === 1
                           ? "registro"
                           : "registros"

@@ -36,14 +36,38 @@ export const HabitCorrelationsSection = ({
   ];
 
   const contextMetrics = [
-    { label: "Actividad física", value: context.activity, icon: "fitness_center" },
+    {
+      label: "Actividad física",
+      value: context.activity,
+      icon: "fitness_center",
+    },
     { label: "Pantallas", value: context.screens, icon: "devices" },
-    { label: "Calidad percibida", value: context.mood, icon: "self_improvement" },
+    {
+      label: "Calidad percibida",
+      value: context.mood,
+      icon: "self_improvement",
+    },
     { label: "Cena registrada", value: context.dinner, icon: "restaurant" },
-    { label: "Hora de acostarse declarada", value: context.bedtime, icon: "bedtime" },
-    { label: "Hora de despertar declarada", value: context.wakeTime, icon: "alarm" },
-    { label: "Última cafeína declarada", value: context.lastCaffeineTime, icon: "coffee" },
-    { label: "Temperatura declarada", value: context.roomTemperature, icon: "thermostat" },
+    {
+      label: "Hora de acostarse declarada",
+      value: context.bedtime,
+      icon: "bedtime",
+    },
+    {
+      label: "Hora de despertar declarada",
+      value: context.wakeTime,
+      icon: "alarm",
+    },
+    {
+      label: "Última cafeína declarada",
+      value: context.lastCaffeineTime,
+      icon: "coffee",
+    },
+    {
+      label: "Temperatura declarada",
+      value: context.roomTemperature,
+      icon: "thermostat",
+    },
     { label: "Luz declarada", value: context.roomLight, icon: "light_mode" },
   ];
   const mealBreakdown = nutrition?.mealBreakdown;
@@ -65,7 +89,9 @@ export const HabitCorrelationsSection = ({
               color: "var(--eusomnia-secondary)",
             }}
           >
-            <span className="material-symbols-outlined fs-5">compare_arrows</span>
+            <span className="material-symbols-outlined fs-5">
+              compare_arrows
+            </span>
           </div>
           <div>
             <h2 className="font-headline h5 fw-bold text-light mb-0">
@@ -81,11 +107,16 @@ export const HabitCorrelationsSection = ({
           <div className="d-flex align-items-center justify-content-between gap-2">
             <span
               className="font-label small fw-bold text-uppercase"
-              style={{ fontSize: "0.75rem", color: "var(--eusomnia-text-muted)" }}
+              style={{
+                fontSize: "0.75rem",
+                color: "var(--eusomnia-text-muted)",
+              }}
             >
               Nutrición
             </span>
-            <span style={{ color: "var(--eusomnia-primary)", fontSize: "0.75rem" }}>
+            <span
+              style={{ color: "var(--eusomnia-primary)", fontSize: "0.75rem" }}
+            >
               {nutrition?.sourceLabel || "Edamam"}
             </span>
           </div>
@@ -194,7 +225,7 @@ export const HabitCorrelationsSection = ({
             Contexto registrado
           </span>
           <p className="font-body small text-secondary mb-0">
-            Hábitos y entorno declarados por ti; no son mediciones de sensores.
+            Hábitos y entorno declarados por ti; no son estimaciones genéricas.
           </p>
           <div className="row g-2 font-body small">
             {contextMetrics.map((metric) => (
