@@ -27,6 +27,7 @@ class NutritionLog(db.Model):
         Float, default=0.0, nullable=False)
     alcohol_g: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
     omega3_mg: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    tryptophan_mg: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
     sodium_mg: Mapped[float] = mapped_column(
         Float, default=0.0, nullable=False)
     vitamin_e_mg: Mapped[float] = mapped_column(
@@ -73,6 +74,7 @@ class NutritionLog(db.Model):
                 self.caffeine_mg,
                 self.alcohol_g,
                 self.omega3_mg,
+                self.tryptophan_mg,
                 self.vitamin_e_mg,
                 self.vitamin_b12_ug,
                 self.total_weight_g,
@@ -91,6 +93,7 @@ class NutritionLog(db.Model):
             "caffeine_mg": get_total("caffeine_mg", self.caffeine_mg),
             "alcohol_g": get_total("alcohol_g", self.alcohol_g),
             "omega3_mg": get_total("omega3_mg", self.omega3_mg),
+            "tryptophan_mg": get_total("tryptophan_mg", self.tryptophan_mg),
             "sodium_mg": get_total("sodium_mg", self.sodium_mg),
             "vitamin_e_mg": get_total("vitamin_e_mg", self.vitamin_e_mg),
             "vitamin_b12_ug": get_total(
