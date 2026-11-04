@@ -10,6 +10,16 @@ export const SomnolenceGauges = ({
   sleepQuality,
   caffeineMg,
 }) => {
+  const numericCaffeineMg = Number(caffeineMg);
+  const caffeineColor =
+    caffeineMg === null || caffeineMg === undefined
+      ? "var(--eusomnia-tertiary-container)"
+      : numericCaffeineMg > 300
+        ? "var(--eusomnia-error)"
+        : numericCaffeineMg > 200
+          ? "#ffc107"
+          : "var(--eusomnia-tertiary-container)";
+
   const metrics = [
     {
       label: "Duración registrada",
@@ -33,7 +43,7 @@ export const SomnolenceGauges = ({
           ? null
           : `${caffeineMg / 1000} g`,
       icon: "bolt",
-      color: "var(--eusomnia-tertiary-container)",
+      color: caffeineColor,
     },
   ];
 

@@ -181,7 +181,10 @@ export const DreamAnalysisSection = ({
                 : "El análisis todavía no contiene una interpretación.")}
           </p>
           {habitsReading && (
-            <p className="font-body small text-secondary mb-0" style={{ lineHeight: 1.6 }}>
+            <p
+              className="font-body small mb-0"
+              style={{ lineHeight: 1.6, color: "var(--eusomnia-text)" }}
+            >
               {habitsReading}
             </p>
           )}
