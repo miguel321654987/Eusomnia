@@ -520,6 +520,7 @@ export const RegistroDiario = () => {
         type: "error",
         text: "Inicia sesión para guardar el registro y generar el análisis.",
       });
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
       return;
     }
 
@@ -723,7 +724,7 @@ export const RegistroDiario = () => {
             </button>
           </div>
         )}
-        {statusMessage && (
+        {currentStep !== 5 && statusMessage && (
           <div
             className={`alert ${statusMessage.type === "error" ? "alert-danger" : "alert-info"} py-2 px-3 mb-4 rounded-3 text-center font-label small`}
             style={{
@@ -917,7 +918,6 @@ export const RegistroDiario = () => {
               <StepNutrition
                 mealEntries={formData.mealEntries}
                 sleepContext={formData.sleepContext}
-                token={token}
                 onChangeMealEntry={handleMealEntryChange}
                 onChangeSleepContext={handleSleepContextChange}
                 onBack={() => setCurrentStep(3)}
@@ -968,6 +968,28 @@ export const RegistroDiario = () => {
                   isEditing ? "Guardando cambios..." : "Procesando con IA..."
                 }
               />
+            )}
+
+            {currentStep === 5 && statusMessage && (
+              <div
+                className={`alert ${statusMessage.type === "error" ? "alert-danger" : "alert-info"} py-2 px-3 mt-3 mb-4 rounded-3 text-center font-label small`}
+                style={{
+                  background:
+                    statusMessage.type === "error"
+                      ? "rgba(255, 180, 171, 0.15)"
+                      : "rgba(0, 229, 255, 0.15)",
+                  color:
+                    statusMessage.type === "error"
+                      ? "var(--eusomnia-error)"
+                      : "var(--eusomnia-primary)",
+                  border:
+                    statusMessage.type === "error"
+                      ? "1px solid rgba(255, 180, 171, 0.3)"
+                      : "1px solid rgba(0, 229, 255, 0.3)",
+                }}
+              >
+                {statusMessage.text}
+              </div>
             )}
 
             {/* Sleep Science Tip Footer */}
