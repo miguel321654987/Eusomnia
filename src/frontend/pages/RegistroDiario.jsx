@@ -157,7 +157,7 @@ function createDefaultFormData() {
     sleepQuality: "Profundo",
     screenTime: "< 1 hora (Filtro cálido)",
     incidents: ["🕊️ Día tranquilo y neutro"],
-    emotionalState: [],
+    emotionalState: ["😐 Neutral"],
     mealEntries: createDefaultMealEntries(),
     sleepContext: normalizeSleepContext(),
     dreamNarrative: "",
@@ -291,7 +291,9 @@ export const RegistroDiario = () => {
             habits.sleep_quality || habits.bedtime_mood || "Profundo",
           screenTime: habits.screen_time || "",
           incidents: parseList(habits.incidents),
-          emotionalState: parseList(habits.emotional_state),
+          emotionalState: parseList(habits.emotional_state).length
+            ? parseList(habits.emotional_state)
+            : ["😐 Neutral"],
           mealEntries: normalizeMealEntries(
             habits.meal_entries,
             habits.food_notes || habits.nutrition_query || "",
@@ -354,38 +356,72 @@ export const RegistroDiario = () => {
     });
   };
 
-  // Step 3: Incidents (multi-select)
+  // Step 3: Incidents (multi-select with mutually exclusive "neutral" incident)
+  const TRANQUIL_INCIDENT = "🕊️ Día tranquilo y neutro";
   const handleToggleIncident = (incident) => {
     setFormData((prev) => {
-      const exists = prev.incidents.includes(incident);
-      if (exists) {
-        return {
-          ...prev,
-          incidents: prev.incidents.filter((i) => i !== incident),
-        };
-      } else {
-        return {
-          ...prev,
-          incidents: [...prev.incidents, incident],
-        };
+      if (incident === TRANQUIL_INCIDENT) {
+        if (prev.incidents.includes(TRANQUIL_INCIDENT)) {
+          return {
+            ...prev,
+            incidents: prev.incidents.filter(
+              (item) => item !== TRANQUIL_INCIDENT,
+            ),
+          };
+        }
+        return { ...prev, incidents: [TRANQUIL_INCIDENT] };
       }
-    });
-  };
 
-  // Step 3: Emotional state (multi-select)
-  const handleToggleEmotionalState = (emotion) => {
-    setFormData((prev) => {
-      const exists = prev.emotionalState.includes(emotion);
-      if (exists) {
+      const currentlySelected = prev.incidents.includes(incident);
+      const withoutTranquil = prev.incidents.filter(
+        (item) => item !== TRANQUIL_INCIDENT,
+      );
+
+      if (currentlySelected) {
         return {
           ...prev,
-          emotionalState: prev.emotionalState.filter((item) => item !== emotion),
+          incidents: withoutTranquil.filter((item) => item !== incident),
         };
       }
 
       return {
         ...prev,
-        emotionalState: [...prev.emotionalState, emotion],
+        incidents: [...withoutTranquil, incident],
+      };
+    });
+  };
+
+  // Step 3: Emotional state (multi-select with mutually exclusive "Neutral")
+  const NEUTRAL_EMOTION = "😐 Neutral";
+  const handleToggleEmotionalState = (emotion) => {
+    setFormData((prev) => {
+      if (emotion === NEUTRAL_EMOTION) {
+        if (prev.emotionalState.includes(NEUTRAL_EMOTION)) {
+          return {
+            ...prev,
+            emotionalState: prev.emotionalState.filter(
+              (item) => item !== NEUTRAL_EMOTION,
+            ),
+          };
+        }
+        return { ...prev, emotionalState: [NEUTRAL_EMOTION] };
+      }
+
+      const exists = prev.emotionalState.includes(emotion);
+      const withoutNeutral = prev.emotionalState.filter(
+        (item) => item !== NEUTRAL_EMOTION,
+      );
+
+      if (exists) {
+        return {
+          ...prev,
+          emotionalState: withoutNeutral.filter((item) => item !== emotion),
+        };
+      }
+
+      return {
+        ...prev,
+        emotionalState: [...withoutNeutral, emotion],
       };
     });
   };
