@@ -85,6 +85,7 @@ MEAL_NUTRIENT_MAP = {
     "omega3_mg": "omega3_mg",
     "vitamin_e_mg": "vitamin_e_mg",
     "vitamin_b12_ug": "vitamin_b12_ug",
+    "tryptophan_mg": "tryptophan_mg",
     "total_weight_g": "total_weight_g",
 }
 GENERIC_NUTRIENTS = (
@@ -245,7 +246,8 @@ def _analyze_meal_entries(meals, params, custom_key):
 def _parse_manual(body: dict) -> dict[str, float | None]:
     """Validate the optional manual caffeine/alcohol/omega-3 reports."""
     manual: dict[str, float | None] = {}
-    for field in ("caffeine_mg", "alcohol_g", "omega3_mg"):
+    for field in ("caffeine_mg", "alcohol_g", "omega3_mg",
+                 "tryptophan_mg"):
         raw_value = body.get(field)
         if raw_value is None:
             manual[field] = None

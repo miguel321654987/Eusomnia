@@ -19,6 +19,7 @@ class NormalizedNutrition(TypedDict):
     caffeine_mg: float
     alcohol_g: float
     omega3_mg: float
+    tryptophan_mg: float
     vitamin_e_mg: float
     vitamin_b12_ug: float
     total_weight_g: float

@@ -358,6 +358,7 @@ export const ResultadoDelDia = () => {
         sugars: entry.nutrition_log.sugar_g,
         sodium: entry.nutrition_log.sodium_mg,
         caffeine: entry.nutrition_log.caffeine_mg,
+        alcohol_g: entry.nutrition_log.alcohol_g,
         tryptophan:
           entry.nutrition_log.tryptophan_mg ??
           entry.nutrition_log.tryptophan ??

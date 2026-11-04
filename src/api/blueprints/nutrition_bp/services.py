@@ -293,6 +293,35 @@ def fetch_edamam_ingredient(query: str) -> dict[str, Any]:  # pragma: no cover
 
 
 
+def _is_tryptophan_nutrient(code: Any, info: Any) -> bool:
+    """True when an Edamam nutrient represents tryptophan."""
+    name = f"{code} "
+    if isinstance(info, dict):
+        name += str(info.get("label") or "") + " "
+        name += str(info.get("tag") or "") + " "
+    lowered = name.lower()
+    return "trp" in lowered or "tryptophan" in lowered
+
+
+def _safe_float(value: Any) -> float:
+    """Coerce an arbitrary (possibly None/Unknown) value to float safely.
+
+    Edamam nutrient entries are typed as ``Any`` because the payload comes
+    from an untyped JSON response. Pylance complains when the result of
+    ``dict.get`` (``Unknown | None``) is passed straight to ``float()``,
+    so this helper performs the runtime ``isinstance`` check explicitly.
+    """
+    if isinstance(value, bool):
+        return float(value)
+    if isinstance(value, (int, float, str, bytes, bytearray)):
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return 0.0
+    return 0.0
+
+
+
 def aggregate_nutrients(raw: dict[str, Any]) -> dict[str, float]:
     """Sum NTR nutrient codes across every parsed ingredient.
 
@@ -302,13 +331,20 @@ def aggregate_nutrients(raw: dict[str, Any]) -> dict[str, float]:
     """
     totals: dict[str, float] = {}
     total_weight = 0.0
-
+    tryptophan_total = 0.0
     for ingredient in raw.get("ingredients", []):
         for parsed in ingredient.get("parsed") or []:
-            total_weight += float(parsed.get("weight") or 0.0)
+            total_weight += _safe_float(parsed.get("weight"))
             for code, info in (parsed.get("nutrients") or {}).items():
-                totals[code] = totals.get(code, 0.0) + float(
-                    info.get("quantity") or 0.0)
+                quantity = _safe_float(
+                    info.get("quantity") if isinstance(info, dict) else 0.0
+                )
+                totals[code] = totals.get(code, 0.0) + quantity
+                if _is_tryptophan_nutrient(code, info):
+                    unit = str(info.get("unit") if isinstance(info, dict) else "").lower()
+                    tryptophan_total += quantity * (
+                        1000.0 if unit in {"g", "gr", "gram", "grams"} else 1.0
+                    )
 
     # Edamam's single-item licensed response (typically GET) does not expose
     # ingredients[].parsed[]; it returns an aggregate in totalNutrients.
@@ -316,7 +352,13 @@ def aggregate_nutrients(raw: dict[str, Any]) -> dict[str, float]:
         total_weight = float(raw.get("totalWeight") or 0.0)
         for code, info in raw.get("totalNutrients", {}).items():
             if isinstance(info, dict):
-                totals[code] = float(info.get("quantity") or 0.0)
+                quantity = _safe_float(info.get("quantity"))
+                totals[code] = quantity
+                if _is_tryptophan_nutrient(code, info):
+                    unit = str(info.get("unit") or "").lower()
+                    tryptophan_total += quantity * (
+                        1000.0 if unit in {"g", "gr", "gram", "grams"} else 1.0
+                    )
 
     # Last resort for very small responses that only expose calories.
     if not totals and raw.get("calories") is not None:
@@ -332,6 +374,7 @@ def aggregate_nutrients(raw: dict[str, Any]) -> dict[str, float]:
         "sodium_mg": round(totals.get("NA", 0.0), 2),
         "vitamin_e_mg": round(totals.get("TOCPHA", 0.0), 2),
         "vitamin_b12_ug": round(totals.get("VITB12", 0.0), 2),
+        "tryptophan_mg": round(tryptophan_total, 2),
         "total_weight_g": round(total_weight, 2),
     }
 
@@ -559,6 +602,7 @@ def analyze_foods(
             "sodium_mg",
             "vitamin_e_mg",
             "vitamin_b12_ug",
+            "tryptophan_mg",
             "total_weight_g",
         )
     ) and not any(value > 0 for value in supplements.values()):
@@ -567,6 +611,8 @@ def analyze_foods(
             "en español y añade una cantidad o porción.",
             status_code=422,
         )
+
+    reported_tryptophan = manual.get("tryptophan_mg")
 
     return NormalizedNutrition(
         calories=nutrients["calories"],
@@ -578,6 +624,11 @@ def analyze_foods(
         caffeine_mg=supplements["caffeine_mg"],
         alcohol_g=supplements["alcohol_g"],
         omega3_mg=supplements["omega3_mg"],
+        tryptophan_mg=(
+            round(float(reported_tryptophan), 2)
+            if reported_tryptophan is not None
+            else float(nutrients.get("tryptophan_mg", 0.0) or 0.0)
+        ),
         vitamin_e_mg=nutrients["vitamin_e_mg"],
         vitamin_b12_ug=nutrients["vitamin_b12_ug"],
         total_weight_g=nutrients["total_weight_g"],
