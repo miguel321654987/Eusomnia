@@ -31,7 +31,10 @@ export const HygienicAlertBanner = ({ alerts = [] }) => {
         >
           Alertas del análisis
         </h2>
-        <ul className="font-body small text-secondary mb-0 ps-3">
+        <ul
+          className="font-body small text-light mb-0 ps-3"
+          style={{ color: "var(--eusomnia-text)" }}
+        >
           {alerts.map((alert, index) => (
             <li key={`${index}-${alert}`}>{alert}</li>
           ))}
