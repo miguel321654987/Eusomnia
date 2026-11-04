@@ -13,8 +13,14 @@ const MEAL_NUTRIENTS = [
   { key: "carbohydrates_g", label: "Carbohidratos", unit: "g" },
   { key: "sugars_g", label: "Azúcares", unit: "g" },
   { key: "fat_g", label: "Grasas", unit: "g" },
-  { key: "sodium_mg", label: "Sodio", unit: "mg" },
+  { key: "omega3_mg", label: "Omega 3", unit: "mg" },
+  { key: "alcohol_g", label: "Alcohol", unit: "g" },
   { key: "caffeine_mg", label: "Cafeína", unit: "mg" },
+  { key: "sodium_mg", label: "Sodio", unit: "mg" },
+  { key: "tryptophan_mg", label: "Triptófano", unit: "mg" },
+  { key: "vitamin_e_mg", label: "Vitamina E", unit: "mg" },
+  { key: "vitamin_b12_ug", label: "Vitamina B12", unit: "µg" },
+  { key: "total_weight_g", label: "Peso total analizado", unit: "g" },
 ];
 
 export const HabitCorrelationsSection = ({
@@ -39,6 +45,7 @@ export const HabitCorrelationsSection = ({
       unit: "mg",
     },
     { label: "Alcohol", value: nutrition?.alcohol_g, unit: "g" },
+    { label: "Omega 3", value: nutrition?.omega3 ?? nutrition?.omega3_mg, unit: "mg" },
     { label: "Vitamina B12", value: nutrition?.vitB12, unit: "µg" },
     { label: "Vitamina E", value: nutrition?.vitE, unit: "mg" },
   ];
@@ -163,7 +170,7 @@ export const HabitCorrelationsSection = ({
                   <tr>
                     <th scope="col">Ingesta</th>
                     <th scope="col">Fuente</th>
-                    {MEAL_NUTRIENTS.slice(0, 5).map((nutrient) => (
+                    {MEAL_NUTRIENTS.map((nutrient) => (
                       <th scope="col" key={nutrient.key}>
                         {nutrient.label}
                       </th>
@@ -189,7 +196,7 @@ export const HabitCorrelationsSection = ({
                           </span>
                         )}
                       </td>
-                      {MEAL_NUTRIENTS.slice(0, 5).map((nutrient) => (
+                      {MEAL_NUTRIENTS.map((nutrient) => (
                         <td key={nutrient.key}>
                           {formatMetric(
                             meal.values?.[nutrient.key],
@@ -202,7 +209,7 @@ export const HabitCorrelationsSection = ({
                   <tr className="fw-bold">
                     <th scope="row">Total disponible</th>
                     <td>{nutrition?.sourceLabel || "—"}</td>
-                    {MEAL_NUTRIENTS.slice(0, 5).map((nutrient) => (
+                    {MEAL_NUTRIENTS.map((nutrient) => (
                       <td key={nutrient.key}>
                         {formatMetric(
                           nutritionTotals[nutrient.key],

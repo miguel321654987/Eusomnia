@@ -103,7 +103,62 @@ OMEGA3_FALLBACK_MG_PER_100G: dict[str, float] = {
     "anchoa": 2000.0,
     "anchovy": 2000.0,
     "anchovies": 2000.0,
+    "linaza": 22800.0, "flaxseed": 22800.0,
+    "chia": 17800.0, "semillas de chia": 17800.0,
+    "nuez": 9100.0, "nueces": 9100.0, "walnut": 9100.0,
+    "semillas de canamo": 8700.0, "hemp seeds": 8700.0,
+    "aceite de canola": 9300.0, "canola oil": 9300.0,
+    "aceite de soja": 6900.0, "soybean oil": 6900.0,
+    "soja": 1400.0, "soy": 1400.0,
+    "tofu": 800.0,
+    "huevo omega-3": 150.0, "omega-3 egg": 150.0,
+    "semillas de sesamo": 300.0, "sesame seeds": 300.0,
+    "mani": 150.0, "maní": 150.0, "peanut": 150.0,
 }
+
+
+TRYPTOPHAN_FALLBACK_MG_PER_100G: dict[str, float] = {
+    "pavo": 330.0, "turkey": 330.0,
+    "pollo": 240.0, "chicken": 240.0,
+    "carne de res": 330.0, "beef": 330.0,
+    "cerdo": 350.0, "pork": 350.0,
+    "jamon": 280.0, "ham": 280.0,
+    "huevo": 130.0, "egg": 130.0,
+    "leche": 45.0, "milk": 45.0,
+    "yogur": 45.0, "yogurt": 45.0,
+    "queso": 220.0, "cheese": 220.0,
+    "salmón": 300.0, "salmon": 300.0,
+    "atun": 250.0, "atún": 250.0, "tuna": 250.0,
+    "sardina": 280.0, "sardines": 280.0,
+    "caballa": 300.0, "mackerel": 300.0,
+    "anchoa": 350.0, "anchoas": 350.0, "anchovy": 350.0,
+    "almond": 210.0, "almendra": 210.0,
+    "cacahuete": 250.0, "peanut": 250.0,
+    "nuez": 170.0, "nueces": 170.0, "walnut": 170.0,
+    "semillas de calabaza": 320.0, "pumpkin seeds": 320.0,
+    "semillas de girasol": 290.0, "sunflower seeds": 290.0,
+    "sesamo": 370.0, "sesame": 370.0,
+    "soja": 170.0, "soy": 170.0,
+    "tofu": 140.0,
+    "lentejas": 140.0, "lentil": 140.0,
+    "garbanzos": 150.0, "chickpea": 150.0,
+    "avena": 160.0, "oats": 160.0,
+    "pan integral": 90.0, "whole wheat bread": 90.0,
+    "pan blanco": 60.0, "white bread": 60.0,
+    "arroz integral": 100.0, "brown rice": 100.0,
+    "arroz blanco": 70.0, "white rice": 70.0,
+    "pasta": 70.0,
+    "quinoa": 170.0,
+    "espinaca": 60.0, "spinach": 60.0,
+    "brocoli": 60.0, "broccoli": 60.0,
+    "platano": 10.0, "banana": 10.0,
+    "chocolate": 25.0, "cacao": 30.0,
+    "camaron": 230.0, "camarón": 230.0, "shrimp": 230.0,
+    "mejillones": 120.0, "mussels": 120.0,
+    "bacalao": 230.0, "cod": 230.0,
+    "merluza": 220.0, "hake": 220.0,
+}
+
 
 # Sleep-disrupting excitants without an official range (JSON: other_excitants).
 # Presence -> negative effect; absence -> neutral effect.
@@ -464,6 +519,13 @@ def _scan_line(line: str, nutrient: str) -> float:
             return 0.0
         return round(_extract_grams(line) / 100.0 * per_100g, 2)
 
+    if nutrient == "tryptophan_mg":
+        per_100g = _match_keyword(
+            line, TRYPTOPHAN_FALLBACK_MG_PER_100G)
+        if not per_100g:
+            return 0.0
+        return round(_extract_grams(line) / 100.0 * per_100g, 2)
+
     if nutrient == "caffeine_mg":
         per_unit = _match_keyword(line, CAFFEINE_FALLBACK_MG)
     else:
@@ -735,5 +797,3 @@ def evaluate_nutrition(
         "excitants": excitants,
         "meal_distribution": distribution,
     }
-
-
