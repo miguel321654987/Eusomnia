@@ -7,36 +7,38 @@ export const StepIncidents = ({
   onNext,
 }) => {
   const incidents = [
+    "🕊️ Día tranquilo y neutro",
     "🎉 Buenas noticias / Logro",
     "💼 Estrés laboral intenso",
     "🗣️ Discusión / Conflicto",
     "⚠️ Accidente o susto repentino",
     "🩺 Malestar físico / Dolor de cabeza",
-    "🕊️ Día tranquilo y neutro",
     "🌧️ Lluvia ruidosa / Tormenta",
     "📱 Uso intenso de pantallas por la noche",
-    "☕ Café o té por la tarde",
+    "💧 Deshidratación / Sed",
     "🏃 Actividad física intensa tardía",
   ];
 
   const emotionalStates = [
-    "😊 Alegre",
-    "😔 Triste",
-    "🙄 Irritado",
-    "😰 Preocupado",
     "🥰 Ilusionado",
+    "😄 Feliz",
+    "😊 Alegre",
     "⚡ Motivado",
     "🫥 Calmado",
-    "😵 Estresado",
-    "😢 Melancólico",
+    "😐 Neutral",
     "😲 Sorprendido",
+    "😔 Triste",
+    "😢 Melancólico",
+    "😰 Preocupado",
+    "😵 Estresado",
+    "🙄 Irritado",
   ];
 
   const renderChip = (item, isSelected, onClick) => (
     <button
       key={item}
       type="button"
-      className={`daily-multichip ${isSelected ? "active-multichip" : ""}`}
+      className={`daily-multichip w-100 ${isSelected ? "active-multichip" : ""}`}
       onClick={onClick}
     >
       <span>{item}</span>
@@ -95,14 +97,16 @@ export const StepIncidents = ({
         <p className="font-body text-secondary small mb-3">
           Sucesos del día que pudieron condicionar tu descanso.
         </p>
-        <div className="d-flex flex-wrap gap-2">
-          {incidents.map((item) =>
-            renderChip(
-              item,
-              selectedIncidents.includes(item),
-              () => onToggleIncident(item),
-            ),
-          )}
+        <div className="row row-cols-1 row-cols-md-2 g-2">
+          {incidents.map((item) => (
+            <div className="col" key={item}>
+              {renderChip(
+                item,
+                selectedIncidents.includes(item),
+                () => onToggleIncident(item),
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -113,14 +117,16 @@ export const StepIncidents = ({
         <p className="font-body text-secondary small mb-3">
           Cómo te sentías principalmente durante el día.
         </p>
-        <div className="d-flex flex-wrap gap-2">
-          {emotionalStates.map((item) =>
-            renderChip(
-              item,
-              selectedEmotionalStates.includes(item),
-              () => onToggleEmotionalState(item),
-            ),
-          )}
+        <div className="row row-cols-2 row-cols-md-4 g-2">
+          {emotionalStates.map((item) => (
+            <div className="col" key={item}>
+              {renderChip(
+                item,
+                selectedEmotionalStates.includes(item),
+                () => onToggleEmotionalState(item),
+              )}
+            </div>
+          ))}
         </div>
       </div>
 

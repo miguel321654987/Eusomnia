@@ -119,121 +119,126 @@ export const StepNutrition = ({
               key={meal.id}
               aria-labelledby={`meal-title-${meal.id}`}
             >
-              <div className="d-flex flex-column flex-sm-row align-items-sm-start justify-content-between gap-3 mb-3">
-                <div className="d-flex align-items-center gap-2">
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ color: "var(--eusomnia-primary)" }}
-                    aria-hidden="true"
-                  >
-                    {meal.icon}
-                  </span>
-                  <h3
-                    id={`meal-title-${meal.id}`}
-                    className="font-headline h6 fw-bold text-light mb-0"
-                  >
-                    {meal.title}
-                  </h3>
+              <div className="d-flex align-items-center gap-2 mb-3">
+                <span
+                  className="material-symbols-outlined"
+                  style={{ color: "var(--eusomnia-primary)" }}
+                  aria-hidden="true"
+                >
+                  {meal.icon}
+                </span>
+                <h3
+                  id={`meal-title-${meal.id}`}
+                  className="font-headline h6 fw-bold text-light mb-0"
+                >
+                  {meal.title}
+                </h3>
+              </div>
+
+              <div className="d-flex flex-column flex-sm-row align-items-start gap-3 mb-3">
+                <div className="flex-shrink-0">
+                  <TimeStepper
+                    label={meal.id === "other" ? "Hora" : "Hora sugerida"}
+                    value={value.time || ""}
+                    suggestedValue={meal.suggestedTime}
+                    onChange={(time) => onChangeMealEntry(meal.id, { time })}
+                  />
                 </div>
-                <TimeStepper
-                  label={meal.id === "other" ? "Hora" : "Hora sugerida"}
-                  value={value.time || ""}
-                  suggestedValue={meal.suggestedTime}
-                  onChange={(time) => onChangeMealEntry(meal.id, { time })}
-                />
-              </div>
 
-              <div
-                className="d-flex flex-wrap gap-2 mb-3"
-                role="group"
-                aria-label={`Modo de registro de ${meal.title.toLocaleLowerCase("es")}`}
-              >
-                <button
-                  type="button"
-                  className={`btn btn-sm rounded-pill ${
-                    value.inputMode === "generic"
-                      ? "btn-primary"
-                      : "btn-eusomnia-secondary"
-                  }`}
-                  aria-pressed={value.inputMode === "generic"}
-                  onClick={() =>
-                    onChangeMealEntry(meal.id, { inputMode: "generic" })
-                  }
-                >
-                  Estimar por tamaño
-                </button>
-                <button
-                  type="button"
-                  className={`btn btn-sm rounded-pill ${
-                    value.inputMode === "detailed"
-                      ? "btn-primary"
-                      : "btn-eusomnia-secondary"
-                  }`}
-                  aria-pressed={value.inputMode === "detailed"}
-                  onClick={() =>
-                    onChangeMealEntry(meal.id, { inputMode: "detailed" })
-                  }
-                >
-                  Detallar alimentos
-                </button>
-              </div>
-
-              {value.inputMode === "generic" && (
-                <div
-                  className="d-flex flex-wrap gap-2"
-                  role="group"
-                  aria-label={`Tamaño de ${meal.title.toLocaleLowerCase("es")}`}
-                >
-                  {MEAL_SIZES.map((size) => (
+                <div className="flex-grow-1">
+                  <div
+                    className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2 w-100"
+                    role="group"
+                    aria-label={`Modo de registro de ${meal.title.toLocaleLowerCase("es")}`}
+                  >
                     <button
-                      className={`btn btn-sm rounded-pill px-3 ${
-                        value.size === size.id
+                      type="button"
+                      className={`btn btn-sm rounded-pill ${
+                        value.inputMode === "generic"
                           ? "btn-primary"
                           : "btn-eusomnia-secondary"
                       }`}
-                      type="button"
-                      aria-pressed={value.size === size.id}
-                      key={size.id}
+                      aria-pressed={value.inputMode === "generic"}
                       onClick={() =>
-                        onChangeMealEntry(meal.id, {
-                          inputMode: "generic",
-                          size: value.size === size.id ? null : size.id,
-                        })
+                        onChangeMealEntry(meal.id, { inputMode: "generic" })
                       }
                     >
-                      {size.label}
+                      Estimar por tamaño
                     </button>
-                  ))}
-                </div>
-              )}
+                    <button
+                      type="button"
+                      className={`btn btn-sm rounded-pill ${
+                        value.inputMode === "detailed"
+                          ? "btn-primary"
+                          : "btn-eusomnia-secondary"
+                      }`}
+                      aria-pressed={value.inputMode === "detailed"}
+                      onClick={() =>
+                        onChangeMealEntry(meal.id, { inputMode: "detailed" })
+                      }
+                    >
+                      Detallar alimentos
+                    </button>
+                  </div>
 
-              {value.inputMode === "detailed" && (
-                <div className="mt-2">
-                  <label
-                    className="font-label small fw-bold text-light d-block mb-2"
-                    htmlFor={`meal-foods-${meal.id}`}
-                  >
-                    Alimentos y cantidades
-                  </label>
-                  <textarea
-                    id={`meal-foods-${meal.id}`}
-                    className="form-control"
-                    rows="2"
-                    maxLength={1000}
-                    value={value.foods || ""}
-                    onChange={(event) =>
-                      onChangeMealEntry(meal.id, {
-                        inputMode: "detailed",
-                        foods: event.target.value,
-                      })
-                    }
-                    placeholder="Ej.: 150 g de arroz, 1 huevo y una taza de café"
-                  />
-                  <p className="font-body small text-secondary mt-2 mb-0">
-                    Con alimentos y cantidades, Edamam puede ofrecer un análisis más específico.
-                  </p>
+                  {value.inputMode === "generic" && (
+                    <div
+                      className="d-flex flex-wrap gap-2"
+                      role="group"
+                      aria-label={`Tamaño de ${meal.title.toLocaleLowerCase("es")}`}
+                    >
+                      {MEAL_SIZES.map((size) => (
+                        <button
+                          className={`btn btn-sm rounded-pill px-3 ${
+                            value.size === size.id
+                              ? "btn-primary"
+                              : "btn-eusomnia-secondary"
+                          }`}
+                          type="button"
+                          aria-pressed={value.size === size.id}
+                          key={size.id}
+                          onClick={() =>
+                            onChangeMealEntry(meal.id, {
+                              inputMode: "generic",
+                              size: value.size === size.id ? null : size.id,
+                            })
+                          }
+                        >
+                          {size.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {value.inputMode === "detailed" && (
+                    <div className="mt-2">
+                      <label
+                        className="font-label small fw-bold text-light d-block mb-2"
+                        htmlFor={`meal-foods-${meal.id}`}
+                      >
+                        Alimentos y cantidades
+                      </label>
+                      <textarea
+                        id={`meal-foods-${meal.id}`}
+                        className="form-control"
+                        rows="2"
+                        maxLength={1000}
+                        value={value.foods || ""}
+                        onChange={(event) =>
+                          onChangeMealEntry(meal.id, {
+                            inputMode: "detailed",
+                            foods: event.target.value,
+                          })
+                        }
+                        placeholder="Ej.: 150 g de arroz, 1 huevo y una taza de café"
+                      />
+                      <p className="font-body small text-secondary mt-2 mb-0">
+                        Con alimentos y cantidades, Edamam puede ofrecer un análisis más específico.
+                      </p>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </section>
           );
         })}
