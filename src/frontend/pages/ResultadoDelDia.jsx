@@ -5,7 +5,10 @@ import { TelemetryHeader } from "../components/daily_result/TelemetryHeader.jsx"
 import { SomnolenceGauges } from "../components/daily_result/SomnolenceGauges.jsx";
 import { HygienicAlertBanner } from "../components/daily_result/HygienicAlertBanner.jsx";
 import { DreamAnalysisSection } from "../components/daily_result/DreamAnalysisSection.jsx";
-import { HabitCorrelationsSection } from "../components/daily_result/HabitCorrelationsSection.jsx";
+import { RecordedStorySection } from "../components/daily_result/RecordedStorySection.jsx";
+import { PersistedNutritionSection } from "../components/daily_result/PersistedNutritionSection.jsx";
+import { NutritionByIntakeSection } from "../components/daily_result/NutritionByIntakeSection.jsx";
+import { ContextRegisteredSection } from "../components/daily_result/ContextRegisteredSection.jsx";
 import { RecommendationsPanel } from "../components/daily_result/RecommendationsPanel.jsx";
 import { apiUrl } from "../api.js";
 
@@ -427,20 +430,49 @@ export const ResultadoDelDia = () => {
         <HygienicAlertBanner alerts={alerts} />
 
         <div className="row g-4 pt-2">
-          <div className="col-12 col-lg-7" style={{ minWidth: 0 }}>
+          <div className="col-12 mb-2">
+            <RecordedStorySection
+              originalDream={sleepReport.raw_text}
+              recordedTime={sleepReport.created_at}
+            />
+          </div>
+
+
+          <div className="col-12 col-lg-7 d-flex flex-column gap-4" style={{ minWidth: 0 }}>
             <DreamAnalysisSection
               emotions={emotions}
               symbols={symbols}
               synthesis={analysis?.interpretation}
               habitsReading={analysis?.habits_reading}
-              originalDream={sleepReport.raw_text}
-              recordedTime={sleepReport.created_at}
+
               isGenerating={isAnalysisLoading}
+            />
+
+
+          </div>
+
+          <div className="col-12 col-lg-5 d-flex flex-column gap-4" style={{ minWidth: 0 }}>
+            {prescriptions.length > 0 && (
+              <RecommendationsPanel prescriptions={prescriptions} />
+            )}
+          </div>
+        </div>
+        <div className="row g-4 pt-2">
+          <div className="col-12 col-lg-7 d-flex flex-column gap-4" style={{ minWidth: 0 }}>
+            <PersistedNutritionSection
+              nutrition={nutrition}
+              nutritionQuery={habitLog.nutrition_query}
             />
           </div>
 
-          <div className="col-12 col-lg-5" style={{ minWidth: 0 }}>
-            <HabitCorrelationsSection
+          <div className="col-12 col-lg-5 d-flex flex-column gap-4" style={{ minWidth: 0 }}>
+            <NutritionByIntakeSection nutrition={nutrition} />
+          </div>
+        </div>
+
+        <div className="row g-4 pt-2">
+          <div className="col-12">
+            <ContextRegisteredSection
               context={{
                 activity: habitLog.physical_activity,
                 screens: habitLog.screen_time,
@@ -460,18 +492,11 @@ export const ResultadoDelDia = () => {
                   bright: "Luminosa",
                 }[habitLog.sleep_context?.room_light],
               }}
-              nutrition={nutrition}
-              nutritionQuery={habitLog.nutrition_query}
             />
           </div>
-
-          {/* Recommendations panel: full width below, aligned on both desktop and mobile */}
-          {prescriptions.length > 0 && (
-            <div className="col-12">
-              <RecommendationsPanel prescriptions={prescriptions} />
-            </div>
-          )}
         </div>
+
+
       </div>
     </div>
   );

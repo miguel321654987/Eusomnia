@@ -2,7 +2,7 @@ export const RecommendationsPanel = ({ prescriptions = [] }) => {
   if (!prescriptions.length) return null;
 
   return (
-    <section className="eusomnia-card p-4 p-sm-5 shadow-lg d-flex flex-column gap-3">
+    <section className="eusomnia-card p-4 p-sm-5 shadow-lg d-flex flex-column gap-3 h-100">
       <div className="d-flex align-items-center gap-2">
         <span
           className="material-symbols-outlined fs-5"
@@ -23,13 +23,18 @@ export const RecommendationsPanel = ({ prescriptions = [] }) => {
 
       <div className="row g-3">
         {prescriptions.map((item) => (
-          <div className="col-12 col-md-6 col-lg-4" key={item.num}>
+          <div className="col-12" key={item.num}>
             <div
               className="prescription-card h-100"
               style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}
             >
-              <div className="prescription-number flex-shrink-0">{item.num}</div>
-              <div>
+              <div
+                className="prescription-number flex-shrink-0"
+                style={{ width: "2rem", minWidth: "2rem" }}
+              >
+                {item.num}
+              </div>
+              <div className="flex-grow-1 min-w-0">
                 <p className="font-label small text-light fw-bold mb-0">
                   {item.title}
                 </p>
