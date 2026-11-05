@@ -1,35 +1,20 @@
 import { useState } from "react";
 
-function formatRecordedTime(value) {
-  if (!value) return null;
-  const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? null
-    : new Intl.DateTimeFormat("es", {
-        dateStyle: "short",
-        timeStyle: "short",
-      }).format(date);
-}
-
 export const DreamAnalysisSection = ({
   emotions = [],
   symbols = [],
   synthesis,
   habitsReading,
-  originalDream,
-  recordedTime,
   isGenerating = false,
 }) => {
   const [expandedSymbol, setExpandedSymbol] = useState(null);
-  const timeLabel = formatRecordedTime(recordedTime);
 
   const toggleSymbol = (id) => {
     setExpandedSymbol((previous) => (previous === id ? null : id));
   };
 
   return (
-    <div className="d-flex flex-column gap-4">
-      <section className="eusomnia-card p-4 p-sm-5 shadow-lg d-flex flex-column gap-4">
+    <section className="eusomnia-card p-4 p-sm-5 shadow-lg d-flex flex-column gap-4 h-100">
         <div className="d-flex align-items-center gap-3">
           <div
             className="rounded-3 d-flex align-items-center justify-content-center p-2 flex-shrink-0"
@@ -190,40 +175,8 @@ export const DreamAnalysisSection = ({
           )}
         </div>
       </section>
-
-      {originalDream && (
-        <section className="eusomnia-card p-4 shadow-sm d-flex flex-column gap-2">
-          <div className="d-flex align-items-center justify-content-between gap-2">
-            <span
-              className="font-label small fw-bold text-uppercase d-flex align-items-center gap-2"
-              style={{ fontSize: "0.75rem", color: "var(--eusomnia-text-muted)" }}
-            >
-              <span className="material-symbols-outlined fs-6">record_voice_over</span>
-              <span>Relato registrado</span>
-            </span>
-            {timeLabel && (
-              <time
-                className="font-label small"
-                dateTime={recordedTime}
-                style={{ color: "var(--eusomnia-secondary)", fontSize: "0.75rem" }}
-              >
-                {timeLabel}
-              </time>
-            )}
-          </div>
-          <blockquote
-            className="p-3 rounded-3 font-body small fst-italic mb-0"
-            style={{
-              background: "rgba(6, 14, 29, 0.7)",
-              color: "var(--eusomnia-text)",
-              borderLeft: "3px solid var(--eusomnia-primary)",
-              lineHeight: 1.6,
-            }}
-          >
-            {originalDream}
-          </blockquote>
-        </section>
-      )}
-    </div>
   );
 };
+
+
+
