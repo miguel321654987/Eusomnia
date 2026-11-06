@@ -64,7 +64,7 @@ describe("Home", () => {
       screen.getByText(/Tienes 2 registros pendientes de análisis/),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/7.5 h en 1 registro/),
+      screen.getByText(/7.5 h de sueño a partir de 1 registro/),
     ).toBeInTheDocument();
     expect(screen.queryByText("84%")).not.toBeInTheDocument();
     expect(screen.queryByText(/Ciclo REM óptimo/)).not.toBeInTheDocument();

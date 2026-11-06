@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { closeModalSafely, switchModals } from "../utils.js";
-import { toast } from "react-toastify";
+
 import { apiUrl } from "../api.js";
 
 const REMEMBERED_CREDENTIALS_KEY = "eusomnia_remembered_credentials";
@@ -56,7 +56,7 @@ export const Login = ({ loginModal, signupModal }) => {
     if (!email.trim() || !password.trim()) {
       dispatch({
         type: "SET_MESSAGE",
-        payload: { msg: "⚠️ Los campos están vacíos", status: 400 },
+        payload: { msg: "⚠️ Los campos están vacíos", status: 400, variant: "danger" },
       });
       return;
     }
@@ -66,6 +66,7 @@ export const Login = ({ loginModal, signupModal }) => {
         payload: {
           msg: "⚠️ La contraseña debe tener al menos 6 caracteres",
           status: 400,
+          variant: "danger",
         },
       });
       return;
@@ -83,9 +84,9 @@ export const Login = ({ loginModal, signupModal }) => {
         const mensajeDelBack = datosError.message || "Error al iniciar sesión";
         dispatch({
           type: "SET_MESSAGE",
-          payload: { msg: `⚠️ ${mensajeDelBack}`, status: resp.status },
+          payload: { msg: `⚠️ ${mensajeDelBack}`, status: resp.status, variant: "danger" },
         });
-        toast.error(mensajeDelBack);
+        // El aviso se muestra una sola vez con MessageToast.
         return;
       }
 
@@ -111,17 +112,14 @@ export const Login = ({ loginModal, signupModal }) => {
       });
       dispatch({
         type: "SET_MESSAGE",
-        payload: { msg: "¡Sesión iniciada!", status: 200 },
+        payload: { msg: "¡Sesión iniciada!", status: 200, variant: "success" },
       });
-      toast.success("¡Sesión iniciada!");
-
       // 🌟 CIERRE DEFENSIVO DEL MODAL
       // En entorno local, Bootstrap a veces tarda en inicializarse completamente.
       // El helper closeModalSafely intenta cerrar con Bootstrap primero, y si falla,
       // lo hace con CSS para que el modal se cierre sin dejar backdrop abierto.
       setTimeout(() => {
         closeModalSafely(loginModal);
-        dispatch({ type: "SET_MESSAGE", payload: null });
         if (!rememberMe) {
           setEmail("");
           setPassword("");
@@ -131,9 +129,9 @@ export const Login = ({ loginModal, signupModal }) => {
       const message = error.message || "Error de conexión";
       dispatch({
         type: "SET_MESSAGE",
-        payload: { msg: message, status: 500 },
+        payload: { msg: message, status: 500, variant: "danger" },
       });
-      toast.error(message);
+      // El aviso se muestra una sola vez con MessageToast.
     }
   };
 
