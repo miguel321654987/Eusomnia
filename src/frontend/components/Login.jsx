@@ -4,10 +4,42 @@ import { closeModalSafely, switchModals } from "../utils.js";
 import { toast } from "react-toastify";
 import { apiUrl } from "../api.js";
 
+const REMEMBERED_CREDENTIALS_KEY = "eusomnia_remembered_credentials";
+
+function readRememberedCredentials() {
+  try {
+    const rememberedCredentials = localStorage.getItem(
+      REMEMBERED_CREDENTIALS_KEY,
+    );
+    if (!rememberedCredentials) {
+      return null;
+    }
+
+    const parsedCredentials = JSON.parse(rememberedCredentials);
+    if (
+      typeof parsedCredentials?.email === "string" &&
+      typeof parsedCredentials?.password === "string"
+    ) {
+      return parsedCredentials;
+    }
+
+    return null;
+  } catch {
+    localStorage.removeItem(REMEMBERED_CREDENTIALS_KEY);
+    return null;
+  }
+}
+
 export const Login = ({ loginModal, signupModal }) => {
   const { dispatch } = useGlobalReducer();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const rememberedCredentials = readRememberedCredentials();
+  const [email, setEmail] = useState(rememberedCredentials?.email ?? "");
+  const [password, setPassword] = useState(
+    rememberedCredentials?.password ?? "",
+  );
+  const [rememberMe, setRememberMe] = useState(
+    Boolean(rememberedCredentials),
+  );
 
   const abrirSignupModal = () => {
     // 🌟 CAMBIO DEFENSIVO DE MODAL (Necesario para local VS Code)
@@ -64,6 +96,15 @@ export const Login = ({ loginModal, signupModal }) => {
       }
 
       localStorage.setItem("jwt-token", accessToken);
+      if (rememberMe) {
+        localStorage.setItem(
+          REMEMBERED_CREDENTIALS_KEY,
+          JSON.stringify({ email, password }),
+        );
+      } else {
+        localStorage.removeItem(REMEMBERED_CREDENTIALS_KEY);
+      }
+
       dispatch({
         type: "LOGIN_SUCCESS",
         payload: { token: accessToken, user: data.user || null },
@@ -81,8 +122,10 @@ export const Login = ({ loginModal, signupModal }) => {
       setTimeout(() => {
         closeModalSafely(loginModal);
         dispatch({ type: "SET_MESSAGE", payload: null });
-        setEmail("");
-        setPassword("");
+        if (!rememberMe) {
+          setEmail("");
+          setPassword("");
+        }
       }, 300);
     } catch (error) {
       const message = error.message || "Error de conexión";
@@ -119,8 +162,10 @@ export const Login = ({ loginModal, signupModal }) => {
               onClick={() => {
                 closeModalSafely(loginModal);
                 dispatch({ type: "SET_MESSAGE", payload: null });
-                setEmail("");
-                setPassword("");
+                if (!rememberMe) {
+                  setEmail("");
+                  setPassword("");
+                }
               }}
             ></button>
           </div>
@@ -145,10 +190,20 @@ export const Login = ({ loginModal, signupModal }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <p className="small text-secondary mb-0" role="note">
-              Tu navegador puede ofrecerte guardar la contraseña. Eusomnia no
-              la almacena.
-            </p>
+            <div className="form-check mt-2 text-start">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="rememberMe"
+                name="rememberMe"
+                data-testid="remember-me"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              <label className="form-check-label small" htmlFor="rememberMe">
+                Recordar usuario y contraseña
+              </label>
+            </div>
           </div>
           <div className="modal-footer d-flex flex-column gap-2">
             <button type="submit" className="btn btn-success w-100">
