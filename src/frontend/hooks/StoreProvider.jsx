@@ -14,13 +14,15 @@ modificarlo, sincronizarlo con tu base de datos y distribuirlo a toda la aplicac
 export function StoreProvider({ children }) {
   const [store, dispatch] = useReducer(storeReducer, initialStore());
 
-  useEffect(() => {
-    const token = store.token;
+  const token = store.token;
 
+  useEffect(() => {
     if (!token) return;
 
     const verificarSesionYCargarDatos = async () => {
-      const actions = getActions(store, dispatch);
+      // getActions only needs dispatch in this flow; passing null avoids coupling
+      // this effect to the whole store object (and the exhaustive-deps warning).
+      const actions = getActions(null, dispatch);
 
       try {
         const userResponse = await fetch(apiUrl("/api/users/profile"), {
@@ -32,7 +34,7 @@ export function StoreProvider({ children }) {
         });
 
         if (userResponse.status === 401 || userResponse.status === 422) {
-          actions.handleLogout();
+          actions.handleLogout(null, "expired");
           return;
         }
 
@@ -48,7 +50,7 @@ export function StoreProvider({ children }) {
     };
 
     verificarSesionYCargarDatos();
-  }, [store.token, dispatch]);
+  }, [token, dispatch]);
 
   return (
     <StoreContext.Provider value={{ store, dispatch }}>
@@ -59,4 +61,4 @@ export function StoreProvider({ children }) {
 
 /* Al usar .Provider se activa el StoreContext y permite que los componentes hijos
  accedan al estado global y al dispatch.
- value={{ state: store, dispatch }}> los vuelve disponibles para useGlobalReducer */
+ value={{ state: store, dispatch }}> los vuelve disponibles para useGlobalReducer */ 

@@ -1,72 +1,183 @@
 import { useEffect } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
-// Helper para obtener la clase de color según el status HTTP o el tipo de mensaje.
-const getStatusClasses = (status) => {
-  if (!status) return { type: "", classes: "" };
-  switch (Math.floor(status)) {
-    case 200: // Éxito (Login, Logout exitoso)
-      return { type: "success", classes: "bg-success border-success" };
-    case 401: // No Autorizado
-    case 403: // Prohibido
-      return { type: "warning", classes: "bg-warning border-warning" };
-    case 409: // Conflicto (Ya existe)
-      return { type: "info", classes: "bg-info border-info" };
-    default: // Error genérico de API o desconectado
-      return { type: "danger", classes: "bg-danger border-danger" };
+const TOAST_DURATION_MS = 3000;
+
+/**
+ * Resolve the visual severity using the explicit variant first and the HTTP
+ * status as a fallback. Login sends "danger" explicitly for invalid
+ * credentials, while expired sessions use "warning".
+ */
+const resolveVariant = (message) => {
+  if (message?.variant) return message.variant;
+
+  const status = Number(message?.status);
+  if (status >= 200 && status < 300) return "success";
+  if (status === 401 || status === 403) return "warning";
+  if (status === 409) return "info";
+  return "danger";
+};
+
+const getPalette = (variant) => {
+  switch (variant) {
+    case "success":
+      return {
+        background: "rgba(34, 197, 94, 0.94)",
+        border: "#16a34a",
+        foreground: "#ffffff",
+        bar: "rgba(255, 255, 255, 0.92)",
+      };
+    case "warning":
+      return {
+        background: "rgba(234, 179, 8, 0.96)",
+        border: "#ca8a04",
+        foreground: "#171003",
+        bar: "rgba(23, 16, 3, 0.72)",
+      };
+    case "info":
+      return {
+        background: "rgba(14, 165, 233, 0.94)",
+        border: "#0284c7",
+        foreground: "#ffffff",
+        bar: "rgba(255, 255, 255, 0.92)",
+      };
+    case "danger":
+    default:
+      return {
+        background: "rgba(239, 68, 68, 0.96)",
+        border: "#dc2626",
+        foreground: "#ffffff",
+        bar: "rgba(255, 255, 255, 0.92)",
+      };
   }
 };
 
-/**
- * Componente que muestra mensajes globales (Toast/Snackbar) basados en el estado del Store.
- * Se recomienda colocarlo dentro del Layout.jsx para envolver todo el contenido principal.
- */
 const MessageToast = () => {
-  // Usamos un contexto o separamos la lógica de lectura de store para mayor modularidad.
-  // Aquí asumimos que tenemos acceso al estado global (message) mediante useContext.
   const { store, dispatch } = useGlobalReducer();
-
   const message = store.message;
 
   useEffect(() => {
-    if (!message) return;
+    if (!message) return undefined;
 
-    // Configurar temporizador para limpiar el mensaje tras 5 segundos (UX mejorado)
     const timer = setTimeout(() => {
-      dispatch({ type: "SET_MESSAGE", payload: null }); // Limpiar el estado después de mostrarlo
-    }, 5000);
+      dispatch({ type: "SET_MESSAGE", payload: null });
+    }, TOAST_DURATION_MS);
 
     return () => clearTimeout(timer);
   }, [message, dispatch]);
 
   if (!message) return null;
 
-  const statusData = getStatusClasses(message.status);
+  const variant = resolveVariant(message);
+  const palette = getPalette(variant);
 
   return (
-    <div
-      className={`fixed top-4 right-4 z-[1050] p-3 rounded-lg shadow-xl max-w-xs transition-all duration-300 border ${statusData.classes}`}
-      role="alert"
-    >
-      <div className="flex justify-between items-center">
-        <p className="font-bold text-sm">{message.msg}</p>
-        {/* Icono corregido con propiedades camelCase para React */}
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
+    <>
+      <style>
+        {`
+        @keyframes eusomnia-toast-progress {
+          from { transform: scaleX(1); }
+          to { transform: scaleX(0); }
+        }
+        .eusomnia-toast-progress-bar {
+          animation: eusomnia-toast-progress ${TOAST_DURATION_MS}ms linear forwards;
+          will-change: transform;
+        }
+        `}
+      </style>
+      <div
+        role="alert"
+        aria-live="polite"
+        style={{
+          position: "fixed",
+          top: "1rem",
+          right: "1rem",
+          zIndex: 1080,
+          maxWidth: "22rem",
+          width: "min(22rem, calc(100vw - 2rem))",
+          borderRadius: "0.85rem",
+          overflow: "hidden",
+          boxShadow: "0 18px 40px rgba(0, 0, 0, 0.34)",
+          backgroundColor: palette.background,
+          border: `1px solid ${palette.border}`,
+          color: palette.foreground,
+        }}
+      >
+        <div
+          style={{
+            padding: "0.85rem 1rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "0.7rem",
+          }}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14V7c0-.55-.45-1-1-1h-9a2 2 0 00-2 2v6a2 2 0 002 2h5l1.405-1.405z"
-          ></path>
-        </svg>
+          {/* A tiny colored dot avoids external icon fonts/glyphs that can render
+              as empty squares on some systems. */}
+          <span
+            aria-hidden="true"
+            style={{
+              flexShrink: 0,
+              width: "0.7rem",
+              height: "0.7rem",
+              borderRadius: "999px",
+              backgroundColor: palette.bar,
+            }}
+          />
+
+          <p
+            style={{
+              flex: 1,
+              margin: 0,
+              fontSize: "0.95rem",
+              fontWeight: 600,
+              lineHeight: 1.35,
+            }}
+          >
+            {message.msg}
+          </p>
+
+          <button
+            type="button"
+            aria-label="Cerrar notificación"
+            onClick={() =>
+              dispatch({ type: "SET_MESSAGE", payload: null })
+            }
+            style={{
+              flexShrink: 0,
+              border: "none",
+              background: "transparent",
+              color: "inherit",
+              fontSize: "1.35rem",
+              lineHeight: 1,
+              cursor: "pointer",
+              opacity: 0.85,
+            }}
+          >
+            ×
+          </button>
+        </div>
+
+        <div
+          aria-hidden="true"
+          style={{
+            height: "5px",
+            width: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.16)",
+          }}
+        >
+          <div
+            className="eusomnia-toast-progress-bar"
+            style={{
+              height: "100%",
+              width: "100%",
+              backgroundColor: palette.bar,
+              transformOrigin: "left center",
+            }}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
