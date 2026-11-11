@@ -2,30 +2,39 @@
 # https://www.npmjs.com/package/@renderinc/heroku-import
 # Schema documented at https://render.com/docs/yaml-spec
 services:
-  - type: web # valid values: https://render.com/docs/yaml-spec#type
+  - type: web
+    name: eusomnia-backend
+    env: python
     region: ohio
-    name: flask-rest-hello
-    env: python # valid values: https://render.com/docs/yaml-spec#environment
+    plan: free
     buildCommand: "./render_build.sh"
-    startCommand: "gunicorn wsgi --chdir ./src/"
-    plan: free # optional; defaults to starter
-    numInstances: 1
+    startCommand: "gunicorn --chdir src wsgi:application"
     envVars:
-      - key: BASENAME
-        value: /
       - key: FLASK_APP
         value: src/app.py
-      - key: DEBUG
-        value: TRUE
       - key: PYTHON_VERSION
         value: 3.13.0
-      - key: DATABASE_URL # Render PostgreSQL database
+      - key: DATABASE_URL
         fromDatabase:
-          name: flask-rest-42170
+          name: eusomnia-db
           property: connectionString
+      - key: FLASK_DEBUG
+        value: "False"
 
-databases: # Render PostgreSQL database
-  - name: flask-rest-42170
+  - type: static
+    name: eusomnia-frontend
+    env: static
     region: ohio
-    ipAllowList: [] # only allow internal connections
-    plan: free # optional; defaults to starter
+    plan: free
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: ./dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: eusomnia-db
+    region: ohio
+    plan: free
+
