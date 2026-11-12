@@ -1,3 +1,5 @@
+import envFile from "../../assets/no-card-image.png";
+
 const Dark = ({ children }) => (
   <span className="bg-dark text-white px-1 rounded">{children}</span>
 );
