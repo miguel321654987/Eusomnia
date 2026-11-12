@@ -1,45 +1,12 @@
 import { useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { closeModalSafely, switchModals } from "../utils.js";
-
-import { apiUrl } from "../api.js";
-
-const REMEMBERED_CREDENTIALS_KEY = "eusomnia_remembered_credentials";
-
-function readRememberedCredentials() {
-  try {
-    const rememberedCredentials = localStorage.getItem(
-      REMEMBERED_CREDENTIALS_KEY,
-    );
-    if (!rememberedCredentials) {
-      return null;
-    }
-
-    const parsedCredentials = JSON.parse(rememberedCredentials);
-    if (
-      typeof parsedCredentials?.email === "string" &&
-      typeof parsedCredentials?.password === "string"
-    ) {
-      return parsedCredentials;
-    }
-
-    return null;
-  } catch {
-    localStorage.removeItem(REMEMBERED_CREDENTIALS_KEY);
-    return null;
-  }
-}
+import { toast } from "react-toastify";
 
 export const Login = ({ loginModal, signupModal }) => {
   const { dispatch } = useGlobalReducer();
-  const rememberedCredentials = readRememberedCredentials();
-  const [email, setEmail] = useState(rememberedCredentials?.email ?? "");
-  const [password, setPassword] = useState(
-    rememberedCredentials?.password ?? "",
-  );
-  const [rememberMe, setRememberMe] = useState(
-    Boolean(rememberedCredentials),
-  );
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const abrirSignupModal = () => {
     // 🌟 CAMBIO DEFENSIVO DE MODAL (Necesario para local VS Code)
@@ -56,7 +23,7 @@ export const Login = ({ loginModal, signupModal }) => {
     if (!email.trim() || !password.trim()) {
       dispatch({
         type: "SET_MESSAGE",
-        payload: { msg: "⚠️ Los campos están vacíos", status: 400, variant: "danger" },
+        payload: { msg: "⚠️ Los campos están vacíos", status: 400 },
       });
       return;
     }
@@ -66,72 +33,60 @@ export const Login = ({ loginModal, signupModal }) => {
         payload: {
           msg: "⚠️ La contraseña debe tener al menos 6 caracteres",
           status: 400,
-          variant: "danger",
         },
       });
       return;
     }
 
     try {
-      const resp = await fetch(apiUrl("/api/users/login"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const resp = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        },
+      );
 
       if (!resp.ok) {
         const datosError = await resp.json();
         const mensajeDelBack = datosError.message || "Error al iniciar sesión";
         dispatch({
           type: "SET_MESSAGE",
-          payload: { msg: `⚠️ ${mensajeDelBack}`, status: resp.status, variant: "danger" },
+          payload: { msg: `⚠️ ${mensajeDelBack}`, status: resp.status },
         });
-        // El aviso se muestra una sola vez con MessageToast.
+        toast.error(mensajeDelBack);
         return;
       }
 
       const data = await resp.json();
-      const accessToken = data.access_token;
-      if (typeof accessToken !== "string" || !accessToken.trim()) {
-        throw new Error("El servidor no devolvió un token válido.");
-      }
-
-      localStorage.setItem("jwt-token", accessToken);
-      if (rememberMe) {
-        localStorage.setItem(
-          REMEMBERED_CREDENTIALS_KEY,
-          JSON.stringify({ email, password }),
-        );
-      } else {
-        localStorage.removeItem(REMEMBERED_CREDENTIALS_KEY);
-      }
-
+      localStorage.setItem("jwt-token", data.token);
       dispatch({
         type: "LOGIN_SUCCESS",
-        payload: { token: accessToken, user: data.user || null },
+        payload: { token: data.token, user: null },
       });
       dispatch({
         type: "SET_MESSAGE",
-        payload: { msg: "¡Sesión iniciada!", status: 200, variant: "success" },
+        payload: { msg: "¡Sesión iniciada!", status: 200 },
       });
+      toast.success("¡Sesión iniciada!");
+
       // 🌟 CIERRE DEFENSIVO DEL MODAL
       // En entorno local, Bootstrap a veces tarda en inicializarse completamente.
       // El helper closeModalSafely intenta cerrar con Bootstrap primero, y si falla,
       // lo hace con CSS para que el modal se cierre sin dejar backdrop abierto.
       setTimeout(() => {
         closeModalSafely(loginModal);
-        if (!rememberMe) {
-          setEmail("");
-          setPassword("");
-        }
+        dispatch({ type: "SET_MESSAGE", payload: null });
+        setEmail("");
+        setPassword("");
       }, 300);
-    } catch (error) {
-      const message = error.message || "Error de conexión";
+    } catch {
       dispatch({
         type: "SET_MESSAGE",
-        payload: { msg: message, status: 500, variant: "danger" },
+        payload: { msg: "Error de conexión", status: 500 },
       });
-      // El aviso se muestra una sola vez con MessageToast.
+      toast.error("Error de conexión");
     }
   };
 
@@ -144,11 +99,7 @@ export const Login = ({ loginModal, signupModal }) => {
       tabIndex="-1"
     >
       <div className="modal-dialog modal-dialog-centered">
-        <form
-          className="modal-content"
-          onSubmit={handleLogin}
-          autoComplete="on"
-        >
+        <form className="modal-content" onSubmit={handleLogin}>
           <div className="modal-header">
             <h2 className="modal-title fs-5">Login</h2>
             {/* 🔥 Eliminamos data-bs-dismiss="modal" y dejamos que nuestro helper */}
@@ -160,10 +111,8 @@ export const Login = ({ loginModal, signupModal }) => {
               onClick={() => {
                 closeModalSafely(loginModal);
                 dispatch({ type: "SET_MESSAGE", payload: null });
-                if (!rememberMe) {
-                  setEmail("");
-                  setPassword("");
-                }
+                setEmail("");
+                setPassword("");
               }}
             ></button>
           </div>
@@ -171,37 +120,19 @@ export const Login = ({ loginModal, signupModal }) => {
             <input
               className="form-control mb-2"
               type="email"
-              name="email"
               placeholder="Email"
               autoComplete="email"
-              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <input
               className="form-control mb-2"
               type="password"
-              name="password"
               placeholder="Contraseña"
               autoComplete="current-password"
-              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <div className="form-check mt-2 text-start">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                id="rememberMe"
-                name="rememberMe"
-                data-testid="remember-me"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              />
-              <label className="form-check-label small" htmlFor="rememberMe">
-                Recordar usuario y contraseña
-              </label>
-            </div>
           </div>
           <div className="modal-footer d-flex flex-column gap-2">
             <button type="submit" className="btn btn-success w-100">

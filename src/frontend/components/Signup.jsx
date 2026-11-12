@@ -1,8 +1,7 @@
 import { useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { closeModalSafely } from "../utils.js";
-
-import { apiUrl } from "../api.js";
+import { toast } from "react-toastify";
 
 export const Signup = ({ signupModal }) => {
   const { dispatch } = useGlobalReducer();
@@ -27,7 +26,7 @@ export const Signup = ({ signupModal }) => {
         type: "SET_MESSAGE",
         payload: { msg: "⚠️ Rellena todos los campos.", status: 400 },
       });
-      // El aviso se muestra una sola vez con MessageToast.
+      toast.info("Rellena todos los campos.");
       return;
     }
     if (password.length < 8) {
@@ -38,7 +37,7 @@ export const Signup = ({ signupModal }) => {
           status: 400,
         },
       });
-      // El aviso se muestra una sola vez con MessageToast.
+      toast.info("La contraseña debe tener al menos 8 caracteres");
       return;
     }
     if (!tieneLetra || !tieneNumero) {
@@ -49,23 +48,26 @@ export const Signup = ({ signupModal }) => {
           status: 400,
         },
       });
-      // El aviso se muestra una sola vez con MessageToast.
+      toast.info("La contraseña debe contener al menos una letra y un número.");
       return;
     }
 
     try {
-      const resp = await fetch(apiUrl("/api/users/signup"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name, last_name }),
-      });
+      const resp = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, name, last_name }),
+        },
+      );
 
       if (resp.status === 409) {
         dispatch({
           type: "SET_MESSAGE",
           payload: { msg: "📧 El usuario ya existe.", status: 409 },
         });
-        // El aviso se muestra una sola vez con MessageToast.
+        toast.error("El usuario ya existe");
         return;
       }
 
@@ -76,7 +78,7 @@ export const Signup = ({ signupModal }) => {
           type: "SET_MESSAGE",
           payload: { msg: `⚠️ ${mensajeDelBack}`, status: resp.status },
         });
-        // El aviso se muestra una sola vez con MessageToast.
+        toast.error(mensajeDelBack);
         return;
       }
 
@@ -85,7 +87,7 @@ export const Signup = ({ signupModal }) => {
           type: "SET_MESSAGE",
           payload: { msg: "✅ ¡Usuario creado con éxito!", status: 201 },
         });
-        // El aviso se muestra una sola vez con MessageToast.
+        toast.success("¡Usuario creado con éxito!");
         setName("");
         setLast_name("");
         setEmail("");
@@ -96,6 +98,7 @@ export const Signup = ({ signupModal }) => {
         // El helper intenta cerrar con Bootstrap. Si falla, lo hace manualmente con CSS
         setTimeout(() => {
           closeModalSafely(signupModal);
+          dispatch({ type: "SET_MESSAGE", payload: null });
         }, 300);
       }
     } catch {
@@ -103,7 +106,7 @@ export const Signup = ({ signupModal }) => {
         type: "SET_MESSAGE",
         payload: { msg: "🚀 Error de conexión.", status: 500 },
       });
-      // El aviso se muestra una sola vez con MessageToast.
+      toast.error("Error de conexión");
     }
   };
 
