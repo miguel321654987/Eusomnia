@@ -72,6 +72,26 @@ def handle_invalid_usage(error):
 
 
 # generate sitemap with all your endpoints
+# Serve React frontend static files
+import mimetypes
+mimetypes.add_type('application/javascript', '.js')
+mimetypes.add_type('text/css', '.css')
+
+DIST_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../dist'))
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(os.path.join(DIST_DIR, path)):
+        return send_from_directory(DIST_DIR, path)
+    else:
+        if os.path.exists(os.path.join(DIST_DIR, 'index.html')):
+            return send_from_directory(DIST_DIR, 'index.html')
+        else:
+            return generate_sitemap(app)
+
+from flask import send_from_directory
+
 
 @app.route('/')
 def sitemap():

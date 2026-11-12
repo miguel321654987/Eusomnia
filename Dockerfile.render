@@ -4,17 +4,26 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
 
+# Install system dependencies, Node.js and npm for building the React frontend
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends graphviz graphviz-dev gcc \
+    && apt-get install -y --no-install-recommends graphviz graphviz-dev gcc curl \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/app
 
+# Install Python dependencies
 COPY Pipfile Pipfile.lock ./
 RUN pip install pipenv \
     && pipenv install --system --deploy
 
+# Copy project files
 COPY . .
+
+# Install frontend dependencies and build React app
+RUN npm install \
+    && npm run build
 
 EXPOSE 3000
 CMD ["gunicorn", "--chdir", "src", "wsgi:application"]
