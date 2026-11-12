@@ -20,4 +20,4 @@ RUN pip install pipenv \
 COPY . .
 
 EXPOSE 3000
-CMD ["gunicorn", "--chdir", "src", "wsgi:application"]
+CMD ["sh", "-c", "flask db upgrade || true; gunicorn --chdir src wsgi:application"]

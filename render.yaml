@@ -6,7 +6,6 @@ services:
     dockerfilePath: ./Dockerfile.render
     region: oregon
     plan: free
-    preDeployCommand: "flask db upgrade"
     envVars:
       - key: FLASK_APP
         value: src/app.py
@@ -22,7 +21,6 @@ services:
   - type: web
     runtime: static
     name: eusomnia-frontend
-    region: oregon
     plan: free
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
