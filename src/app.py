@@ -1,50 +1,73 @@
 """
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
+This module takes care of starting the API Server, loading the DB and adding the endpoints.
 """
+
 import os
+from datetime import timedelta
 from flask import Flask, jsonify
 from flask_migrate import Migrate
 from flask_cors import CORS
+import click
 from dotenv import load_dotenv
+
 from api.utils import APIException, generate_sitemap
 from api.admin import setup_admin
 from api.models import db
 from flask_jwt_extended import JWTManager
 from api.routes import api
 from api.extensions import bcrypt
-# Importamos la función pura de sincronización para el seeding automático al arrancar
 from sqlalchemy import select
 
 load_dotenv()
 
-app = Flask(__name__)
+# Create Flask application
+app: Flask = Flask(__name__)
 
+# Universal CORS configuration for development and production
 CORS(app)
 
-# Nota: este fallback es para trabajar en modo local desde VS Code/localhost.
-app.config['JWT_SECRET_KEY'] = os.getenv(
-    'JWT_SECRET_KEY', 'local-dev-secret-key')
+# Fallback for local development
+app.config["JWT_SECRET_KEY"] = os.getenv(
+    "JWT_SECRET_KEY", "local-dev-secret-key")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
 jwt = JWTManager(app)
 
-# UNIÓN OFICIAL: Aquí le inyectamos el motor Flask a Bcrypt
+# Inject Flask into Bcrypt
 bcrypt.init_app(app)
+
+# Application-level configuration inherited from environment variables (.env).
+app.config["QDRANT_URL"] = os.getenv("QDRANT_URL", "http://localhost:6333")
+app.config["QDRANT_API_KEY"] = os.getenv("QDRANT_API_KEY")
+app.config["QDRANT_COLLECTION"] = os.getenv(
+    "QDRANT_COLLECTION", "dream_dictionary")
+app.config["OPENROUTER_BASE_URL"] = os.getenv(
+    "OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"
+)
+app.config["EMBEDDING_MODEL"] = os.getenv(
+    "EMBEDDING_MODEL", "openai/text-embedding-3-small"
+)
+# Default model for OpenRouter
+app.config["OPENROUTER_MODEL"] = os.getenv(
+    "OPENROUTER_MODEL", "openai/gpt-4o-mini"
+)
 
 app.url_map.strict_slashes = False
 
 db_url = os.getenv("DATABASE_URL")
 if db_url is not None and not db_url.startswith("sqlite:///"):
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_url.replace(
+    # Convert possible postgres:// scheme to sqlalchemy compatible form
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_url.replace(
         "postgres://", "postgresql://")
 else:
-    # Bloque especial para Windows Local
+    # Local fallback for SQLite
     base_dir = os.path.abspath(os.path.dirname(__file__))
-    instance_dir = os.path.join(base_dir, 'instance')
+    instance_dir = os.path.join(base_dir, "instance")
 
     if not os.path.exists(instance_dir):
         os.makedirs(instance_dir)
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(instance_dir, 'example.db')}"
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(instance_dir, 'example.db')}"
 
 MIGRATE = Migrate(app, db)
 db.init_app(app)
@@ -52,18 +75,26 @@ db.init_app(app)
 with app.app_context():
     try:
         db.create_all()
-        print("✅ Base de datos inicializada y tablas verificadas/creadas correctamente en PostgreSQL.")
+        print("✅ Database initialized and tables verified/created.")
     except Exception as e:
-        print(f"⚠️ Error al inicializar la base de datos automáticamente: {e}")
+        print(f"⚠️ Error initializing database automatically: {e}")
 
-
-CORS(app)
 setup_admin(app)
 
 
-# REGISTRO DE BLUEPRINTS
-# Registramos el blueprint maestro 'api' que viene de routes.py
-app.register_blueprint(api, url_prefix='/api')
+@app.cli.command("rebuild-dream-collection")
+def rebuild_dream_collection_command():
+    """Rebuild the Qdrant dream dictionary collection."""
+    from api.services.qdrant_service import DreamRetrievalService
+
+    service = DreamRetrievalService()
+    count = service.rebuild_collection_from_csv()
+    click.echo(
+        f"Indexed {count} dream dictionary points with the current embeddings.")
+
+
+# Blueprint registration
+app.register_blueprint(api, url_prefix="/api")
 
 
 @app.errorhandler(APIException)
@@ -71,40 +102,22 @@ def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
 
 
-# generate sitemap with all your endpoints
-# Serve React frontend static files
-import mimetypes
-mimetypes.add_type('application/javascript', '.js')
-mimetypes.add_type('text/css', '.css')
-
-DIST_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../dist'))
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve(path):
-    if path != "" and os.path.exists(os.path.join(DIST_DIR, path)):
-        return send_from_directory(DIST_DIR, path)
-    else:
-        if os.path.exists(os.path.join(DIST_DIR, 'index.html')):
-            return send_from_directory(DIST_DIR, 'index.html')
-        else:
-            return generate_sitemap(app)
-
-from flask import send_from_directory
+@app.route("/")
+def health_check():
+    return jsonify({
+        "status": "online",
+        "service": "Eusomnia Backend API"
+    }), 200
 
 
-@app.route('/')
+@app.route("/sitemap")
 def sitemap():
     return generate_sitemap(app)
 
 
-if __name__ == '__main__':
-
-    # LANZAMIENTO DEL SERVIDOR WEB FLASK
-    # Leemos el puerto asignado en las variables de entorno (por defecto el 3000)
-    PORT = int(os.environ.get('PORT', 3000))
+if __name__ == "__main__":
+    PORT = int(os.environ.get("PORT", 3000))
 
     print(f"🚀 Servidor Flask listo y escuchando en el puerto {PORT}...")
 
-    # Encendemos los sockets de Flask para empezar a recibir peticiones de usuarios o frontend
-    app.run(host='0.0.0.0', port=PORT, debug=False)
+    app.run(host="0.0.0.0", port=PORT, debug=False)

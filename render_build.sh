@@ -1,11 +1,7 @@
-
 #!/usr/bin/env bash
 # exit on error
 set -o errexit
 
-# npm install
-# npm run build
-
-pipenv install
-
+pipenv install --deploy --system
 pipenv run upgrade
+

@@ -1,6 +1,5 @@
 import { closeModalSafely } from "../utils.js";
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+import { apiUrl } from "../api.js";
 
 export const getActions = (store, dispatch) => {
   // 🔥 Helper interno para incluir el Token JWT de forma automática y segura
@@ -20,7 +19,7 @@ export const getActions = (store, dispatch) => {
   };
 
   return {
-    handleLogout: (modalId = null) => {
+    handleLogout: (modalId = null, reason = "manual") => {
       // 1. Si hay un ID, cerramos ese modal específico de forma segura.
       if (modalId) {
         closeModalSafely(modalId);
@@ -37,17 +36,30 @@ export const getActions = (store, dispatch) => {
       localStorage.removeItem("jwt-token");
       dispatch({ type: "LOGOUT" });
 
-      dispatch({
-        type: "SET_MESSAGE",
-        payload: {
-          msg: "Sesión expirada. Por favor, identifícate de nuevo.",
-          status: 401,
-        },
-      });
+      // Duración estándar para cualquier aviso controlado en la UI (3000 ms).
+      const TOAST_DURATION = 3000;
 
-      setTimeout(() => {
-        dispatch({ type: "SET_MESSAGE", payload: null });
-      }, 3000);
+      if (reason === "expired") {
+        // Sesión inválida/expirada en el servidor: aviso de advertencia controlado.
+        dispatch({
+          type: "SET_MESSAGE",
+          payload: {
+            msg: "La sesión ha caducado. Vuelve a iniciar sesión para continuar.",
+            status: 401,
+            variant: "warning",
+          },
+        });
+
+        setTimeout(() => {
+          dispatch({ type: "SET_MESSAGE", payload: null });
+        }, TOAST_DURATION);
+      } else {
+        // Cierre manual: el reducer ya deja el aviso verde de éxito.
+        // Se limpia con el mismo timeout estándar.
+        setTimeout(() => {
+          dispatch({ type: "SET_MESSAGE", payload: null });
+        }, TOAST_DURATION);
+      }
     },
 
     //  ❤️ GESTIÓN DE FAVORITOS
@@ -60,7 +72,7 @@ export const getActions = (store, dispatch) => {
 
       try {
         const response = await fetch(
-          `${BACKEND_URL}/api/favorites/user/${userId}/favorites`,
+          apiUrl(`/api/favorites/user/${userId}/favorites`),
           { headers: getAuthHeaders() },
         );
         if (!response.ok)
@@ -88,7 +100,7 @@ export const getActions = (store, dispatch) => {
         const idSeguro = encodeURIComponent(String(pokemon.id).trim());
 
         const response = await fetch(
-          `${BACKEND_URL}/api/favorites/user/${userId}/favorites/${idSeguro}`,
+          apiUrl(`/api/favorites/user/${userId}/favorites/${idSeguro}`),
           {
             method: "POST",
             headers: { ...getAuthHeaders() }, // ✨ Escalabilidad: podrían agregarse otros headers
@@ -99,7 +111,7 @@ export const getActions = (store, dispatch) => {
         if (response.status === 409) {
           dispatch({
             type: "SET_MESSAGE",
-            payload: { msg: "⚠️ Ya está en favoritos", status: 409 },
+            payload: { msg: "Esta carta ya está en tus favoritos.", status: 409, variant: "info" },
           });
           return;
         }
@@ -119,7 +131,7 @@ export const getActions = (store, dispatch) => {
         const idSeguro = encodeURIComponent(String(pokemonId).trim());
 
         const response = await fetch(
-          `${BACKEND_URL}/api/favorites/user/${userId}/favorites/${idSeguro}`,
+          apiUrl(`/api/favorites/user/${userId}/favorites/${idSeguro}`),
           {
             method: "DELETE",
             headers: { ...getAuthHeaders() },
@@ -133,7 +145,7 @@ export const getActions = (store, dispatch) => {
 
         dispatch({
           type: "SET_MESSAGE",
-          payload: { msg: "🗑️ Carta eliminada de tus favoritos", status: 200 },
+          payload: { msg: "La carta se ha eliminado de tus favoritos.", status: 200, variant: "success" },
         });
       } catch (error) {
         console.error("Error al eliminar favorito:", error);

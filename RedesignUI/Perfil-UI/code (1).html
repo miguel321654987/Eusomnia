@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "secondary-fixed": "#d2e4ff", "on-primary-container": "#00626e", "surface-container": "#17202f", "on-secondary-fixed": "#001c37", "outline-variant": "#3b494c", "surface-container-low": "#131c2b", "on-surface-variant": "#bac9cc", "primary-container": "#00e5ff", "primary-fixed": "#9cf0ff", "surface-tint": "#00daf3", "error-container": "#93000a", "surface-variant": "#2c3545", "surface-container-high": "#222a3a", "error": "#ffb4ab", "on-primary-fixed-variant": "#004f58", "surface-bright": "#31394a", "primary": "#c3f5ff", "on-surface": "#dae2f8", "on-tertiary-fixed": "#2a1800", "on-error": "#690005", "tertiary": "#ffe9d2", "on-tertiary": "#462a00", "secondary-container": "#2b486a", "tertiary-container": "#ffc67e", "secondary": "#abc9f1", "on-tertiary-container": "#7d4f00", "on-secondary-container": "#9ab7df", "on-primary-fixed": "#001f24", "secondary-fixed-dim": "#abc9f1", "background": "#0a1322", "on-error-container": "#ffdad6", "on-primary": "#00363d", "surface-container-highest": "#2c3545", "surface-container-lowest": "#060e1d", "surface-dim": "#0a1322", "on-secondary": "#113252", "on-tertiary-fixed-variant": "#643f00", "inverse-surface": "#dae2f8", "surface": "#0a1322", "on-background": "#dae2f8", "inverse-on-surface": "#283141", "on-secondary-fixed-variant": "#2b486a", "outline": "#849396", "primary-fixed-dim": "#00daf3", "tertiary-fixed": "#ffddb6", "inverse-primary": "#006875", "tertiary-fixed-dim": "#ffb95a" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-mobile": "0.75rem", "space-sm": "0.5rem", "space-xl": "2.25rem", "gutter": "1.25rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "margin-mobile": "1rem", "space-md": "1rem", "margin": "2rem" }, "fontFamily": { "label-md": [ "Space Grotesk" ], "label-lg": [ "Space Grotesk" ], "headline-sm": [ "Plus Jakarta Sans" ], "headline-xl-mobile": [ "Plus Jakarta Sans" ], "headline-xl": [ "Plus Jakarta Sans" ], "body-md": [ "Manrope" ], "headline-lg-mobile": [ "Plus Jakarta Sans" ], "headline-lg": [ "Plus Jakarta Sans" ], "label-sm": [ "Space Grotesk" ], "body-lg": [ "Manrope" ], "headline-md": [ "Plus Jakarta Sans" ], "body-sm": [ "Manrope" ] }, "fontSize": { "label-md": [ "12px", { "lineHeight": "16px", "fontWeight": "500" } ], "label-lg": [ "14px", { "lineHeight": "20px", "fontWeight": "600" } ], "headline-sm": [ "16px", { "lineHeight": "24px", "fontWeight": "600" } ], "headline-xl-mobile": [ "26px", { "lineHeight": "32px", "fontWeight": "700" } ], "headline-xl": [ "36px", { "lineHeight": "44px", "fontWeight": "700" } ], "body-md": [ "14px", { "lineHeight": "22px", "fontWeight": "400" } ], "headline-lg-mobile": [ "22px", { "lineHeight": "28px", "fontWeight": "700" } ], "headline-lg": [ "28px", { "lineHeight": "36px", "fontWeight": "700" } ], "label-sm": [ "10px", { "lineHeight": "14px", "fontWeight": "600" } ], "body-lg": [ "16px", { "lineHeight": "26px", "fontWeight": "400" } ], "headline-md": [ "20px", { "lineHeight": "28px", "fontWeight": "600" } ], "body-sm": [ "12px", { "lineHeight": "18px", "fontWeight": "400" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,229,255,0.06)]"><div class="h-16 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center relative shadow-[0_0_16px_rgba(0,229,255,0.25)]"><span class="material-symbols-outlined text-primary-container text-[22px]">bedtime</span><span class="material-symbols-outlined text-primary text-[14px] absolute top-1 right-1">hub</span></div><span class="font-headline-md text-headline-md tracking-tight text-primary">Eusomnia</span></div><nav class="hidden xl:flex items-center gap-space-sm bg-surface-container-lowest/60 p-space-xs rounded-xl backdrop-blur-md" data-active-classes="bg-surface-container-high text-primary font-bold rounded-lg shadow-[0_0_12px_rgba(0,229,255,0.15)]"><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="home" href="#">Home</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="registro-diario" href="#">Registro Diario</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="resultado-del-dia" href="#">Resultado del Día</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="historial" href="#">Historial</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="perfil" href="#">Perfil</a></nav><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm pl-space-md py-space-xs bg-surface-container-low rounded-full"><span class="font-label-sm text-label-sm text-on-surface-variant hidden sm:inline">Usuario activo:</span><span class="font-label-md text-label-md text-on-surface">Maruja</span><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div><a class="flex items-center gap-space-xs text-on-surface-variant hover:text-error transition-colors p-space-xs rounded-lg group" data-path="login" href="#" title="Cerrar sesión"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-error transition-colors">logout</span><span class="font-label-md text-label-md hidden md:inline text-on-surface-variant group-hover:text-error transition-colors">Cerrar sesión</span></a></div></div></header><main class="w-full pt-16 flex-1 bg-surface relative"><div class="flex flex-col w-full">
+<div class="relative w-full max-w-7xl mx-auto px-6 lg:px-12 py-space-xl">
+<div class="absolute -top-10 right-10 w-96 h-96 bg-primary-container/5 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<div class="absolute top-1/2 -left-20 w-80 h-80 bg-secondary-container/20 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<!-- Header de Perfil y Telemetría del Usuario -->
+<div class="bg-surface-container-low rounded-xl p-space-lg shadow-xl relative overflow-hidden mb-space-xl">
+<div class="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-primary-container/10 to-transparent pointer-events-none"></div>
+<div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-space-lg">
+<div class="flex items-center gap-space-lg">
+<div class="relative">
+<div class="w-24 h-24 rounded-full bg-surface-container-highest flex items-center justify-center shadow-lg relative overflow-hidden">
+<span class="material-symbols-outlined text-primary text-5xl">face_3</span>
+<div class="absolute inset-0 bg-gradient-to-tr from-primary-container/20 to-transparent"></div>
+</div>
+<div class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary-container flex items-center justify-center shadow-md shadow-primary-container/40" title="Dispositivo Oura Ring sincronizado">
+<span class="material-symbols-outlined text-on-primary-container text-sm">sensors</span>
+</div>
+</div>
+<div class="space-y-space-xs">
+<div class="flex flex-wrap items-center gap-space-sm">
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight">Maruja</h1>
+<span class="px-space-sm py-0.5 rounded-full bg-primary-container/15 text-primary font-label-sm text-label-sm tracking-wider uppercase">Plan Neuro-Pro</span>
+<span class="px-space-sm py-0.5 rounded-full bg-secondary-container/40 text-secondary font-label-sm text-label-sm">Miembro desde Octubre 2026</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-base text-primary/70">alternate_email</span>
+              maruja@gmail.com
+            </p>
+<div class="flex items-center gap-space-sm pt-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container animate-pulse shadow-sm shadow-primary-container"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Sincronización activa con Oura Ring v4 • Último handshake: hace 14 min</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-space-md w-full lg:w-auto">
+<div class="bg-surface-container p-space-md rounded-xl text-center shadow-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">Eficiencia Media</span>
+<span class="font-headline-md text-headline-md text-primary font-bold">92%</span>
+<span class="font-body-sm text-body-sm text-secondary block">+4% este mes</span>
+</div>
+<div class="bg-surface-container p-space-md rounded-xl text-center shadow-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">Sueños Grabados</span>
+<span class="font-headline-md text-headline-md text-on-surface font-bold">148</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant block">86 interpretados</span>
+</div>
+<div class="bg-surface-container p-space-md rounded-xl text-center shadow-sm col-span-2 sm:col-span-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block">Índice Circadiano</span>
+<span class="font-headline-md text-headline-md text-tertiary font-bold">8.4<span class="font-label-sm text-label-sm text-on-surface-variant font-normal">/10</span></span>
+<span class="font-body-sm text-body-sm text-tertiary-container block">Fase estable</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Pestañas de Navegación del Perfil -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-space-sm mb-space-lg">
+<button class="tab-pill px-space-md py-space-xs rounded-full font-label-md text-label-md flex items-center gap-space-xs transition-all bg-primary-container text-on-primary-container font-semibold shadow-md shadow-primary-container/20" id="tab-btn-cuenta" onclick="switchTab('cuenta')">
+<span class="material-symbols-outlined text-base">person</span>
+        Datos Personales &amp; Cuenta
+      </button>
+<button class="tab-pill px-space-md py-space-xs rounded-full font-label-md text-label-md flex items-center gap-space-xs transition-all bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" id="tab-btn-ia" onclick="switchTab('ia')">
+<span class="material-symbols-outlined text-base">psychology</span>
+        Motor de IA Onírica
+      </button>
+<button class="tab-pill px-space-md py-space-xs rounded-full font-label-md text-label-md flex items-center gap-space-xs transition-all bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" id="tab-btn-rutinas" onclick="switchTab('rutinas')">
+<span class="material-symbols-outlined text-base">alarm</span>
+        Rutinas &amp; Recordatorios
+      </button>
+<button class="tab-pill px-space-md py-space-xs rounded-full font-label-md text-label-md flex items-center gap-space-xs transition-all bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high" id="tab-btn-privacidad" onclick="switchTab('privacidad')">
+<span class="material-symbols-outlined text-base">security</span>
+        Exportación &amp; Privacidad
+      </button>
+</div>
+<!-- Contenido de Pestañas -->
+<div class="space-y-space-xl">
+<!-- Pestaña 1: Datos Personales & Cuenta -->
+<section class="tab-panel grid grid-cols-1 lg:grid-cols-12 gap-space-lg" id="panel-cuenta">
+<div class="lg:col-span-8 bg-surface-container-low rounded-xl p-space-lg shadow-xl space-y-space-lg">
+<div class="flex items-center justify-between pb-space-xs">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary tracking-tight">Identidad &amp; Parámetros Médicos</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Configura tu perfil para calibrar las métricas metabólicas del sueño.</p>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-2xl">manage_accounts</span>
+</div>
+<form class="space-y-space-md" id="perfil-form" onsubmit="event.preventDefault(); notificarGuardado();">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="space-y-space-xs">
+<label class="font-label-md text-label-md text-on-surface block">Nombre Completo</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-3 text-outline text-lg">badge</span>
+<input class="w-full bg-surface-container rounded-lg pl-10 pr-3 py-2 text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary-container shadow-inner" type="text" value="Maruja"/>
+</div>
+</div>
+<div class="space-y-space-xs">
+<label class="font-label-md text-label-md text-on-surface block">Correo Electrónico</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-3 text-outline text-lg">mail</span>
+<input class="w-full bg-surface-container rounded-lg pl-10 pr-3 py-2 text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary-container shadow-inner" type="email" value="maruja@gmail.com"/>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md pt-space-xs">
+<div class="space-y-space-xs">
+<label class="font-label-md text-label-md text-on-surface block">Año de Nacimiento</label>
+<input class="w-full bg-surface-container rounded-lg px-3 py-2 text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary-container" type="number" value="1984"/>
+</div>
+<div class="space-y-space-xs">
+<label class="font-label-md text-label-md text-on-surface block">Cronotipo Asignado</label>
+<select class="w-full bg-surface-container rounded-lg px-3 py-2 text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary-container">
+<option selected="">Lobo (Nocturno tardío)</option>
+<option>León (Matutino temprano)</option>
+<option>Oso (Sincronizado solar)</option>
+<option>Delfín (Sueño fragmentado)</option>
+</select>
+</div>
+<div class="space-y-space-xs">
+<label class="font-label-md text-label-md text-on-surface block">Zona Horaria</label>
+<input class="w-full bg-surface-container/60 text-on-surface-variant rounded-lg px-3 py-2 font-body-md text-body-md cursor-not-allowed" readonly="" type="text" value="Europe/Madrid (UTC+1)"/>
+</div>
+</div>
+<div class="pt-space-md space-y-space-sm">
+<label class="font-label-md text-label-md text-on-surface block">Cambio de Contraseña</label>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<input class="w-full bg-surface-container rounded-lg px-3 py-2 text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary-container" placeholder="Contraseña actual" type="password"/>
+<input class="w-full bg-surface-container rounded-lg px-3 py-2 text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary-container" id="new-password" oninput="evaluarContrasena(this.value)" placeholder="Nueva contraseña segura" type="password"/>
+</div>
+<div class="space-y-1 pt-1">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Fortaleza de contraseña:</span>
+<span class="font-label-sm text-label-sm text-secondary font-semibold" id="strength-label">Media (Cifrado SHA-256)</span>
+</div>
+<div class="w-full bg-surface-container h-1.5 rounded-full overflow-hidden">
+<div class="w-3/5 bg-primary-container h-full rounded-full transition-all duration-300" id="strength-bar"></div>
+</div>
+</div>
+</div>
+<div class="flex justify-end pt-space-md">
+<button class="px-space-lg py-space-sm bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold rounded-lg shadow-lg hover:shadow-primary-container/30 transition-all flex items-center gap-space-xs" type="submit">
+<span class="material-symbols-outlined text-lg">save</span>
+                Guardar cambios
+              </button>
+</div>
+</form>
+</div>
+<div class="lg:col-span-4 space-y-space-md">
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-xl space-y-space-md">
+<h3 class="font-headline-sm text-headline-sm text-primary flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-lg text-primary-container">watch</span>
+              Dispositivos Sincronizados
+            </h3>
+<div class="space-y-space-sm">
+<div class="bg-surface-container p-space-sm rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-md bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container text-xl">ring_volume</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-semibold">Oura Ring Gen 4</h4>
+<span class="font-body-sm text-body-sm text-primary">Conectado (Batería 84%)</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors p-1" title="Desvincular">
+<span class="material-symbols-outlined text-lg">link_off</span>
+</button>
+</div>
+<div class="bg-surface-container p-space-sm rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-md bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-xl">smartphone</span>
+</div>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-semibold">Apple HealthKit</h4>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Sincronización diaria</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors p-1" title="Desvincular">
+<span class="material-symbols-outlined text-lg">link_off</span>
+</button>
+</div>
+</div>
+<button class="w-full py-space-xs bg-surface-container-high hover:bg-surface-bright text-primary font-label-md text-label-md rounded-lg transition-colors flex items-center justify-center gap-space-xs">
+<span class="material-symbols-outlined text-base">add</span>
+              Vincular nuevo biosensor
+            </button>
+</div>
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-xl space-y-space-sm">
+<h3 class="font-headline-sm text-headline-sm text-tertiary flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-lg text-tertiary">card_membership</span>
+              Suscripción Neuro-Pro
+            </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tu membresía incluye modelos de análisis onírico ilimitados con claude-3-5-sonnet y correlaciones metabólicas Edamam.</p>
+<div class="pt-space-xs flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Próxima renovación:</span>
+<span class="text-on-surface font-semibold">14 Noviembre 2026</span>
+</div>
+<button class="w-full mt-space-xs py-space-xs bg-surface-container text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm rounded-lg transition-colors">
+              Gestionar facturación en Stripe
+            </button>
+</div>
+</div>
+</section>
+<!-- Pestaña 2: Configuración del Motor de IA Onírica -->
+<section class="tab-panel hidden grid grid-cols-1 lg:grid-cols-12 gap-space-lg" id="panel-ia">
+<div class="lg:col-span-8 bg-surface-container-low rounded-xl p-space-lg shadow-xl space-y-space-lg">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary tracking-tight">Parametrización del Motor de IA Onírica</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Define el sesgo interpretativo y el algoritmo de decodificación de las narrativas del sueño.</p>
+</div>
+<!-- Selector de Enfoque Interpretativo -->
+<div class="space-y-space-sm">
+<label class="font-label-md text-label-md text-on-surface block font-semibold">Marco Teórico Principal de Interpretación</label>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-space-sm">
+<div class="approach-card p-space-md rounded-xl bg-surface-container-high cursor-pointer transition-all shadow-md group" onclick="selectApproach(this)">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="material-symbols-outlined text-primary-container text-2xl">auto_stories</span>
+<span class="w-4 h-4 rounded-full bg-primary-container flex items-center justify-center check-indicator">
+<span class="material-symbols-outlined text-on-primary-container text-xs">check</span>
+</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-primary font-bold">Junguiano</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Análisis de sombras, arquetipos universales, ánima/ánimus y sincronicidad simbólica.</p>
+</div>
+<div class="approach-card p-space-md rounded-xl bg-surface-container cursor-pointer transition-all hover:bg-surface-container-high group" onclick="selectApproach(this)">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="material-symbols-outlined text-secondary text-2xl">neurology</span>
+<span class="w-4 h-4 rounded-full bg-surface-container-highest flex items-center justify-center check-indicator opacity-0">
+<span class="material-symbols-outlined text-on-surface text-xs">check</span>
+</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Neurocientífico</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Consolidación de memoria episódica, podado sináptico y desensibilización amigdalina.</p>
+</div>
+<div class="approach-card p-space-md rounded-xl bg-surface-container cursor-pointer transition-all hover:bg-surface-container-high group" onclick="selectApproach(this)">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="material-symbols-outlined text-tertiary-container text-2xl">self_improvement</span>
+<span class="w-4 h-4 rounded-full bg-surface-container-highest flex items-center justify-center check-indicator opacity-0">
+<span class="material-symbols-outlined text-on-surface text-xs">check</span>
+</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface font-bold">Holístico</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Integración somática, higiene mental y proyecciones creativas del estado de vigilia.</p>
+</div>
+</div>
+</div>
+<!-- Nivel de Detalle del Análisis -->
+<div class="space-y-space-sm pt-space-xs">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface font-semibold">Profundidad del Reporte Generativo</label>
+<span class="font-label-sm text-label-sm text-primary font-bold" id="detail-text">Clínico Completo (3 apartados + prescripción)</span>
+</div>
+<input class="w-full accent-primary-container bg-surface-container h-2 rounded-lg cursor-pointer" max="3" min="1" oninput="updateDetailText(this.value)" type="range" value="3"/>
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant">
+<span>Conciso (1 párrafo)</span>
+<span>Estándar (2 apartados)</span>
+<span>Clínico Detallado</span>
+</div>
+</div>
+<!-- Correlaciones Edamam & Nutrición -->
+<div class="pt-space-xs space-y-space-sm">
+<div class="p-space-md bg-surface-container rounded-xl flex items-start justify-between gap-space-md">
+<div class="space-y-1">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary-container text-lg">restaurant</span>
+<h4 class="font-label-lg text-label-lg text-on-surface font-semibold">Detección automática de correlaciones nutricionales (Edamam API)</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                  Cruza automáticamente los macronutrientes de la cena (triptófano, magnesio, azúcares rápidos, cafeína) con la latencia del sueño REM y la vivacidad de los sueños registrados.
+                </p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-surface peer-checked:bg-primary-container after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+</label>
+</div>
+<div class="p-space-md bg-surface-container rounded-xl flex items-start justify-between gap-space-md">
+<div class="space-y-1">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-lg">palette</span>
+<h4 class="font-label-lg text-label-lg text-on-surface font-semibold">Generación de paisaje visual del sueño con Diffusion</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                  Crea una representación estética y etérea del sueño al guardar la transcripción en el diario matutino.
+                </p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-surface peer-checked:bg-primary-container after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+</label>
+</div>
+</div>
+<div class="flex justify-end pt-space-xs">
+<button class="px-space-md py-space-xs bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold rounded-lg shadow-md hover:shadow-primary-container/30 transition-all" onclick="notificarGuardado()">
+              Actualizar modelo de IA
+            </button>
+</div>
+</div>
+<div class="lg:col-span-4 space-y-space-md">
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-xl space-y-space-sm">
+<h3 class="font-headline-sm text-headline-sm text-primary flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-lg text-primary-container">token</span>
+              Consumo de Tokens IA
+            </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Límite mensual regenerativo del plan Pro.</p>
+<div class="pt-space-xs space-y-1">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Tokens consumidos:</span>
+<span class="text-primary font-bold">142.800 / 500.000</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="w-[28.5%] bg-primary-container h-full rounded-full"></div>
+</div>
+</div>
+<div class="bg-surface-container p-space-sm rounded-lg mt-space-sm">
+<span class="font-label-sm text-label-sm text-secondary block font-semibold">Modelo actual:</span>
+<span class="font-body-sm text-body-sm text-on-surface font-mono">eusomnia-synapse-v4.2-claude</span>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-xl space-y-space-xs">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">¿Cómo funciona la IA?</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              La IA no emite diagnósticos psiquiátricos cerrados; actúa como un espejo semántico y clasificador fenotípico para que tú y tu especialista identifiquen patrones de tensión latente.
+            </p>
+</div>
+</div>
+</section>
+<!-- Pestaña 3: Rutinas y Recordatorios Inteligentes -->
+<section class="tab-panel hidden grid grid-cols-1 lg:grid-cols-12 gap-space-lg" id="panel-rutinas">
+<div class="lg:col-span-8 bg-surface-container-low rounded-xl p-space-lg shadow-xl space-y-space-lg">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary tracking-tight">Higiene Circadiana &amp; Automatismos</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Ajusta los disparadores sensoriales que mantienen sincronizado tu reloj biológico central.</p>
+</div>
+<div class="space-y-space-md">
+<!-- Recordatorio Matutino -->
+<div class="p-space-md bg-surface-container rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary-container text-2xl">wb_twilight</span>
+</div>
+<div>
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold">Registro Guiado Matutino</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Notificación suave para dictar el sueño inmediatamente al despertar antes del olvido fásico.</p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm shrink-0 pl-14 sm:pl-0">
+<input class="bg-surface-container-highest px-3 py-1.5 rounded-lg text-primary font-label-md text-label-md focus:outline-none focus:ring-1 focus:ring-primary-container" type="time" value="07:30"/>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-primary-container after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+</label>
+</div>
+</div>
+<!-- Corte de Excitantes -->
+<div class="p-space-md bg-surface-container rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-tertiary text-2xl">coffee_maker</span>
+</div>
+<div>
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold">Límite de Adenosina / Cafeína</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Aviso preventivo para detener la ingesta de cafeína, teobromina y bebidas estimulantes.</p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm shrink-0 pl-14 sm:pl-0">
+<input class="bg-surface-container-highest px-3 py-1.5 rounded-lg text-tertiary font-label-md text-label-md focus:outline-none focus:ring-1 focus:ring-tertiary" type="time" value="18:00"/>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-tertiary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+</label>
+</div>
+</div>
+<!-- Atenuación Lumínica -->
+<div class="p-space-md bg-surface-container rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-2xl">bedtime</span>
+</div>
+<div>
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold">Preparación de Melatonina (Wind-down)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Recordatorio para activar filtros de luz azul, bajar lúmenes en el dormitorio y desconectar pantallas.</p>
+</div>
+</div>
+<div class="flex items-center gap-space-sm shrink-0 pl-14 sm:pl-0">
+<input class="bg-surface-container-highest px-3 py-1.5 rounded-lg text-secondary font-label-md text-label-md focus:outline-none focus:ring-1 focus:ring-secondary" type="time" value="22:30"/>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:bg-secondary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-on-surface after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+</label>
+</div>
+</div>
+</div>
+<div class="pt-space-xs space-y-space-sm">
+<h3 class="font-label-lg text-label-lg text-on-surface font-semibold">Canales de Notificación</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm">
+<label class="p-space-sm bg-surface-container rounded-lg flex items-center justify-between cursor-pointer">
+<span class="font-body-md text-body-md text-on-surface">Notificaciones Push al móvil</span>
+<input checked="" class="accent-primary-container w-4 h-4" type="checkbox"/>
+</label>
+<label class="p-space-sm bg-surface-container rounded-lg flex items-center justify-between cursor-pointer">
+<span class="font-body-md text-body-md text-on-surface">Resumen semanal por email</span>
+<input checked="" class="accent-primary-container w-4 h-4" type="checkbox"/>
+</label>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4 space-y-space-md">
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-xl space-y-space-sm">
+<h3 class="font-headline-sm text-headline-sm text-primary flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-lg text-primary-container">light_mode</span>
+              Ventana de Luz Solar
+            </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Basado en tu geolocalización (Madrid):</p>
+<div class="bg-surface-container p-space-sm rounded-lg space-y-space-xs">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Amanecer óptimo:</span>
+<span class="text-tertiary font-bold">08:12 AM</span>
+</div>
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Exposición solar recomendada:</span>
+<span class="text-primary font-bold">15 - 20 min</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-xl space-y-space-xs">
+<span class="material-symbols-outlined text-primary-container text-2xl">tips_and_updates</span>
+<h4 class="font-label-lg text-label-lg text-on-surface font-semibold">Consejo Circadiano</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Mantener fija la hora de registro matutino durante los fines de semana reduce el desfase social en un 38%.
+            </p>
+</div>
+</div>
+</section>
+<!-- Pestaña 4: Exportación de Datos & Privacidad -->
+<section class="tab-panel hidden grid grid-cols-1 lg:grid-cols-12 gap-space-lg" id="panel-privacidad">
+<div class="lg:col-span-8 bg-surface-container-low rounded-xl p-space-lg shadow-xl space-y-space-lg">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary tracking-tight">Exportación Médica &amp; Soberanía de Datos</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tus datos biométricos y diarios oníricos están protegidos bajo protocolos de grado clínico.</p>
+</div>
+<!-- Descarga Informe Clínico -->
+<div class="p-space-lg bg-surface-container rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md">
+<div class="flex items-start gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-primary-container/20 flex items-center justify-center shrink-0 text-primary-container">
+<span class="material-symbols-outlined text-3xl">picture_as_pdf</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">Informe Clínico Eusomnia (PDF)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                  Genera un dosier completo con gráficos de arquitectura de fases NREM/REM, patrones de pesadillas recurrentes y correlaciones nutricionales para tu neurólogo o somnólogo.
+                </p>
+</div>
+</div>
+<button class="w-full md:w-auto px-space-md py-space-sm bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold rounded-lg shadow-lg hover:shadow-primary-container/30 transition-all flex items-center justify-center gap-space-xs shrink-0" id="btn-pdf" onclick="simularDescargaPDF()">
+<span class="material-symbols-outlined text-lg">download</span>
+<span>Descargar PDF</span>
+</button>
+</div>
+<!-- Protocolo de Seguridad -->
+<div class="space-y-space-sm pt-space-xs">
+<h3 class="font-label-lg text-label-lg text-on-surface font-semibold flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-secondary text-lg">verified_user</span>
+              Cifrado y Cumplimiento Normativo
+            </h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+<div class="p-space-md bg-surface-container rounded-xl space-y-1">
+<div class="flex items-center gap-space-xs text-primary">
+<span class="material-symbols-outlined text-base">lock</span>
+<h4 class="font-label-md text-label-md font-bold">Cifrado de Extremo a Extremo</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tus transcripciones de sueños se codifican con claves AES-256 en reposo antes de alimentar los modelos generativos.</p>
+</div>
+<div class="p-space-md bg-surface-container rounded-xl space-y-1">
+<div class="flex items-center gap-space-xs text-secondary">
+<span class="material-symbols-outlined text-base">health_and_safety</span>
+<h4 class="font-label-md text-label-md font-bold">Estándar HIPAA &amp; RGPD</h4>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Ningún dato onírico personal es vendido a terceros ni utilizado para entrenamiento masivo de modelos públicos.</p>
+</div>
+</div>
+</div>
+<!-- Zona Peligro / Borrado -->
+<div class="pt-space-md space-y-space-sm">
+<h3 class="font-label-lg text-label-lg text-error font-semibold flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-lg">warning</span>
+              Zona Crítica de Cuenta
+            </h3>
+<div class="p-space-md bg-surface-container rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+<div>
+<h4 class="font-label-md text-label-md text-on-surface font-bold">Purgar Registro Onírico y Métricas</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Elimina de forma irreversible todos tus registros históricos y modelos personalizados.</p>
+</div>
+<button class="px-space-md py-space-xs bg-error-container text-on-error-container hover:bg-error hover:text-on-error font-label-md text-label-md font-semibold rounded-lg transition-colors shrink-0" onclick="confirmarEliminacion()">
+                Eliminar todos mis datos
+              </button>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4 space-y-space-md">
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-xl space-y-space-sm">
+<h3 class="font-headline-sm text-headline-sm text-primary flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-lg text-primary-container">database</span>
+              Exportación en Bruto
+            </h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Descarga una copia completa de tu archivo onírico en formatos estructurados interoperables.</p>
+<div class="pt-space-xs space-y-space-xs">
+<button class="w-full py-space-xs bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md rounded-lg transition-colors flex items-center justify-center gap-space-xs">
+<span class="material-symbols-outlined text-base">data_object</span>
+                Exportar en JSON crudo
+              </button>
+<button class="w-full py-space-xs bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md rounded-lg transition-colors flex items-center justify-center gap-space-xs">
+<span class="material-symbols-outlined text-base">table_view</span>
+                Exportar métricas en CSV
+              </button>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-space-md shadow-xl text-center space-y-space-xs">
+<span class="material-symbols-outlined text-outline text-3xl">fingerprint</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ID Médico Anónimo Eusomnia:</p>
+<span class="font-mono text-xs text-primary bg-surface-container px-2 py-1 rounded select-all block">ES-2026-9941-MRJ</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Feedback Toast Flotante -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none" id="toast">
+<div class="bg-surface-container-high text-primary px-space-md py-space-sm rounded-xl shadow-2xl flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary-container text-xl">check_circle</span>
+<span class="font-label-md text-label-md" id="toast-message">Cambios guardados con éxito.</span>
+</div>
+</div>
+</div>
+<script>
+    // Tab switching logic
+    function switchTab(tabId) {
+      const tabs = ['cuenta', 'ia', 'rutinas', 'privacidad'];
+      tabs.forEach(id => {
+        const btn = document.getElementById('tab-btn-' + id);
+        const panel = document.getElementById('panel-' + id);
+        
+        if (id === tabId) {
+          panel.classList.remove('hidden');
+          btn.classList.add('bg-primary-container', 'text-on-primary-container', 'font-semibold', 'shadow-md', 'shadow-primary-container/20');
+          btn.classList.remove('bg-surface-container', 'text-on-surface-variant');
+        } else {
+          panel.classList.add('hidden');
+          btn.classList.remove('bg-primary-container', 'text-on-primary-container', 'font-semibold', 'shadow-md', 'shadow-primary-container/20');
+          btn.classList.add('bg-surface-container', 'text-on-surface-variant');
+        }
+      });
+    }
+
+    // Approach selector
+    function selectApproach(card) {
+      const cards = document.querySelectorAll('.approach-card');
+      cards.forEach(c => {
+        c.classList.remove('bg-surface-container-high');
+        c.classList.add('bg-surface-container');
+        const check = c.querySelector('.check-indicator');
+        if (check) check.classList.add('opacity-0');
+      });
+      card.classList.remove('bg-surface-container');
+      card.classList.add('bg-surface-container-high');
+      const activeCheck = card.querySelector('.check-indicator');
+      if (activeCheck) activeCheck.classList.remove('opacity-0');
+    }
+
+    // Detail slider helper
+    function updateDetailText(val) {
+      const label = document.getElementById('detail-text');
+      if (val == 1) label.innerText = 'Conciso (1 párrafo síntesis)';
+      else if (val == 2) label.innerText = 'Estándar (2 apartados + símbolos clave)';
+      else label.innerText = 'Clínico Completo (3 apartados + prescripción)';
+    }
+
+    // Password strength evaluator
+    function evaluarContrasena(pass) {
+      const bar = document.getElementById('strength-bar');
+      const text = document.getElementById('strength-label');
+      if (!pass || pass.length < 4) {
+        bar.style.width = '20%';
+        bar.className = 'w-1/5 bg-error h-full rounded-full transition-all duration-300';
+        text.innerText = 'Débil';
+        text.className = 'font-label-sm text-label-sm text-error font-semibold';
+      } else if (pass.length < 8) {
+        bar.style.width = '60%';
+        bar.className = 'w-3/5 bg-tertiary h-full rounded-full transition-all duration-300';
+        text.innerText = 'Media (Cifrado SHA-256)';
+        text.className = 'font-label-sm text-label-sm text-secondary font-semibold';
+      } else {
+        bar.style.width = '100%';
+        bar.className = 'w-full bg-primary-container h-full rounded-full transition-all duration-300';
+        text.innerText = 'Alta (Cumple estándar neuro-médico)';
+        text.className = 'font-label-sm text-label-sm text-primary font-semibold';
+      }
+    }
+
+    // Toast notification
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      toastMsg.innerText = msg;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 3000);
+    }
+
+    function notificarGuardado() {
+      showToast('Perfil y preferencias sincronizados');
+    }
+
+    function simularDescargaPDF() {
+      const btn = document.getElementById('btn-pdf');
+      const oldHtml = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined text-lg animate-spin">refresh</span><span>Compilando PDF...</span>';
+      setTimeout(() => {
+        btn.innerHTML = oldHtml;
+        showToast('Informe clínico Eusomnia descargado con éxito');
+      }, 1200);
+    }
+
+    function confirmarEliminacion() {
+      if (confirm('¿Estás segura de querer eliminar todos tus datos oníricos y biométricos de forma irreversible?')) {
+        showToast('Solicitud de purga iniciada conforme a RGPD');
+      }
+    }
+
+    // Sincronizar estado visual de pestaña activa en Header global si existe
+    document.addEventListener('DOMContentLoaded', () => {
+      const navLinks = document.querySelectorAll('header nav a');
+      navLinks.forEach(link => {
+        if (link.getAttribute('data-path') === 'perfil') {
+          link.className = "px-space-md py-space-xs font-label-md text-label-md bg-surface-container-high text-primary font-bold rounded-lg shadow-[0_0_12px_rgba(0,229,255,0.15)]";
+        } else {
+          link.className = "px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg";
+        }
+      });
+    });
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest/80 backdrop-blur-md shadow-[0_-1px_16px_rgba(0,0,0,0.2)] mt-auto"><div class="max-w-7xl mx-auto px-6 lg:px-12 py-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-left">© 2026 Eusomnia - TechLab 4Geeks Academy</div><div class="flex items-center gap-space-lg"><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="contacto" href="#">Contacto</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="privacidad" href="#">Privacidad</a></div></div></footer></body></html>

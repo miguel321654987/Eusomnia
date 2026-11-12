@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "secondary-fixed": "#d2e4ff", "on-primary-container": "#00626e", "surface-container": "#17202f", "on-secondary-fixed": "#001c37", "outline-variant": "#3b494c", "surface-container-low": "#131c2b", "on-surface-variant": "#bac9cc", "primary-container": "#00e5ff", "primary-fixed": "#9cf0ff", "surface-tint": "#00daf3", "error-container": "#93000a", "surface-variant": "#2c3545", "surface-container-high": "#222a3a", "error": "#ffb4ab", "on-primary-fixed-variant": "#004f58", "surface-bright": "#31394a", "primary": "#c3f5ff", "on-surface": "#dae2f8", "on-tertiary-fixed": "#2a1800", "on-error": "#690005", "tertiary": "#ffe9d2", "on-tertiary": "#462a00", "secondary-container": "#2b486a", "tertiary-container": "#ffc67e", "secondary": "#abc9f1", "on-tertiary-container": "#7d4f00", "on-secondary-container": "#9ab7df", "on-primary-fixed": "#001f24", "secondary-fixed-dim": "#abc9f1", "background": "#0a1322", "on-error-container": "#ffdad6", "on-primary": "#00363d", "surface-container-highest": "#2c3545", "surface-container-lowest": "#060e1d", "surface-dim": "#0a1322", "on-secondary": "#113252", "on-tertiary-fixed-variant": "#643f00", "inverse-surface": "#dae2f8", "surface": "#0a1322", "on-background": "#dae2f8", "inverse-on-surface": "#283141", "on-secondary-fixed-variant": "#2b486a", "outline": "#849396", "primary-fixed-dim": "#00daf3", "tertiary-fixed": "#ffddb6", "inverse-primary": "#006875", "tertiary-fixed-dim": "#ffb95a" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-mobile": "0.75rem", "space-sm": "0.5rem", "space-xl": "2.25rem", "gutter": "1.25rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "margin-mobile": "1rem", "space-md": "1rem", "margin": "2rem" }, "fontFamily": { "label-md": [ "Space Grotesk" ], "label-lg": [ "Space Grotesk" ], "headline-sm": [ "Plus Jakarta Sans" ], "headline-xl-mobile": [ "Plus Jakarta Sans" ], "headline-xl": [ "Plus Jakarta Sans" ], "body-md": [ "Manrope" ], "headline-lg-mobile": [ "Plus Jakarta Sans" ], "headline-lg": [ "Plus Jakarta Sans" ], "label-sm": [ "Space Grotesk" ], "body-lg": [ "Manrope" ], "headline-md": [ "Plus Jakarta Sans" ], "body-sm": [ "Manrope" ] }, "fontSize": { "label-md": [ "12px", { "lineHeight": "16px", "fontWeight": "500" } ], "label-lg": [ "14px", { "lineHeight": "20px", "fontWeight": "600" } ], "headline-sm": [ "16px", { "lineHeight": "24px", "fontWeight": "600" } ], "headline-xl-mobile": [ "26px", { "lineHeight": "32px", "fontWeight": "700" } ], "headline-xl": [ "36px", { "lineHeight": "44px", "fontWeight": "700" } ], "body-md": [ "14px", { "lineHeight": "22px", "fontWeight": "400" } ], "headline-lg-mobile": [ "22px", { "lineHeight": "28px", "fontWeight": "700" } ], "headline-lg": [ "28px", { "lineHeight": "36px", "fontWeight": "700" } ], "label-sm": [ "10px", { "lineHeight": "14px", "fontWeight": "600" } ], "body-lg": [ "16px", { "lineHeight": "26px", "fontWeight": "400" } ], "headline-md": [ "20px", { "lineHeight": "28px", "fontWeight": "600" } ], "body-sm": [ "12px", { "lineHeight": "18px", "fontWeight": "400" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,229,255,0.06)]"><div class="h-16 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center relative shadow-[0_0_16px_rgba(0,229,255,0.25)]"><span class="material-symbols-outlined text-primary-container text-[22px]">bedtime</span><span class="material-symbols-outlined text-primary text-[14px] absolute top-1 right-1">hub</span></div><span class="font-headline-md text-headline-md tracking-tight text-primary">Eusomnia</span></div><nav class="hidden xl:flex items-center gap-space-sm bg-surface-container-lowest/60 p-space-xs rounded-xl backdrop-blur-md" data-active-classes="bg-surface-container-high text-primary font-bold rounded-lg shadow-[0_0_12px_rgba(0,229,255,0.15)]"><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="home" href="#">Home</a><a aria-current="page" class="px-space-md py-space-xs transition-colors bg-surface-container-high text-primary font-bold rounded-lg shadow-[0_0_12px_rgba(0,229,255,0.15)]" data-path="registro-diario" href="#">Registro Diario</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="resultado-del-dia" href="#">Resultado del Día</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="historial" href="#">Historial</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="perfil" href="#">Perfil</a></nav><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm pl-space-md py-space-xs bg-surface-container-low rounded-full"><span class="font-label-sm text-label-sm text-on-surface-variant hidden sm:inline">Usuario activo:</span><span class="font-label-md text-label-md text-on-surface">Maruja</span><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div><a class="flex items-center gap-space-xs text-on-surface-variant hover:text-error transition-colors p-space-xs rounded-lg group" data-path="login" href="#" title="Cerrar sesión"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-error transition-colors">logout</span><span class="font-label-md text-label-md hidden md:inline text-on-surface-variant group-hover:text-error transition-colors">Cerrar sesión</span></a></div></div></header><main class="w-full pt-16 flex-1 bg-surface relative"><div class="flex flex-col w-full">
+<!-- Atmospheric Constellation Glow Backdrops -->
+<div class="relative w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+<div class="absolute -top-12 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-b from-primary-container/10 via-surface-tint/5 to-transparent blur-3xl pointer-events-none rounded-full"></div>
+<div class="absolute top-1/3 -right-24 w-80 h-80 bg-primary/5 blur-3xl pointer-events-none rounded-full"></div>
+<div class="absolute bottom-10 -left-20 w-80 h-80 bg-tertiary-container/5 blur-3xl pointer-events-none rounded-full"></div>
+<!-- Header Section with Calm Wake-up Tone -->
+<header class="relative z-10 flex flex-col items-center text-center mb-8 sm:mb-10">
+<div class="inline-flex items-center gap-space-xs px-3.5 py-1.5 rounded-full bg-surface-container-high/80 text-primary-fixed backdrop-blur-md mb-4 shadow-sm">
+<span class="material-symbols-outlined text-[16px] text-primary-container">routine</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Protocolo Matutino Guiado</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight flex items-center justify-center gap-3">
+<span class="text-tertiary">🌙</span>
+<span>Registro Diario Integral</span>
+</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-xl mt-2">
+        Diseñado para la calma de tu despertar. Un toque a la vez, sin sobrecarga cognitiva ni pantallas invasivas.
+      </p>
+<!-- Stepper / Progress Bar HUD -->
+<div class="w-full max-w-2xl mt-8 p-4 rounded-xl bg-surface-container-low/90 backdrop-blur-md shadow-md">
+<div class="flex items-center justify-between font-label-md text-label-md mb-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+<span class="text-on-surface font-semibold" id="step-counter-text">Paso 2 de 5: Higiene del Sueño</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant font-label-sm text-label-sm">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary-container">timer</span>
+              ~2 min
+            </span>
+<span class="text-primary font-bold" id="progress-percent">40%</span>
+</div>
+</div>
+<!-- Progress track -->
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-gradient-to-r from-surface-tint to-primary-container rounded-full transition-all duration-500 ease-out" id="progress-bar-fill" style="width: 40%;"></div>
+</div>
+<!-- Timeline steps micro dots -->
+<div class="grid grid-cols-5 gap-1 mt-3 font-label-sm text-label-sm text-center">
+<button class="step-pill text-left sm:text-center text-primary-container font-semibold transition-colors flex items-center justify-center gap-1" onclick="goToStep(1)" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span class="hidden sm:inline">1. Hábitos</span>
+</button>
+<button class="step-pill text-left sm:text-center text-primary font-semibold transition-colors flex items-center justify-center gap-1" onclick="goToStep(2)" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span class="hidden sm:inline">2. Higiene</span>
+</button>
+<button class="step-pill text-left sm:text-center text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center gap-1" onclick="goToStep(3)" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="hidden sm:inline">3. Incidencias</span>
+</button>
+<button class="step-pill text-left sm:text-center text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center gap-1" onclick="goToStep(4)" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="hidden sm:inline">4. Nutrición</span>
+</button>
+<button class="step-pill text-left sm:text-center text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center gap-1" onclick="goToStep(5)" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span>
+<span class="hidden sm:inline">5. Sueño</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Interactive Stepper Container -->
+<main class="relative z-10 space-y-6">
+<!-- ================= COMPACT SUMMARY CAPSULES (COMPLETED STEPS) ================= -->
+<section class="space-y-2" id="summary-capsules">
+<!-- Capsule Step 1 (Completed State Simulation) -->
+<article class="flex items-center justify-between px-4 py-3 rounded-lg bg-surface-container-low/70 backdrop-blur-sm transition-all hover:bg-surface-container-low" id="capsule-step-1">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-7 h-7 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<div class="truncate">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider block">1. Hábitos y Actividad de ayer</span>
+<span class="font-body-md text-body-md text-on-surface font-medium truncate" id="summary-activity-text">Media (ejercicio regular aeróbico 45m)</span>
+</div>
+</div>
+<button class="px-3 py-1 rounded-md text-primary font-label-sm text-label-sm hover:bg-surface-container transition-colors flex items-center gap-1" onclick="goToStep(1)" type="button">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+            Editar
+          </button>
+</article>
+<!-- Capsule Step 2 (Initially Hidden) -->
+<article class="hidden flex items-center justify-between px-4 py-3 rounded-lg bg-surface-container-low/70 backdrop-blur-sm transition-all hover:bg-surface-container-low" id="capsule-step-2">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-7 h-7 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<div class="truncate">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider block">2. Higiene y Calidad del Sueño</span>
+<span class="font-body-md text-body-md text-on-surface font-medium truncate" id="summary-sleep-text">7.5 horas · Calidad Profunda · &lt;1h Pantallas</span>
+</div>
+</div>
+<button class="px-3 py-1 rounded-md text-primary font-label-sm text-label-sm hover:bg-surface-container transition-colors flex items-center gap-1" onclick="goToStep(2)" type="button">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+            Editar
+          </button>
+</article>
+<!-- Capsule Step 3 (Initially Hidden) -->
+<article class="hidden flex items-center justify-between px-4 py-3 rounded-lg bg-surface-container-low/70 backdrop-blur-sm transition-all hover:bg-surface-container-low" id="capsule-step-3">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-7 h-7 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<div class="truncate">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider block">3. Incidencias Biopsicosociales</span>
+<span class="font-body-md text-body-md text-on-surface font-medium truncate" id="summary-incidents-text">Buenas noticias · Jornada estable</span>
+</div>
+</div>
+<button class="px-3 py-1 rounded-md text-primary font-label-sm text-label-sm hover:bg-surface-container transition-colors flex items-center gap-1" onclick="goToStep(3)" type="button">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+            Editar
+          </button>
+</article>
+<!-- Capsule Step 4 (Initially Hidden) -->
+<article class="hidden flex items-center justify-between px-4 py-3 rounded-lg bg-surface-container-low/70 backdrop-blur-sm transition-all hover:bg-surface-container-low" id="capsule-step-4">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-7 h-7 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<div class="truncate">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider block">4. Nutrición &amp; Crono-factores</span>
+<span class="font-body-md text-body-md text-on-surface font-medium truncate" id="summary-nutrition-text">Cena ligera · Infusión relajante</span>
+</div>
+</div>
+<button class="px-3 py-1 rounded-md text-primary font-label-sm text-label-sm hover:bg-surface-container transition-colors flex items-center gap-1" onclick="goToStep(4)" type="button">
+<span class="material-symbols-outlined text-[14px]">edit</span>
+            Editar
+          </button>
+</article>
+</section>
+<!-- ================= MAIN ACTIVE CARDS WIZARD ================= -->
+<!-- STEP 1 CARD -->
+<section class="wizard-panel hidden rounded-xl bg-surface-container p-6 sm:p-8 shadow-xl transition-all" id="step-panel-1">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div>
+<span class="font-label-sm text-label-sm text-primary-container uppercase tracking-wider font-semibold">Paso 1 de 5</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1">Actividad física de ayer</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">El gasto metabólico temprano condiciona la presión homeostática del sueño (adenosina).</p>
+</div>
+<span class="w-10 h-10 rounded-xl bg-surface-container-high text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">fitness_center</span>
+</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-8" id="activity-options">
+<!-- Option 1 -->
+<button class="activity-chip text-left p-4 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-all flex items-start gap-3.5 group" onclick="selectActivity(this, 'Sedentario / Nula')" type="button">
+<span class="w-9 h-9 rounded-lg bg-surface-variant group-hover:bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">chair</span>
+</span>
+<div class="flex-1">
+<div class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary">Ninguna / Sedentario</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Día de escritorio, menor a 3.000 pasos</div>
+</div>
+<span class="check-icon hidden material-symbols-outlined text-primary-container text-[20px]">check_circle</span>
+</button>
+<!-- Option 2 -->
+<button class="activity-chip text-left p-4 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-all flex items-start gap-3.5 group" onclick="selectActivity(this, 'Baja (Paseo suave)')" type="button">
+<span class="w-9 h-9 rounded-lg bg-surface-variant group-hover:bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">directions_walk</span>
+</span>
+<div class="flex-1">
+<div class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary">Baja (Paseo suave)</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Caminata o movilidad ligera (4k-7k pasos)</div>
+</div>
+<span class="check-icon hidden material-symbols-outlined text-primary-container text-[20px]">check_circle</span>
+</button>
+<!-- Option 3 (Selected initially) -->
+<button class="activity-chip active-chip text-left p-4 rounded-xl bg-surface-container-high transition-all flex items-start gap-3.5 group" onclick="selectActivity(this, 'Media (Ejercicio regular)')" type="button">
+<span class="w-9 h-9 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">directions_run</span>
+</span>
+<div class="flex-1">
+<div class="font-headline-sm text-headline-sm text-primary">Media (Ejercicio regular)</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Gimnasio, running, pilates (30 a 60 min)</div>
+</div>
+<span class="check-icon material-symbols-outlined text-primary-container text-[20px]">check_circle</span>
+</button>
+<!-- Option 4 -->
+<button class="activity-chip text-left p-4 rounded-xl bg-surface-container-low hover:bg-surface-container-high transition-all flex items-start gap-3.5 group" onclick="selectActivity(this, 'Alta (Entrenamiento intenso)')" type="button">
+<span class="w-9 h-9 rounded-lg bg-surface-variant group-hover:bg-surface-container flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">sprint</span>
+</span>
+<div class="flex-1">
+<div class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary">Alta (Entrenamiento intenso)</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Crossfit, alta intensidad o &gt;90 minutos</div>
+</div>
+<span class="check-icon hidden material-symbols-outlined text-primary-container text-[20px]">check_circle</span>
+</button>
+</div>
+<div class="flex items-center justify-end">
+<button class="px-6 py-3 rounded-lg bg-primary-container text-on-primary-container font-label-lg text-label-lg font-bold shadow-[0_0_16px_rgba(0,229,255,0.3)] hover:shadow-[0_0_24px_rgba(0,229,255,0.5)] transition-all flex items-center gap-2" onclick="goToStep(2)" type="button">
+<span>Confirmar y avanzar</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- STEP 2 CARD (Active Initially in Wizard Mock) -->
+<section class="wizard-panel rounded-xl bg-surface-container p-6 sm:p-8 shadow-xl transition-all" id="step-panel-2">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div>
+<span class="font-label-sm text-label-sm text-primary-container uppercase tracking-wider font-semibold">Paso 2 de 5</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1">¿Cómo descansaste anoche?</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Registra la arquitectura percibida de tu noche para calcular el índice de recuperación.</p>
+</div>
+<span class="w-10 h-10 rounded-xl bg-surface-container-high text-primary-fixed flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">bedtime</span>
+</span>
+</div>
+<!-- Hours of sleep stepper dial -->
+<div class="p-5 rounded-xl bg-surface-container-low mb-6">
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+<div>
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-wider block">Horas totales de sueño</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Incluyendo pequeños despertares no conscientes</span>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-highest/60 p-2 rounded-xl">
+<button class="w-10 h-10 rounded-lg bg-surface-container text-primary hover:bg-surface-variant flex items-center justify-center transition-colors" onclick="adjustHours(-0.5)" type="button">
+<span class="material-symbols-outlined text-[20px]">remove</span>
+</button>
+<div class="text-center min-w-[100px]">
+<span class="font-headline-xl text-headline-xl text-primary font-bold tracking-tight" id="sleep-hours-val">7.5</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant block uppercase">horas</span>
+</div>
+<button class="w-10 h-10 rounded-lg bg-surface-container text-primary hover:bg-surface-variant flex items-center justify-center transition-colors" onclick="adjustHours(0.5)" type="button">
+<span class="material-symbols-outlined text-[20px]">add</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Sleep Quality Badges -->
+<div class="mb-6">
+<label class="font-label-md text-label-md text-on-surface block mb-3">Calidad subjetiva del despertar</label>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<button class="quality-chip p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-left transition-all group flex flex-col justify-between h-24" onclick="selectQuality(this, 'Profundo')" type="button">
+<span class="text-2xl">⚡️</span>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface group-hover:text-primary block font-semibold">Profundo</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Descanso reparador</span>
+</div>
+</button>
+<button class="quality-chip active-quality p-3.5 rounded-xl bg-surface-container-high text-left transition-all group flex flex-col justify-between h-24 shadow-sm" onclick="selectQuality(this, 'Intermedio')" type="button">
+<span class="text-2xl">🌱</span>
+<div>
+<span class="font-label-lg text-label-lg text-primary block font-semibold">Intermedio</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Aceptable y lúcido</span>
+</div>
+</button>
+<button class="quality-chip p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-left transition-all group flex flex-col justify-between h-24" onclick="selectQuality(this, 'Fragmentado')" type="button">
+<span class="text-2xl">🌊</span>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface group-hover:text-primary block font-semibold">Fragmentado</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Interrupciones leves</span>
+</div>
+</button>
+<button class="quality-chip p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-left transition-all group flex flex-col justify-between h-24" onclick="selectQuality(this, 'Insomnio')" type="button">
+<span class="text-2xl">🌪️</span>
+<div>
+<span class="font-label-lg text-label-lg text-on-surface group-hover:text-primary block font-semibold">Insomnio</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Dificultad de conciliar</span>
+</div>
+</button>
+</div>
+</div>
+<!-- Screens Exposure Pre-sleep -->
+<div class="mb-8">
+<label class="font-label-md text-label-md text-on-surface block mb-3">Exposición a pantallas (últimas 2h antes de dormir)</label>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<button class="screen-chip p-3 rounded-lg bg-surface-container-low text-left font-label-md text-label-md text-on-surface-variant hover:text-on-surface flex items-center justify-between" onclick="selectScreen(this, 'Sin pantallas')" type="button">
+<span>0 min (Lectura / Sin luz azul)</span>
+<span class="material-symbols-outlined text-[18px] opacity-0 check-indicator">check</span>
+</button>
+<button class="screen-chip active-screen p-3 rounded-lg bg-surface-container-high text-left font-label-md text-label-md text-primary font-semibold flex items-center justify-between" onclick="selectScreen(this, '&lt; 1 hora')" type="button">
+<span>&lt; 1 hora (Filtro cálido)</span>
+<span class="material-symbols-outlined text-[18px] text-primary-container check-indicator">check</span>
+</button>
+<button class="screen-chip p-3 rounded-lg bg-surface-container-low text-left font-label-md text-label-md text-on-surface-variant hover:text-on-surface flex items-center justify-between" onclick="selectScreen(this, '&gt; 2 horas')" type="button">
+<span>&gt; 2 horas (Uso continuo)</span>
+<span class="material-symbols-outlined text-[18px] opacity-0 check-indicator">check</span>
+</button>
+</div>
+</div>
+<!-- Navigation Buttons -->
+<div class="flex items-center justify-between pt-2">
+<button class="px-4 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors flex items-center gap-1.5" onclick="goToStep(1)" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Atrás</span>
+</button>
+<button class="px-6 py-3 rounded-lg bg-primary-container text-on-primary-container font-label-lg text-label-lg font-bold shadow-[0_0_16px_rgba(0,229,255,0.3)] hover:shadow-[0_0_24px_rgba(0,229,255,0.5)] transition-all flex items-center gap-2" onclick="goToStep(3)" type="button">
+<span>Aceptar y Siguiente</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- STEP 3 CARD -->
+<section class="wizard-panel hidden rounded-xl bg-surface-container p-6 sm:p-8 shadow-xl transition-all" id="step-panel-3">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div>
+<span class="font-label-sm text-label-sm text-primary-container uppercase tracking-wider font-semibold">Paso 3 de 5</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1">Incidencias y estado emocional del día</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Selecciona los sucesos que hayan alterado tus niveles de cortisol o adrenalina.</p>
+</div>
+<span class="w-10 h-10 rounded-xl bg-surface-container-high text-tertiary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">psychology</span>
+</span>
+</div>
+<div class="flex flex-wrap gap-2.5 mb-8">
+<button class="multichip px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all flex items-center gap-2" onclick="toggleMultiChip(this)" type="button">
+<span>🎉 Buenas noticias / Logro</span>
+<span class="material-symbols-outlined text-[16px] text-primary-container hidden">done</span>
+</button>
+<button class="multichip px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all flex items-center gap-2" onclick="toggleMultiChip(this)" type="button">
+<span>💼 Estrés laboral intenso</span>
+<span class="material-symbols-outlined text-[16px] text-primary-container hidden">done</span>
+</button>
+<button class="multichip px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all flex items-center gap-2" onclick="toggleMultiChip(this)" type="button">
+<span>🗣️ Discusión / Conflicto</span>
+<span class="material-symbols-outlined text-[16px] text-primary-container hidden">done</span>
+</button>
+<button class="multichip px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all flex items-center gap-2" onclick="toggleMultiChip(this)" type="button">
+<span>⚠️ Accidente o susto repentino</span>
+<span class="material-symbols-outlined text-[16px] text-primary-container hidden">done</span>
+</button>
+<button class="multichip px-4 py-2.5 rounded-full bg-surface-container-low hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all flex items-center gap-2" onclick="toggleMultiChip(this)" type="button">
+<span>🩺 Malestar físico / Dolor de cabeza</span>
+<span class="material-symbols-outlined text-[16px] text-primary-container hidden">done</span>
+</button>
+<button class="multichip px-4 py-2.5 rounded-full bg-surface-container-high text-primary font-bold font-label-md text-label-md transition-all flex items-center gap-2" onclick="toggleMultiChip(this)" type="button">
+<span>🕊️ Día tranquilo y neutro</span>
+<span class="material-symbols-outlined text-[16px] text-primary-container">done</span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<button class="px-4 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors flex items-center gap-1.5" onclick="goToStep(2)" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Atrás</span>
+</button>
+<button class="px-6 py-3 rounded-lg bg-primary-container text-on-primary-container font-label-lg text-label-lg font-bold shadow-[0_0_16px_rgba(0,229,255,0.3)] hover:shadow-[0_0_24px_rgba(0,229,255,0.5)] transition-all flex items-center gap-2" onclick="goToStep(4)" type="button">
+<span>Continuar a Nutrición</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- STEP 4 CARD -->
+<section class="wizard-panel hidden rounded-xl bg-surface-container p-6 sm:p-8 shadow-xl transition-all" id="step-panel-4">
+<div class="flex items-start justify-between gap-4 mb-6">
+<div>
+<span class="font-label-sm text-label-sm text-primary-container uppercase tracking-wider font-semibold">Paso 4 de 5</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1">Nutrición Express y Cronofactores</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Identifica rápidamente agentes excitantes o digestiones pesadas que alteran la fase REM.</p>
+</div>
+<span class="w-10 h-10 rounded-xl bg-surface-container-high text-tertiary-fixed-dim flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">restaurant</span>
+</span>
+</div>
+<!-- Fast nutrition chips -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+<button class="multichip p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-left font-label-md text-label-md text-on-surface transition-all flex items-center justify-between" onclick="toggleMultiChip(this)" type="button">
+<div class="flex items-center gap-3">
+<span class="text-xl">🥗</span>
+<div>
+<span class="block font-semibold">Cena ligera / temprana</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">&gt; 3h antes de ir a la cama</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary-container text-[20px] hidden">check_circle</span>
+</button>
+<button class="multichip p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-left font-label-md text-label-md text-on-surface transition-all flex items-center justify-between" onclick="toggleMultiChip(this)" type="button">
+<div class="flex items-center gap-3">
+<span class="text-xl">🍕</span>
+<div>
+<span class="block font-semibold">Cena pesada / copiosa</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Grasas saturadas o azúcares tarde</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary-container text-[20px] hidden">check_circle</span>
+</button>
+<button class="multichip p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-left font-label-md text-label-md text-on-surface transition-all flex items-center justify-between" onclick="toggleMultiChip(this)" type="button">
+<div class="flex items-center gap-3">
+<span class="text-xl">☕</span>
+<div>
+<span class="block font-semibold">Cafeína tardía (&gt;17:00h)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Café, té estimulante o energizante</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary-container text-[20px] hidden">check_circle</span>
+</button>
+<button class="multichip p-3.5 rounded-xl bg-surface-container-low hover:bg-surface-container-high text-left font-label-md text-label-md text-on-surface transition-all flex items-center justify-between" onclick="toggleMultiChip(this)" type="button">
+<div class="flex items-center gap-3">
+<span class="text-xl">🍷</span>
+<div>
+<span class="block font-semibold">Alcohol consumido</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Fragmentación de fases profundas</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary-container text-[20px] hidden">check_circle</span>
+</button>
+<button class="multichip p-3.5 rounded-xl bg-surface-container-high text-left font-label-md text-label-md text-primary font-semibold transition-all flex items-center justify-between sm:col-span-2" onclick="toggleMultiChip(this)" type="button">
+<div class="flex items-center gap-3">
+<span class="text-xl">🍵</span>
+<div>
+<span class="block">Infusión relajante / Magnesio</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Manzanilla, pasiflora o suplemento inductivo</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary-container text-[20px]">check_circle</span>
+</button>
+</div>
+<div class="flex items-center justify-between">
+<button class="px-4 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors flex items-center gap-1.5" onclick="goToStep(3)" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Atrás</span>
+</button>
+<button class="px-6 py-3 rounded-lg bg-primary-container text-on-primary-container font-label-lg text-label-lg font-bold shadow-[0_0_16px_rgba(0,229,255,0.3)] hover:shadow-[0_0_24px_rgba(0,229,255,0.5)] transition-all flex items-center gap-2" onclick="goToStep(5)" type="button">
+<span>Paso final: Relato del Sueño</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- STEP 5 CARD: DREAM JOURNAL & VOICE RECORDING -->
+<section class="wizard-panel hidden rounded-xl bg-surface-container p-6 sm:p-8 shadow-xl transition-all" id="step-panel-5">
+<div class="flex items-start justify-between gap-4 mb-4">
+<div>
+<span class="font-label-sm text-label-sm text-primary-container uppercase tracking-wider font-semibold">Paso 5 de 5 · Onirismo &amp; Neuroanálisis</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-1">Relato del Sueño</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Graba por voz o redacta tus impresiones antes de que se desvanezcan en la memoria operativa.</p>
+</div>
+<span class="w-10 h-10 rounded-xl bg-surface-container-high text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[24px]">auto_awesome</span>
+</span>
+</div>
+<!-- Voice Dictation Interactive Trigger Card -->
+<div class="p-4 rounded-xl bg-surface-container-low mb-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-primary-container/20 text-primary-container flex items-center justify-center transition-all" id="mic-pulse">
+<span class="material-symbols-outlined text-[24px]">mic</span>
+</div>
+<div>
+<span class="font-headline-sm text-headline-sm text-on-surface block">Dictado por Voz Matutino</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Ideal para registrar con los ojos semicerrados</span>
+</div>
+</div>
+<button class="px-5 py-2.5 rounded-full bg-surface-container-highest hover:bg-surface-variant text-on-surface font-label-md text-label-md font-semibold transition-all flex items-center gap-2 shadow-sm" id="voice-btn" onclick="toggleVoiceDictation()" type="button">
+<span class="material-symbols-outlined text-[18px] text-primary-container">mic</span>
+<span id="voice-btn-text">Iniciar dictado</span>
+</button>
+</div>
+<!-- Guided Prompt suggestions -->
+<div class="flex items-center gap-2 mb-2 overflow-x-auto pb-1 text-on-surface-variant font-label-sm text-label-sm">
+<span class="text-primary font-semibold">Sugerencias:</span>
+<button class="px-2.5 py-1 rounded-md bg-surface-container-high hover:text-on-surface whitespace-nowrap" onclick="insertPrompt('¿Dónde te encontrabas exactamente?')" type="button">📍 ¿Dónde estabas?</button>
+<button class="px-2.5 py-1 rounded-md bg-surface-container-high hover:text-on-surface whitespace-nowrap" onclick="insertPrompt('¿Qué emoción predominaba (asombro, paz, angustia)?')" type="button">💭 Emoción predominante</button>
+<button class="px-2.5 py-1 rounded-md bg-surface-container-high hover:text-on-surface whitespace-nowrap" onclick="insertPrompt('¿Aparecía alguna persona conocida o arquetipo?')" type="button">👤 Personajes / Símbolos</button>
+</div>
+<!-- Dream Textarea -->
+<div class="relative mb-6">
+<textarea class="w-full rounded-xl bg-surface-container-lowest p-4 text-on-surface font-body-md text-body-md placeholder:text-on-surface-variant/40 focus:outline-none focus:ring-2 focus:ring-primary-container/40 transition-all resize-y" id="dream-text-input" placeholder="Esta noche soñé que caminaba por un bosque bioluminiscente con senderos de cristal templado..." rows="5"></textarea>
+<div class="absolute bottom-3 right-3 text-on-surface-variant font-label-sm text-label-sm">
+<span id="char-counter">74</span> palabras
+          </div>
+</div>
+<!-- Final Submission Block -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+<button class="px-4 py-2.5 rounded-lg text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors flex items-center gap-1.5 self-start sm:self-auto" onclick="goToStep(4)" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Atrás</span>
+</button>
+<div class="flex items-center gap-3 w-full sm:w-auto">
+<button class="flex-1 sm:flex-initial px-4 py-3 rounded-lg bg-surface-container-high hover:bg-surface-variant text-on-surface font-label-md text-label-md font-semibold transition-colors text-center" onclick="triggerSaveDraft()" type="button">
+              Guardar borrador
+            </button>
+<button class="flex-1 sm:flex-initial px-7 py-3 rounded-lg bg-gradient-to-r from-surface-tint to-primary-container text-on-primary-container font-label-lg text-label-lg font-bold shadow-[0_0_24px_rgba(0,229,255,0.4)] hover:shadow-[0_0_32px_rgba(0,229,255,0.6)] transition-all flex items-center justify-center gap-2" onclick="completeDailyLog()" type="button">
+<span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+<span>Guardar y Analizar con IA</span>
+</button>
+</div>
+</div>
+</section>
+<!-- ================= SUCCESS CONFIRMATION MODAL STATE ================= -->
+<section class="hidden rounded-xl bg-surface-container p-8 sm:p-12 text-center shadow-2xl animate-fade-in" id="success-screen">
+<div class="w-16 h-16 rounded-full bg-primary-container/20 text-primary-container mx-auto flex items-center justify-center mb-5 shadow-[0_0_24px_rgba(0,229,255,0.3)]">
+<span class="material-symbols-outlined text-[36px]">verified</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface">¡Registro Diario Completado!</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg mx-auto mt-2">
+          Tus datos somáticos, crononutricionales y oníricos han sido procesados. El motor de correlación de Eusomnia ha generado tu diagnóstico matutino.
+        </p>
+<!-- Biometric Summary Score Teaser -->
+<div class="max-w-md mx-auto grid grid-cols-3 gap-3 my-8">
+<div class="p-4 rounded-xl bg-surface-container-low text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant block uppercase">Índice Sueño</span>
+<span class="font-headline-lg text-headline-lg text-primary font-bold">88<span class="font-label-md text-label-md text-on-surface-variant font-normal">/100</span></span>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant block uppercase">Profundidad REM</span>
+<span class="font-headline-lg text-headline-lg text-primary font-bold">1h 48m</span>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low text-center">
+<span class="font-label-sm text-label-sm text-on-surface-variant block uppercase">Tensión</span>
+<span class="font-headline-lg text-headline-lg text-primary-fixed font-bold">Baja</span>
+</div>
+</div>
+<div class="flex items-center justify-center gap-4">
+<a class="px-6 py-3 rounded-lg bg-primary-container text-on-primary-container font-label-lg text-label-lg font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-2" data-path="resultado-del-dia" href="#">
+<span>Ver Resultado del Día</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<button class="px-5 py-3 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-variant font-label-md text-label-md transition-colors" onclick="location.reload()" type="button">
+            Registrar otro parámetro
+          </button>
+</div>
+</section>
+</main>
+<!-- Sleep Science Subtle Micro-Card Tip -->
+<footer class="mt-12 p-4 rounded-xl bg-surface-container-low/60 backdrop-blur-md flex items-center gap-3.5 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-primary-container text-[22px] flex-shrink-0">lightbulb</span>
+<span>
+<strong>Dato neurofisiológico:</strong> Registrar los fragmentos del sueño dentro de los primeros 10 minutos al despertar maximiza la retención hipnagógica antes de que se reactiven los filtros corticales diurnos.
+      </span>
+</footer>
+</div>
+</div>
+<script>
+  let currentStep = 2;
+  let sleepHours = 7.5;
+  let isRecording = false;
+
+  const stepTitles = {
+    1: '1. Hábitos y Actividad física',
+    2: '2. Higiene del Sueño',
+    3: '3. Incidencias Biopsicosociales',
+    4: '4. Nutrición & Cronofactores',
+    5: '5. Relato del Sueño'
+  };
+
+  function updateProgressBar() {
+    const fill = document.getElementById('progress-bar-fill');
+    const percentEl = document.getElementById('progress-percent');
+    const titleEl = document.getElementById('step-counter-text');
+    const pct = Math.round((currentStep / 5) * 100);
+
+    fill.style.width = pct + '%';
+    percentEl.textContent = pct + '%';
+    titleEl.textContent = `Paso ${currentStep} de 5: ${stepTitles[currentStep]}`;
+
+    // Update capsule visibility based on progress
+    for (let i = 1; i <= 4; i++) {
+      const capsule = document.getElementById(`capsule-step-` + i);
+      if (capsule) {
+        if (i < currentStep) {
+          capsule.classList.remove('hidden');
+        } else {
+          capsule.classList.add('hidden');
+        }
+      }
+    }
+  }
+
+  function goToStep(step) {
+    if (step < 1 || step > 5) return;
+    
+    // Hide all step panels
+    for (let i = 1; i <= 5; i++) {
+      const panel = document.getElementById(`step-panel-` + i);
+      if (panel) {
+        panel.classList.add('hidden');
+      }
+    }
+
+    currentStep = step;
+    const targetPanel = document.getElementById(`step-panel-` + step);
+    if (targetPanel) {
+      targetPanel.classList.remove('hidden');
+    }
+
+    updateProgressBar();
+    window.scrollTo({ top: 120, behavior: 'smooth' });
+  }
+
+  function adjustHours(delta) {
+    sleepHours = Math.max(3.0, Math.min(14.0, sleepHours + delta));
+    const hoursEl = document.getElementById('sleep-hours-val');
+    if (hoursEl) {
+      hoursEl.textContent = sleepHours.toFixed(1);
+    }
+    const sumText = document.getElementById('summary-sleep-text');
+    if (sumText) {
+      sumText.textContent = `${sleepHours.toFixed(1)} horas · Calidad seleccionada`;
+    }
+  }
+
+  function selectActivity(button, text) {
+    const container = document.getElementById('activity-options');
+    container.querySelectorAll('.activity-chip').forEach(btn => {
+      btn.classList.remove('bg-surface-container-high');
+      btn.classList.add('bg-surface-container-low');
+      const check = btn.querySelector('.check-icon');
+      if (check) check.classList.add('hidden');
+    });
+
+    button.classList.remove('bg-surface-container-low');
+    button.classList.add('bg-surface-container-high');
+    const activeCheck = button.querySelector('.check-icon');
+    if (activeCheck) activeCheck.classList.remove('hidden');
+
+    const summary = document.getElementById('summary-activity-text');
+    if (summary) summary.textContent = text;
+  }
+
+  function selectQuality(button, quality) {
+    document.querySelectorAll('.quality-chip').forEach(btn => {
+      btn.classList.remove('bg-surface-container-high');
+      btn.classList.add('bg-surface-container-low');
+    });
+    button.classList.remove('bg-surface-container-low');
+    button.classList.add('bg-surface-container-high');
+
+    const summary = document.getElementById('summary-sleep-text');
+    if (summary) {
+      summary.textContent = `${sleepHours.toFixed(1)} horas · Calidad ${quality}`;
+    }
+  }
+
+  function selectScreen(button, text) {
+    document.querySelectorAll('.screen-chip').forEach(btn => {
+      btn.classList.remove('bg-surface-container-high', 'text-primary');
+      btn.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+      const check = btn.querySelector('.check-indicator');
+      if (check) check.classList.add('opacity-0');
+    });
+
+    button.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+    button.classList.add('bg-surface-container-high', 'text-primary');
+    const check = button.querySelector('.check-indicator');
+    if (check) check.classList.remove('opacity-0');
+  }
+
+  function toggleMultiChip(button) {
+    const isSelected = button.classList.contains('bg-surface-container-high');
+    const checkIcon = button.querySelector('.material-symbols-outlined');
+
+    if (isSelected) {
+      button.classList.remove('bg-surface-container-high', 'text-primary', 'font-bold');
+      button.classList.add('bg-surface-container-low', 'text-on-surface');
+      if (checkIcon) checkIcon.classList.add('hidden');
+    } else {
+      button.classList.remove('bg-surface-container-low', 'text-on-surface');
+      button.classList.add('bg-surface-container-high', 'text-primary', 'font-bold');
+      if (checkIcon) checkIcon.classList.remove('hidden');
+    }
+  }
+
+  function toggleVoiceDictation() {
+    isRecording = !isRecording;
+    const micPulse = document.getElementById('mic-pulse');
+    const btnText = document.getElementById('voice-btn-text');
+    const textarea = document.getElementById('dream-text-input');
+
+    if (isRecording) {
+      micPulse.classList.add('animate-ping', 'bg-primary-container/40');
+      btnText.textContent = 'Detener grabación';
+      // Append placeholder simulated transcript after 2.5s
+      setTimeout(() => {
+        if (isRecording) {
+          textarea.value += (textarea.value ? ' ' : '') + 'Sentía un viento frío y la sensación de volar sobre techos de cobre que reflejaban estrellas azules.';
+          const wordCount = textarea.value.trim().split(/\s+/).length;
+          document.getElementById('char-counter').textContent = wordCount;
+        }
+      }, 2500);
+    } else {
+      micPulse.classList.remove('animate-ping', 'bg-primary-container/40');
+      btnText.textContent = 'Iniciar dictado';
+    }
+  }
+
+  function insertPrompt(text) {
+    const textarea = document.getElementById('dream-text-input');
+    textarea.value += (textarea.value ? '\n\n' : '') + text + ' ';
+    textarea.focus();
+    const wordCount = textarea.value.trim().split(/\s+/).length;
+    document.getElementById('char-counter').textContent = wordCount;
+  }
+
+  function triggerSaveDraft() {
+    const btn = event.currentTarget;
+    const oldHtml = btn.innerHTML;
+    btn.innerHTML = '¡Guardado!';
+    btn.classList.add('text-primary');
+    setTimeout(() => {
+      btn.innerHTML = oldHtml;
+      btn.classList.remove('text-primary');
+    }, 1800);
+  }
+
+  function completeDailyLog() {
+    for (let i = 1; i <= 5; i++) {
+      const panel = document.getElementById(`step-panel-` + i);
+      if (panel) panel.classList.add('hidden');
+    }
+    document.getElementById('summary-capsules').classList.add('hidden');
+    document.getElementById('success-screen').classList.remove('hidden');
+    
+    // Fill to 100%
+    document.getElementById('progress-bar-fill').style.width = '100%';
+    document.getElementById('progress-percent').textContent = '100%';
+    document.getElementById('step-counter-text').textContent = 'Completado con Éxito';
+    window.scrollTo({ top: 100, behavior: 'smooth' });
+  }
+
+  // Initial setup call
+  document.addEventListener('DOMContentLoaded', () => {
+    updateProgressBar();
+  });
+</script></main><footer class="w-full bg-surface-container-lowest/80 backdrop-blur-md shadow-[0_-1px_16px_rgba(0,0,0,0.2)] mt-auto"><div class="max-w-7xl mx-auto px-6 lg:px-12 py-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-left">© 2026 Eusomnia - TechLab 4Geeks Academy</div><div class="flex items-center gap-space-lg"><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="contacto" href="#">Contacto</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="privacidad" href="#">Privacidad</a></div></div></footer></body></html>

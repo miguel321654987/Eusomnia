@@ -1,7 +1,7 @@
 ---
 # Cronograma de Ejecución — Eusomnia
 Duración: 12-15 h/semana · 6 semanas · 72 - 90 h totales
-Stack: React 19 + Vite + Bootstrap / Flask + Blueprints + SQLAlchemy / SQLite↔PostgreSQL / Qdrant + sentence-transformers / CalorieNinjas / OpenRouter
+Stack: React 19 + Vite + Bootstrap / Flask + Blueprints + SQLAlchemy / SQLite↔PostgreSQL / Qdrant + LangGraph / Edamam / OpenRouter
 ---
 
 ## Semana 1 — Fundaciones, alcance y diseño
@@ -12,7 +12,7 @@ Stack: React 19 + Vite + Bootstrap / Flask + Blueprints + SQLAlchemy / SQLite↔
 | --- | -------------------------------------------------------------------------------------------------------------------- | :--------: |
 | 1   | Problema/solución y alcance MVP                                                                                      |    2 h     |
 | 2   | Stack + repo, ramas y estructura                                                                                     |   1,5 h    |
-| 3   | Entorno local y dependencias (`Qdrant`, `sentence-transformers`)                                                     |    2 h     |
+| 3   | Entorno local y dependencias (`Qdrant`, `LangGraph`)                                                                 |    2 h     |
 | 4   | Modelo de datos (diagrama: User+prefs, DailyEntry, SleepReport, HabitLog, NutritionLog, DreamConcept, SleepAnalysis) |    3 h     |
 | 5   | Backlog de épicas e historias (MVP v1.0 vs v1.1+)                                                                    |    2 h     |
 | 6   | Wireframes (Home, Registro, Resultado, Historial, Perfil, Navbar, Footer)                                            |    3 h     |
@@ -29,8 +29,8 @@ Stack: React 19 + Vite + Bootstrap / Flask + Blueprints + SQLAlchemy / SQLite↔
 | 1   | Blueprints (user, daily_entries, nutrition, analysis) |  1,5 h   |
 | 2   | Modelos SQLAlchemy + migraciones Flask-Migrate        |   2 h    |
 | 3   | Auth JWT + preferencias IA                            |  1,5 h   |
-| 4   | Endpoints (CRUD diario, proxy CalorieNinjas)          |   3 h    |
-| 5   | Motor RAG (sentence-transformers + Qdrant)            |   3 h    |
+| 4   | Endpoints (CRUD diario, proxy Edamam)                 |   3 h    |
+| 5   | Motor RAG (LangGraph + Qdrant)                        |   3 h    |
 | 6   | Orquestación IA (OpenRouter → JSON único)             |  2,5 h   |
 | 7   | Pruebas básicas, validaciones, errores y doc API      |  1,5 h   |
 |     | **Total**                                             | **15 h** |

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "secondary-fixed": "#d2e4ff", "on-primary-container": "#00626e", "surface-container": "#17202f", "on-secondary-fixed": "#001c37", "outline-variant": "#3b494c", "surface-container-low": "#131c2b", "on-surface-variant": "#bac9cc", "primary-container": "#00e5ff", "primary-fixed": "#9cf0ff", "surface-tint": "#00daf3", "error-container": "#93000a", "surface-variant": "#2c3545", "surface-container-high": "#222a3a", "error": "#ffb4ab", "on-primary-fixed-variant": "#004f58", "surface-bright": "#31394a", "primary": "#c3f5ff", "on-surface": "#dae2f8", "on-tertiary-fixed": "#2a1800", "on-error": "#690005", "tertiary": "#ffe9d2", "on-tertiary": "#462a00", "secondary-container": "#2b486a", "tertiary-container": "#ffc67e", "secondary": "#abc9f1", "on-tertiary-container": "#7d4f00", "on-secondary-container": "#9ab7df", "on-primary-fixed": "#001f24", "secondary-fixed-dim": "#abc9f1", "background": "#0a1322", "on-error-container": "#ffdad6", "on-primary": "#00363d", "surface-container-highest": "#2c3545", "surface-container-lowest": "#060e1d", "surface-dim": "#0a1322", "on-secondary": "#113252", "on-tertiary-fixed-variant": "#643f00", "inverse-surface": "#dae2f8", "surface": "#0a1322", "on-background": "#dae2f8", "inverse-on-surface": "#283141", "on-secondary-fixed-variant": "#2b486a", "outline": "#849396", "primary-fixed-dim": "#00daf3", "tertiary-fixed": "#ffddb6", "inverse-primary": "#006875", "tertiary-fixed-dim": "#ffb95a" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "gutter-mobile": "0.75rem", "space-sm": "0.5rem", "space-xl": "2.25rem", "gutter": "1.25rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "margin-mobile": "1rem", "space-md": "1rem", "margin": "2rem" }, "fontFamily": { "label-md": [ "Space Grotesk" ], "label-lg": [ "Space Grotesk" ], "headline-sm": [ "Plus Jakarta Sans" ], "headline-xl-mobile": [ "Plus Jakarta Sans" ], "headline-xl": [ "Plus Jakarta Sans" ], "body-md": [ "Manrope" ], "headline-lg-mobile": [ "Plus Jakarta Sans" ], "headline-lg": [ "Plus Jakarta Sans" ], "label-sm": [ "Space Grotesk" ], "body-lg": [ "Manrope" ], "headline-md": [ "Plus Jakarta Sans" ], "body-sm": [ "Manrope" ] }, "fontSize": { "label-md": [ "12px", { "lineHeight": "16px", "fontWeight": "500" } ], "label-lg": [ "14px", { "lineHeight": "20px", "fontWeight": "600" } ], "headline-sm": [ "16px", { "lineHeight": "24px", "fontWeight": "600" } ], "headline-xl-mobile": [ "26px", { "lineHeight": "32px", "fontWeight": "700" } ], "headline-xl": [ "36px", { "lineHeight": "44px", "fontWeight": "700" } ], "body-md": [ "14px", { "lineHeight": "22px", "fontWeight": "400" } ], "headline-lg-mobile": [ "22px", { "lineHeight": "28px", "fontWeight": "700" } ], "headline-lg": [ "28px", { "lineHeight": "36px", "fontWeight": "700" } ], "label-sm": [ "10px", { "lineHeight": "14px", "fontWeight": "600" } ], "body-lg": [ "16px", { "lineHeight": "26px", "fontWeight": "400" } ], "headline-md": [ "20px", { "lineHeight": "28px", "fontWeight": "600" } ], "body-sm": [ "12px", { "lineHeight": "18px", "fontWeight": "400" } ] } } } };</script></head><body class="bg-background font-body-md text-on-surface min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 w-full z-50 bg-surface/85 backdrop-blur-xl shadow-[0_4px_24px_rgba(0,229,255,0.06)]"><div class="h-16 max-w-7xl mx-auto px-6 lg:px-12 flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm"><div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center relative shadow-[0_0_16px_rgba(0,229,255,0.25)]"><span class="material-symbols-outlined text-primary-container text-[22px]">bedtime</span><span class="material-symbols-outlined text-primary text-[14px] absolute top-1 right-1">hub</span></div><span class="font-headline-md text-headline-md tracking-tight text-primary">Eusomnia</span></div><nav class="hidden xl:flex items-center gap-space-sm bg-surface-container-lowest/60 p-space-xs rounded-xl backdrop-blur-md" data-active-classes="bg-surface-container-high text-primary font-bold rounded-lg shadow-[0_0_12px_rgba(0,229,255,0.15)]"><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="home" href="#">Home</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="registro-diario" href="#">Registro Diario</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="resultado-del-dia" href="#">Resultado del Día</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="historial" href="#">Historial</a><a class="px-space-md py-space-xs font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors rounded-lg" data-path="perfil" href="#">Perfil</a></nav><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm pl-space-md py-space-xs bg-surface-container-low rounded-full"><span class="font-label-sm text-label-sm text-on-surface-variant hidden sm:inline">Usuario activo:</span><span class="font-label-md text-label-md text-on-surface">Maruja</span><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div><a class="flex items-center gap-space-xs text-on-surface-variant hover:text-error transition-colors p-space-xs rounded-lg group" data-path="login" href="#" title="Cerrar sesión"><span class="material-symbols-outlined text-[20px] text-outline group-hover:text-error transition-colors">logout</span><span class="font-label-md text-label-md hidden md:inline text-on-surface-variant group-hover:text-error transition-colors">Cerrar sesión</span></a></div></div></header><main class="w-full pt-16 flex-1 bg-surface relative"><div class="flex flex-col w-full">
+<div class="relative w-full overflow-hidden pb-12 pt-6">
+<div class="absolute -top-32 -left-40 w-96 h-96 bg-primary-container/10 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="absolute top-1/3 -right-24 w-80 h-80 bg-secondary-container/20 rounded-full blur-[100px] pointer-events-none"></div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col gap-8 relative z-10">
+<!-- Top Metric Bar & Chronobiology Header -->
+<section class="flex flex-col gap-6">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary-fixed-dim">Sincronización Circadiana Eusomnia</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Historial de Registros &amp; Cronobiología</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mt-1">
+              Registro longitudinal de telemetría nocturna, arquitectura neurosomática y desgloses de sinapsis oníricas.
+            </p>
+</div>
+<div class="flex items-center gap-2 self-start md:self-auto bg-surface-container-lowest/80 p-1.5 rounded-xl shadow-md">
+<button class="time-range-btn px-3 py-1.5 rounded-lg font-label-md text-label-md bg-surface-container-high text-primary shadow-sm transition-all" data-range="7d">Últimos 7 días</button>
+<button class="time-range-btn px-3 py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-range="30d">Últimos 30 días</button>
+<button class="time-range-btn px-3 py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-range="all">Todo</button>
+</div>
+</div>
+<!-- Global Summary Cards Bento -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-surface-container-low/70 backdrop-blur-xl p-5 rounded-2xl flex items-center justify-between shadow-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Promedio Sueño Semanal</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-headline-xl text-headline-xl text-primary font-bold">7.4<span class="text-headline-md font-normal text-on-surface-variant ml-0.5">h</span></span>
+<span class="flex items-center text-xs font-label-sm text-primary-fixed-dim bg-secondary-container/40 px-2 py-0.5 rounded-full">+18m vs ant.</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Ventana regular 23:40 - 07:05</span>
+</div>
+<div class="w-14 h-14 rounded-2xl bg-surface-container flex items-center justify-center text-primary-container shadow-inner">
+<span class="material-symbols-outlined text-[32px]">avg_pace</span>
+</div>
+</div>
+<div class="bg-surface-container-low/70 backdrop-blur-xl p-5 rounded-2xl flex items-center justify-between shadow-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Calidad Media Somática</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold">81<span class="text-headline-md font-normal text-on-surface-variant ml-0.5">%</span></span>
+<span class="flex items-center text-xs font-label-sm text-primary-container bg-surface-container px-2 py-0.5 rounded-full">Óptimo</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Índice polisomnográfico Eusomnia</span>
+</div>
+<div class="w-14 h-14 rounded-2xl bg-surface-container flex items-center justify-center text-primary shadow-inner">
+<span class="material-symbols-outlined text-[32px]">vital_signs</span>
+</div>
+</div>
+<div class="bg-surface-container-low/70 backdrop-blur-xl p-5 rounded-2xl flex items-center justify-between shadow-sm">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Alertas Excitante Residual</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-headline-xl text-headline-xl text-tertiary-container font-bold">2 <span class="text-headline-sm font-normal text-on-surface-variant">días</span></span>
+<span class="flex items-center text-xs font-label-sm text-tertiary bg-on-tertiary-container/40 px-2 py-0.5 rounded-full">Moderado</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Cafeína tardía &gt;18:00h detectada</span>
+</div>
+<div class="w-14 h-14 rounded-2xl bg-surface-container flex items-center justify-center text-tertiary-container shadow-inner">
+<span class="material-symbols-outlined text-[32px]">warning_amber</span>
+</div>
+</div>
+</div>
+<!-- Filters & Search Toolbar -->
+<div class="bg-surface-container-lowest/60 p-4 rounded-2xl flex flex-col lg:flex-row gap-4 justify-between items-stretch lg:items-center backdrop-blur-md">
+<div class="relative flex-1 min-w-[260px]">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+<input class="w-full bg-surface-container-low text-on-surface placeholder:text-outline-variant font-body-md text-body-md rounded-xl pl-11 pr-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-primary-container shadow-inner" id="search-input" placeholder="Buscar palabras clave, símbolos (ej. vuelo, radio, araña)..." type="text"/>
+</div>
+<div class="flex flex-wrap items-center gap-2">
+<span class="font-label-sm text-label-sm uppercase text-on-surface-variant hidden xl:inline-block mr-1">Filtro de Calidad:</span>
+<button class="filter-pill px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container-high text-primary flex items-center gap-1.5 shadow-sm" data-filter="all">
+<span>Todos</span>
+</button>
+<button class="filter-pill px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container flex items-center gap-1.5 transition-all" data-filter="profundo">
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+<span>Profundo (&gt;80%)</span>
+</button>
+<button class="filter-pill px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container flex items-center gap-1.5 transition-all" data-filter="intermedio">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>Intermedio (70-79%)</span>
+</button>
+<button class="filter-pill px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container flex items-center gap-1.5 transition-all" data-filter="fragmentado">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span>Fragmentado (&lt;70%)</span>
+</button>
+<button class="filter-pill px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container flex items-center gap-1.5 transition-all" data-filter="alerta">
+<span class="material-symbols-outlined text-[15px] text-tertiary-container">emergency_heat</span>
+<span>Alertas Nutricionales</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Main Dual Column Workspace: Chronological Timeline List & Deep Day Inspection Panel -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- Left Column: Chronological Interactive Timeline List (7 cols) -->
+<div class="lg:col-span-7 flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">calendar_view_day</span>
+              Cronología de Sesiones No-REM / REM
+            </h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">5 registros ordenados</span>
+</div>
+<div class="flex flex-col gap-3 relative before:absolute before:top-4 before:bottom-4 before:left-7 before:w-0.5 before:bg-surface-container-high/80">
+<!-- Item 1: 28 Oct 2026 (Selected / Active) -->
+<article class="timeline-item group relative pl-14 cursor-pointer" data-alert="true" data-id="2026-10-28" data-quality="profundo">
+<div class="absolute left-5 top-5 -translate-x-1/2 w-4 h-4 rounded-full bg-primary-container shadow-[0_0_12px_rgba(0,229,255,0.8)] z-10"></div>
+<div class="p-5 rounded-2xl bg-surface-container-low transition-all duration-300 shadow-[0_4px_24px_rgba(0,229,255,0.12)]">
+<div class="flex items-start justify-between gap-3">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-label-lg text-label-lg text-primary font-bold">28 Oct 2026</span>
+<span class="text-outline text-xs">•</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Miércoles • 23:45 - 07:15</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary-container font-label-sm text-label-sm">Seleccionado</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mt-1.5 group-hover:text-primary transition-colors">
+                      "Soñé que iba en un avión sobre gran ciudad"
+                    </h3>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-headline-md text-headline-md text-primary font-bold">84%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Eficiencia</span>
+</div>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-4 pt-3 bg-surface-container-lowest/40 p-2.5 rounded-xl">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">schedule</span>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Duración</p>
+<p class="font-label-md text-label-md text-on-surface font-semibold">7.5 h</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">night_sight_max</span>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">REM</p>
+<p class="font-label-md text-label-md text-on-surface font-semibold">1h 48m (72%)</p>
+</div>
+</div>
+<div class="flex items-center gap-2 col-span-2 sm:col-span-1">
+<span class="material-symbols-outlined text-[18px] text-tertiary-container">local_cafe</span>
+<div>
+<p class="font-label-sm text-label-sm text-tertiary-container">Alerta Cafeína</p>
+<p class="font-label-md text-label-md text-tertiary font-semibold">95 mg residual</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between flex-wrap gap-2 mt-3.5">
+<div class="flex items-center gap-1.5 flex-wrap">
+<span class="font-label-sm text-label-sm text-primary px-2.5 py-0.5 rounded-full bg-surface-container">#vuelo</span>
+<span class="font-label-sm text-label-sm text-primary px-2.5 py-0.5 rounded-full bg-surface-container">#ciudad</span>
+<span class="font-label-sm text-label-sm text-primary px-2.5 py-0.5 rounded-full bg-surface-container">#cine</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary-container flex items-center gap-1">
+                    Inspeccionando detalles <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</span>
+</div>
+</div>
+</article>
+<!-- Item 2: 27 Oct 2026 -->
+<article class="timeline-item group relative pl-14 cursor-pointer" data-alert="false" data-id="2026-10-27" data-quality="intermedio">
+<div class="absolute left-5 top-5 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-secondary shadow-sm z-10"></div>
+<div class="p-5 rounded-2xl bg-surface-container-low/70 hover:bg-surface-container-low transition-all duration-300">
+<div class="flex items-start justify-between gap-3">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">27 Oct 2026</span>
+<span class="text-outline text-xs">•</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Martes • 00:10 - 07:10</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/50 text-secondary font-label-sm text-label-sm">Sueño Lúcido</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface-variant mt-1.5 group-hover:text-on-surface transition-colors">
+                      "La radio contaba la historia de las lechugas"
+                    </h3>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-headline-md text-headline-md text-secondary font-bold">78%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Eficiencia</span>
+</div>
+</div>
+<div class="flex items-center gap-4 mt-3 text-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> 7.0 h</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">bolt</span> Latencia 18m</span>
+<span class="flex items-center gap-1 text-primary-fixed"><span class="material-symbols-outlined text-[16px]">psychology</span> Alta coherencia</span>
+</div>
+<div class="flex items-center gap-1.5 flex-wrap mt-3">
+<span class="font-label-sm text-label-sm text-on-surface-variant px-2.5 py-0.5 rounded-full bg-surface-container-highest/40">#radio</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant px-2.5 py-0.5 rounded-full bg-surface-container-highest/40">#huerto</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant px-2.5 py-0.5 rounded-full bg-surface-container-highest/40">#narrativa</span>
+</div>
+</div>
+</article>
+<!-- Item 3: 25 Oct 2026 -->
+<article class="timeline-item group relative pl-14 cursor-pointer" data-alert="true" data-id="2026-10-25" data-quality="fragmentado">
+<div class="absolute left-5 top-5 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-error shadow-sm z-10"></div>
+<div class="p-5 rounded-2xl bg-surface-container-low/70 hover:bg-surface-container-low transition-all duration-300">
+<div class="flex items-start justify-between gap-3">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">25 Oct 2026</span>
+<span class="text-outline text-xs">•</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Domingo • 01:20 - 07:32</span>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-error font-label-sm text-label-sm">Fragmentado</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface-variant mt-1.5 group-hover:text-on-surface transition-colors">
+                      "Una araña me perseguía en el bosque"
+                    </h3>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-headline-md text-headline-md text-error font-bold">62%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Eficiencia</span>
+</div>
+</div>
+<div class="flex items-center gap-3 mt-3 flex-wrap">
+<span class="px-2 py-0.5 rounded bg-tertiary-container/20 text-tertiary-container font-label-sm text-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">set_meal</span> Alerta Digestión pesada
+                  </span>
+<span class="text-body-sm text-on-surface-variant">6.2 h de descanso total</span>
+<span class="text-body-sm text-error">4 microdespertares</span>
+</div>
+<div class="flex items-center gap-1.5 flex-wrap mt-3">
+<span class="font-label-sm text-label-sm text-on-surface-variant px-2.5 py-0.5 rounded-full bg-surface-container-highest/40">#pesadilla</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant px-2.5 py-0.5 rounded-full bg-surface-container-highest/40">#alerta</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant px-2.5 py-0.5 rounded-full bg-surface-container-highest/40">#frecuencia_elevada</span>
+</div>
+</div>
+</article>
+<!-- Item 4: 24 Oct 2026 -->
+<article class="timeline-item group relative pl-14 cursor-pointer" data-alert="false" data-id="2026-10-24" data-quality="profundo">
+<div class="absolute left-5 top-5 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-primary-container shadow-sm z-10"></div>
+<div class="p-5 rounded-2xl bg-surface-container-low/70 hover:bg-surface-container-low transition-all duration-300">
+<div class="flex items-start justify-between gap-3">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">24 Oct 2026</span>
+<span class="text-outline text-xs">•</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Sábado • 23:10 - 07:22</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm">Profundo</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface-variant mt-1.5 group-hover:text-on-surface transition-colors">
+                      "Podía volar sobre el océano"
+                    </h3>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-headline-md text-headline-md text-primary font-bold">91%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Eficiencia</span>
+</div>
+</div>
+<div class="flex items-center gap-4 mt-3 text-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> 8.2 h</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">spa</span> Fase Delta 2h 15m</span>
+<span class="flex items-center gap-1 text-primary"><span class="material-symbols-outlined text-[16px]">verified</span> Sueño restaurativo</span>
+</div>
+<div class="flex items-center gap-1.5 flex-wrap mt-3">
+<span class="font-label-sm text-label-sm text-on-surface-variant px-2.5 py-0.5 rounded-full bg-surface-container-highest/40">#vuelo</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant px-2.5 py-0.5 rounded-full bg-surface-container-highest/40">#paz</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant px-2.5 py-0.5 rounded-full bg-surface-container-highest/40">#oceano</span>
+</div>
+</div>
+</article>
+<!-- Item 5: 23 Oct 2026 -->
+<article class="timeline-item group relative pl-14 cursor-pointer" data-alert="false" data-id="2026-10-23" data-quality="intermedio">
+<div class="absolute left-5 top-5 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-secondary shadow-sm z-10"></div>
+<div class="p-5 rounded-2xl bg-surface-container-low/70 hover:bg-surface-container-low transition-all duration-300">
+<div class="flex items-start justify-between gap-3">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">23 Oct 2026</span>
+<span class="text-outline text-xs">•</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Viernes • 00:05 - 07:05</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-sm text-label-sm">Intermedio</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface-variant mt-1.5 group-hover:text-on-surface transition-colors">
+                      "Soñé que caía lentamente"
+                    </h3>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-headline-md text-headline-md text-secondary font-bold">74%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Eficiencia</span>
+</div>
+</div>
+<div class="flex items-center gap-4 mt-3 text-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">schedule</span> 7.0 h</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">waves</span> REM normal</span>
+</div>
+<div class="flex items-center gap-1.5 flex-wrap mt-3">
+<span class="font-label-sm text-label-sm text-on-surface-variant px-2.5 py-0.5 rounded-full bg-surface-container-highest/40">#gravedad</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant px-2.5 py-0.5 rounded-full bg-surface-container-highest/40">#descenso</span>
+</div>
+</div>
+</article>
+</div>
+</div>
+<!-- Right Column: Deep Detailed Inspection Panel for 28 Oct (5 cols) -->
+<div class="lg:col-span-5 flex flex-col gap-5 sticky top-20">
+<div class="bg-surface-container-low/90 backdrop-blur-2xl p-6 rounded-2xl shadow-xl flex flex-col gap-6">
+<!-- Panel Header -->
+<div class="flex items-start justify-between gap-4">
+<div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container shadow-[0_0_8px_rgba(0,229,255,0.7)]"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-primary">Detalle Clínico &amp; Psico-onírico</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface mt-1">28 de Octubre, 2026</h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Ventana: 23:45 - 07:15 (7.5 horas de reposo)</span>
+</div>
+<span class="px-3 py-1 rounded-full bg-primary-container/20 text-primary-container font-label-md text-label-md font-bold">
+                84% Eficiencia
+              </span>
+</div>
+<!-- Dream Journal Narrative Quote Card -->
+<div class="bg-surface-container-lowest/80 p-4 rounded-xl relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/5 rounded-full pointer-events-none"></div>
+<div class="flex items-center gap-2 text-primary text-xs font-label-md uppercase tracking-wider mb-1.5">
+<span class="material-symbols-outlined text-[16px]">auto_stories</span>
+                Relato Onírico Grabado
+              </div>
+<p class="font-body-md text-body-md text-on-surface italic leading-relaxed">
+                "Soñé que iba en un avión sobre gran ciudad. Miraba por la ventanilla luces de neón infinitas y sentía que los motores flotaban en absoluto silencio."
+              </p>
+<div class="flex gap-2 mt-3">
+<span class="px-2 py-0.5 rounded-md bg-surface-container text-primary font-label-sm text-label-sm">#vuelo</span>
+<span class="px-2 py-0.5 rounded-md bg-surface-container text-primary font-label-sm text-label-sm">#ciudad</span>
+<span class="px-2 py-0.5 rounded-md bg-surface-container text-primary font-label-sm text-label-sm">#cine</span>
+<span class="px-2 py-0.5 rounded-md bg-secondary-container/40 text-secondary font-label-sm text-label-sm">Lúcido: Parcial</span>
+</div>
+</div>
+<!-- Sleep Architecture Telemetry -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Arquitectura del Sueño</span>
+<span class="font-label-sm text-label-sm text-primary">Latencia: 28 min</span>
+</div>
+<!-- Inline SVG Hypnogram Distribution Bar -->
+<div class="w-full bg-surface-container-lowest rounded-full h-4 overflow-hidden flex p-0.5 gap-0.5">
+<div class="bg-secondary-container h-full rounded-l-full" style="width: 14%;" title="Sueño Ligero (14%)"></div>
+<div class="bg-primary/50 h-full" style="width: 32%;" title="Profundo / NREM (32%)"></div>
+<div class="bg-primary-container h-full rounded-r-full shadow-[0_0_8px_rgba(0,229,255,0.5)]" style="width: 54%;" title="Fase REM (72% efectividad)"></div>
+</div>
+<div class="grid grid-cols-3 gap-2 pt-1 text-center">
+<div class="bg-surface-container p-2.5 rounded-xl">
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Fase REM</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold">72%</span>
+<span class="block font-body-sm text-[10px] text-on-surface-variant">1h 48m</span>
+</div>
+<div class="bg-surface-container p-2.5 rounded-xl">
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Sueño Profundo</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">32%</span>
+<span class="block font-body-sm text-[10px] text-on-surface-variant">2h 24m</span>
+</div>
+<div class="bg-surface-container p-2.5 rounded-xl">
+<span class="block font-label-sm text-label-sm text-on-surface-variant">Latencia</span>
+<span class="font-headline-sm text-headline-sm text-secondary font-bold">28 m</span>
+<span class="block font-body-sm text-[10px] text-tertiary-container">+8m elevado</span>
+</div>
+</div>
+</div>
+<!-- Correlation Habits vs Sleep Card (Warning and details) -->
+<div class="bg-surface-container-high/60 p-4 rounded-xl flex flex-col gap-3">
+<div class="flex items-center gap-2 text-tertiary-container font-label-md text-label-md">
+<span class="material-symbols-outlined text-[18px]">sync_problem</span>
+                Correlación Hábitos vs. Calidad
+              </div>
+<div class="space-y-2.5">
+<div class="flex items-start gap-3 bg-surface-container-low p-2.5 rounded-lg">
+<span class="material-symbols-outlined text-tertiary-container text-[20px] mt-0.5">cookie</span>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface font-semibold">Barrita de chocolate a medianoche (23:15h)</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Retrasó la inducción NREM en 28 minutos debido al pico glucémico tardío.</p>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-surface-container-low p-2.5 rounded-lg">
+<span class="material-symbols-outlined text-tertiary-container text-[20px] mt-0.5">coffee</span>
+<div class="flex-1">
+<p class="font-label-md text-label-md text-on-surface font-semibold">Pico de cafeína residual (95 mg)</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Café espresso doble consumido a las 18:40h impidió el descenso cardiaco inicial.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Detected Dominant Emotions -->
+<div class="flex flex-col gap-2.5">
+<span class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant">Emociones Dominantes (Neuro-NLP)</span>
+<div class="space-y-2">
+<div>
+<div class="flex justify-between font-label-sm text-label-sm mb-1">
+<span class="text-on-surface flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary-container"></span> Libertad y Expansión</span>
+<span class="text-primary font-bold">80%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-primary-container h-full rounded-full" style="width: 80%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-sm text-label-sm mb-1">
+<span class="text-on-surface flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary"></span> Serenidad / Alegría</span>
+<span class="text-secondary font-bold">65%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2 overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 65%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Actions / CTAs -->
+<div class="flex flex-col sm:flex-row items-center gap-3 pt-2">
+<a class="w-full sm:flex-1 py-3 px-4 rounded-xl bg-primary-container hover:bg-primary-fixed-dim text-on-primary-container font-label-md text-label-md font-bold flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,229,255,0.4)] transition-all" data-path="resultado-del-dia" href="#">
+<span class="material-symbols-outlined text-[18px]">insights</span>
+                Ver Análisis Completo
+              </a>
+<a class="w-full sm:w-auto py-3 px-4 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center gap-2 transition-all" data-path="registro-diario" href="#">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+                Editar Registro
+              </a>
+</div>
+</div>
+<!-- Chrono Tip Mini-card -->
+<div class="bg-surface-container-lowest/50 p-4 rounded-xl flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-[22px]">lightbulb</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Recomendación AI: Reducir la última ingesta de teobromina/cafeína al menos 7 horas antes de la acostada planificada para mitigar la latencia de 28m.
+            </p>
+</div>
+</div>
+</section>
+</div>
+</div>
+<script>
+    (function initHistoryView() {
+      // Ensure active state on App Shell topbar
+      const navLinks = document.querySelectorAll('header nav a[data-path]');
+      navLinks.forEach(link => {
+        if (link.getAttribute('data-path') === 'historial') {
+          link.classList.remove('text-on-surface-variant', 'hover:bg-surface-container');
+          link.classList.add('bg-surface-container-high', 'text-primary', 'font-bold', 'rounded-lg', 'shadow-[0_0_12px_rgba(0,229,255,0.15)]');
+        } else {
+          link.classList.remove('bg-surface-container-high', 'text-primary', 'font-bold', 'shadow-[0_0_12px_rgba(0,229,255,0.15)]');
+          link.classList.add('text-on-surface-variant');
+        }
+      });
+
+      // Filter Pill Micro-interaction
+      const filterPills = document.querySelectorAll('.filter-pill');
+      const timelineItems = document.querySelectorAll('.timeline-item');
+
+      filterPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          filterPills.forEach(p => {
+            p.classList.remove('bg-surface-container-high', 'text-primary', 'shadow-sm');
+            p.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+          });
+          pill.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+          pill.classList.add('bg-surface-container-high', 'text-primary', 'shadow-sm');
+
+          const filterVal = pill.getAttribute('data-filter');
+          timelineItems.forEach(item => {
+            const quality = item.getAttribute('data-quality');
+            const hasAlert = item.getAttribute('data-alert') === 'true';
+
+            if (filterVal === 'all') {
+              item.style.display = 'block';
+            } else if (filterVal === 'alerta') {
+              item.style.display = hasAlert ? 'block' : 'none';
+            } else {
+              item.style.display = quality === filterVal ? 'block' : 'none';
+            }
+          });
+        });
+      });
+
+      // Range Selector Micro-interaction
+      const rangeBtns = document.querySelectorAll('.time-range-btn');
+      rangeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          rangeBtns.forEach(b => {
+            b.classList.remove('bg-surface-container-high', 'text-primary', 'shadow-sm');
+            b.classList.add('text-on-surface-variant');
+          });
+          btn.classList.add('bg-surface-container-high', 'text-primary', 'shadow-sm');
+          btn.classList.remove('text-on-surface-variant');
+        });
+      });
+
+      // Search keyword filter
+      const searchInput = document.getElementById('search-input');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const val = e.target.value.toLowerCase().trim();
+          timelineItems.forEach(item => {
+            const textContent = item.textContent.toLowerCase();
+            if (textContent.includes(val)) {
+              item.style.display = 'block';
+            } else {
+              item.style.display = 'none';
+            }
+          });
+        });
+      }
+
+      // Interactive selection for timeline entries
+      timelineItems.forEach(item => {
+        item.addEventListener('click', () => {
+          timelineItems.forEach(it => {
+            const container = it.querySelector('div.rounded-2xl');
+            const indicator = it.querySelector('div.absolute');
+            if (container) {
+              container.classList.remove('shadow-[0_4px_24px_rgba(0,229,255,0.12)]');
+            }
+            if (indicator) {
+              indicator.classList.remove('shadow-[0_0_12px_rgba(0,229,255,0.8)]');
+            }
+          });
+          const targetContainer = item.querySelector('div.rounded-2xl');
+          const targetIndicator = item.querySelector('div.absolute');
+          if (targetContainer) {
+            targetContainer.classList.add('shadow-[0_4px_24px_rgba(0,229,255,0.12)]');
+          }
+          if (targetIndicator) {
+            targetIndicator.classList.add('shadow-[0_0_12px_rgba(0,229,255,0.8)]');
+          }
+        });
+      });
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-lowest/80 backdrop-blur-md shadow-[0_-1px_16px_rgba(0,0,0,0.2)] mt-auto"><div class="max-w-7xl mx-auto px-6 lg:px-12 py-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-left">© 2026 Eusomnia - TechLab 4Geeks Academy</div><div class="flex items-center gap-space-lg"><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="contacto" href="#">Contacto</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" data-path="privacidad" href="#">Privacidad</a></div></div></footer></body></html>

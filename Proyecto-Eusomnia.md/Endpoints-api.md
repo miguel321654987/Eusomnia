@@ -1,0 +1,94 @@
+**Resumen completo de todos los endpoints definidos bajo `src/api/blueprints/`**
+
+_(Agrupados por el Blueprint al que pertenecen)_
+
+---
+
+### **1️⃣ user_bp** _(gestión de usuarios y preferencias)_
+
+| **Método** | **Ruta**            | **Descripción**                                                                                                                                                                                                                     |
+| ---------- | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **POST**   | `/signup`           | Crea una cuenta de usuario. Valida que el cuerpo JSON incluya `email`, `password`, `name` y `last_name`. Genera la contraseña encriptada, persiste el usuario y crea sus `UserPreferences` por defecto.                             |
+| **POST**   | `/login`            | Autentica al usuario. Requiere `email` y `password` en el cuerpo JSON, verifica credenciales y devuelve un _access token_ JWT junto con los datos del usuario.                                                                      |
+| **GET**    | `/profile`          | Devuelve la información del usuario autenticado (según el token JWT) y sus preferencias asociadas (`UserPreferences`).                                                                                                              |
+| **PUT**    | `/profile`          | Actualiza parcialmente los datos personales (`name`, `last_name`, `email`, `birth_year`, `chronotype`) y las preferencias de IA, zona horaria y rutinas. Valida los valores y nunca devuelve la clave API. |
+| **POST**   | `/profile/password` | Cambia la contraseña del usuario autenticado. Requiere `current_password` y `new_password`; valida la contraseña actual y la longitud de la nueva. |
+| **GET**    | `/` _(sin prefijo)_ | Lista todos los usuarios registrados (paginado). Parámetros opcionales `page` y `per_page`. Solo requiere que el solicitante esté autenticado con JWT.                                                                              |
+| **GET**    | `/<int:user_id>`    | Obtiene la información de un usuario concreto a partir de su **ID**. Requiere autenticación JWT.                                                                                                                                    |
+| **DELETE** | `/<int:user_id>`    | Elimina la cuenta autenticada y sus preferencias, entradas y detalles relacionados. Requiere `current_password`; solo el titular del JWT puede eliminarse. |
+|  |
+
+---
+
+### **2️⃣ daily_entries_bp** _(registro y consulta de entradas diarias)_
+
+| Método   | Ruta                | Descripción                                                                                         |
+| -------- | ------------------- | --------------------------------------------------------------------------------------------------- |
+| **GET**    | `/` _(sin prefijo)_ | Lista todas las `DailyEntry` del usuario actual, ordenadas por fecha efectiva descendente. Incluye `entry_date` (fecha efectiva) y `original_entry_date` (fecha inicial inmutable). |
+| **GET**    | `/<int:entry_id>`   | Obtiene una entrada diaria concreta (solo del propietario), incluyendo fecha efectiva e inicial. |
+| **POST**   | `/` _(sin prefijo)_ | Crea una nueva `DailyEntry` con su `SleepReport` y `HabitLog`. Inicializa la fecha original con la fecha indicada en `date`. |
+| **PUT/PATCH** | `/<int:entry_id>` | Actualiza relato, hábitos y fecha efectiva (`date`, formato ISO `YYYY-MM-DD`); conserva `original_entry_date`. Solo el propietario. |
+
+---
+
+### **3️⃣ analysis_bp** _(análisis de textos de sueño mediante IA)_
+
+| Método   | Ruta              | Descripción                                                                                                                                                  |
+| -------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **POST** | `/<int:entry_id>` | Ejecuta el análisis de IA para la entrada diaria indicada. Usa `UserPreferences` para seleccionar modelo / API key y guarda el resultado en `SleepAnalysis`. |
+| **GET**  | `/<int:entry_id>` | Recupera el análisis previamente generado para la entrada diaria.                                                                                            |
+
+---
+
+### **4️⃣ nutrition_bp** _(análisis y registro nutricional)_
+
+| Endpoint                                                                    | ¿Qué hace exactamente?                                                                                                                                                                                   | ¿Por qué es necesario?                                                                                                                                 |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **`POST /nutrition/analyze`**                                               | Recibe **una sola cadena de texto** (p. ej. “2 rebanadas de pizza”) y devuelve el análisis **sin crear ninguna entidad en la base de datos**.                                                            | Permite a la UI ofrecer al usuario una **vista previa rápida** (por ejemplo, “¿Cuántas calorías tiene este alimento?”) antes de decidir guardarlo.     |
+| **`POST /nutrition/analyze-recipe`**                                        | Recibe **una lista de ingredientes** (título opcional) y devuelve el análisis **sin persistir**.                                                                                                         | Útil cuando el usuario quiere **analizar una receta completa** (sopa, lasaña, etc.) sin asociarla todavía a una `DailyEntry`.                          |
+| **`POST /nutrition/log`**                                                   | Recibe `entry_id` + datos de la comida, **analiza** (llamando a `analyze_foods`) **y guarda/actualiza** un registro `NutritionLog` vinculado a esa `DailyEntry`.                                         | Es el **punto de integración** entre la información nutricional y la entrada diaria del usuario; el análisis se vuelve parte del historial del día.    |
+| **`GET /nutrition/log/<entry_id>`**                                         | Devuelve el `NutritionLog` ya **persistido** para la entrada indicada.                                                                                                                                   | Permite a la UI **mostrar** los datos guardados (por ejemplo, al abrir la pantalla de “Detalles del día”).                                             |
+| **`GET /nutrition/logs`**                                                   | Lista **paginada** de todos los logs del usuario.                                                                                                                                                        | Necesario para vistas de historial, reportes o exportaciones donde se necesitan varios días.                                                           |
+| **`PUT /nutrition/log/<entry_id>`** / **`PATCH /nutrition/log/<entry_id>`** | Actualiza **total o parcialmente** un log existente.                                                                                                                                                     | El usuario puede corregir o completar datos después de haber guardado (p.ej. añadir una bebida que olvidó).                                            |
+| **`DELETE /nutrition/log/<entry_id>`**                                      | Elimina el log asociado a una `DailyEntry`.                                                                                                                                                              | Permite al usuario **borrar** datos erróneos o reiniciar el registro de un día.                                                                        |
+| **`POST /nutrition/evaluate`**                                              | **Toma** un `NutritionLog` ya guardado y lo **compara** con los parámetros de referencia del usuario (requerimientos calóricos, macro‑nutrientes, etc.) y devuelve una **puntuación / recomendaciones**. | Provee la **capa de valor**: no solo muestra datos crudos, sino que interpreta si la ingesta está dentro de los rangos recomendados y sugiere ajustes. |
+| **`GET /nutrition/parameters`**                                             | Devuelve los **parámetros de referencia** (rangos de macronutrientes, límites de cafeína, etc.) que se usan tanto en el análisis como en la evaluación.                                                  | Permite a la UI **mostrar** esos valores al usuario y también a los demás endpoints para validar `meal_type` y otros campos.                           |
+
+---
+
+### **5️⃣ exports_bp** _(exportación de datos propios)_
+
+| Método | Ruta | Descripción |
+| --- | --- | --- |
+| **GET** | `/exports/json` | Devuelve las entradas guardadas del usuario autenticado en JSON. |
+| **GET** | `/exports/csv` | Descarga las entradas guardadas del usuario autenticado en CSV. |
+| **GET** | `/exports/pdf` | Descarga un informe PDF construido con los datos guardados del usuario autenticado. |
+
+Las tres rutas aceptan `start_date` y `end_date` opcionales (formato `YYYY-MM-DD`). Se deben enviar ambas para filtrar un intervalo inclusivo; si se omiten las dos, se exportan todos los registros. No se generan métricas ni datos que Eusomnia no almacena.
+
+Las preferencias de perfil admiten `interpretation_framework` (`jungian`, `neuroscientific`, `holistic`), `report_depth` (`concise`, `standard`, `clinical`), `include_nutrition_in_analysis` y las preferencias de habilitación/hora para los recordatorios `morning`, `caffeine` y `winddown`. Los avisos configurados se muestran dentro de la aplicación mientras está abierta; no se envían por push ni email.
+
+---
+
+#### Resumen de la arquitectura
+
+1. **Servicio único** (`analyze_foods`) → **single source of truth** para la interacción con Edamam.
+2. **Endpoints ligeros** → cada uno se ocupa sólo de:
+   - Validar y transformar la petición del cliente.
+   - Llamar al servicio central.
+   - **Decidir** si persiste el resultado, lo devuelve tal cual, o lo procesa (p.ej., evaluación).
+3. **Separación de responsabilidades**:
+   - **Rápida inspección** → `/analyze` y `/analyze-recipe`.
+   - **Persistencia del día** → `/log` (creación/actualización).
+   - **Gestión CRUD** → `/log/<id>` (read, update, delete, list).
+   - **Interpretación** → `/evaluate`.
+
+---
+
+#### Observaciones generales
+
+- **Seguridad**: Todos los endpoints que manipulan datos de usuarios o logs están protegidos con `@jwt_required()`.
+- **Manejo de errores**: Se utilizan `APIException` para devolver códigos HTTP adecuados (400, 401, 403, 404, 409, 422, 502, 500).
+- **Validaciones**: Cada punto de entrada valida tipos, rangos y presencia de campos críticos (p. ej., `entry_id`, `meal_type`, números no negativos).
+- **Serialización**: Los modelos (`User`, `DailyEntry`, `NutritionLog`, etc.) implementan un método `serialize()` que se usa para construir la respuesta JSON.
+- **Paginación**: Implementada en `GET /nutrition/logs` con controles de valores positivos y límites seguros.
