@@ -21,33 +21,19 @@ from sqlalchemy import select
 load_dotenv()
 
 # Create Flask application
-# Añadimos una anotación de tipo para mejorar la detección estática y evitar errores de Pylance
 app: Flask = Flask(__name__)
 
-# Configuración de CORS para permitir solicitudes del frontend en desarrollo
-# Se especifica el origen del frontend y se habilita el soporte de credenciales
-CORS(
-    app,
-    resources={
-        r"/api/*": {
-            "origins": [
-                "http://localhost:5173",
-                "http://localhost:5174",
-                "http://localhost:5175",
-            ]
-        }
-    },
-    supports_credentials=True,
-)
+# Universal CORS configuration for development and production
+CORS(app)
 
-# Nota: este fallback es para trabajar en modo local desde VS Code/localhost.
+# Fallback for local development
 app.config["JWT_SECRET_KEY"] = os.getenv(
     "JWT_SECRET_KEY", "local-dev-secret-key")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
 jwt = JWTManager(app)
 
-# UNIÓN OFICIAL: Aquí le inyectamos el motor Flask a Bcrypt
+# Inject Flask into Bcrypt
 bcrypt.init_app(app)
 
 # Application-level configuration inherited from environment variables (.env).
@@ -61,8 +47,7 @@ app.config["OPENROUTER_BASE_URL"] = os.getenv(
 app.config["EMBEDDING_MODEL"] = os.getenv(
     "EMBEDDING_MODEL", "openai/text-embedding-3-small"
 )
-# Modelo por defecto para OpenRouter. Se utiliza el router gratuito que delega al modelo libre disponible.
-# Puede sobrescribirse mediante la variable de entorno OPENROUTER_MODEL.
+# Default model for OpenRouter
 app.config["OPENROUTER_MODEL"] = os.getenv(
     "OPENROUTER_MODEL", "openai/gpt-4o-mini"
 )
@@ -75,7 +60,7 @@ if db_url is not None and not db_url.startswith("sqlite:///"):
     app.config["SQLALCHEMY_DATABASE_URI"] = db_url.replace(
         "postgres://", "postgresql://")
 else:
-    # Bloque especial para Windows Local
+    # Local fallback for SQLite
     base_dir = os.path.abspath(os.path.dirname(__file__))
     instance_dir = os.path.join(base_dir, "instance")
 
@@ -87,6 +72,13 @@ else:
 MIGRATE = Migrate(app, db)
 db.init_app(app)
 
+with app.app_context():
+    try:
+        db.create_all()
+        print("✅ Database initialized and tables verified/created.")
+    except Exception as e:
+        print(f"⚠️ Error initializing database automatically: {e}")
+
 setup_admin(app)
 
 
@@ -97,17 +89,17 @@ def rebuild_dream_collection_command():
 
     service = DreamRetrievalService()
     count = service.rebuild_collection_from_csv()
-    click.echo(f"Indexed {count} dream dictionary points with the current embeddings.")
+    click.echo(
+        f"Indexed {count} dream dictionary points with the current embeddings.")
 
-# REGISTRO DE BLUEPRINTS
+
+# Blueprint registration
 app.register_blueprint(api, url_prefix="/api")
 
 
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
-
-# generate sitemap with all your endpoints
 
 
 @app.route("/")
@@ -124,11 +116,8 @@ def sitemap():
 
 
 if __name__ == "__main__":
-    # LANZAMIENTO DEL SERVIDOR WEB FLASK
-    # Leemos el puerto asignado en las variables de entorno (por defecto el 3000)
     PORT = int(os.environ.get("PORT", 3000))
 
     print(f"🚀 Servidor Flask listo y escuchando en el puerto {PORT}...")
 
-    # Encendemos los sockets de Flask para empezar a recibir peticiones de usuarios o frontend
     app.run(host="0.0.0.0", port=PORT, debug=False)
