@@ -23,6 +23,7 @@ flask-jwt-extended = "*"
 requests = "*"
 flask-bcrypt = "*"
 flask-migrate = "*"
+psycopg = "*"
 
 [requires]
 python_version = "3.13"
