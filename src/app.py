@@ -111,6 +111,14 @@ def handle_invalid_usage(error):
 
 
 @app.route("/")
+def health_check():
+    return jsonify({
+        "status": "online",
+        "service": "Eusomnia Backend API"
+    }), 200
+
+
+@app.route("/sitemap")
 def sitemap():
     return generate_sitemap(app)
 
