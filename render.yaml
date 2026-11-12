@@ -19,7 +19,8 @@ services:
       - key: FLASK_DEBUG
         value: "False"
 
-  - type: static
+  - type: web
+    runtime: static
     name: eusomnia-frontend
     region: oregon
     plan: free
