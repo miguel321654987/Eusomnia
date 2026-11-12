@@ -49,6 +49,13 @@ else:
 MIGRATE = Migrate(app, db)
 db.init_app(app)
 
+with app.app_context():
+    try:
+        db.create_all()
+        print("✅ Base de datos inicializada y tablas verificadas/creadas correctamente en PostgreSQL.")
+    except Exception as e:
+        print(f"⚠️ Error al inicializar la base de datos automáticamente: {e}")
+
 
 CORS(app)
 setup_admin(app)
