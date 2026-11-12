@@ -2,7 +2,8 @@ import { useReducer, useEffect } from "react";
 import storeReducer, { initialStore } from "../store.js";
 import { getActions } from "./actions.js";
 import { StoreContext } from "./useGlobalReducer.jsx";
-import { apiUrl } from "../api.js";
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
 
 /* StoreProvider es el corazón del estado global: se encarga de crear el estado, 
 modificarlo, sincronizarlo con tu base de datos y distribuirlo a toda la aplicación */
@@ -14,18 +15,16 @@ modificarlo, sincronizarlo con tu base de datos y distribuirlo a toda la aplicac
 export function StoreProvider({ children }) {
   const [store, dispatch] = useReducer(storeReducer, initialStore());
 
-  const token = store.token;
-
   useEffect(() => {
+    const token = store.token;
+
     if (!token) return;
 
     const verificarSesionYCargarDatos = async () => {
-      // getActions only needs dispatch in this flow; passing null avoids coupling
-      // this effect to the whole store object (and the exhaustive-deps warning).
-      const actions = getActions(null, dispatch);
+      const actions = getActions(store, dispatch);
 
       try {
-        const userResponse = await fetch(apiUrl("/api/users/profile"), {
+        const userResponse = await fetch(`${BACKEND_URL}/api/auth/profile`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -33,24 +32,30 @@ export function StoreProvider({ children }) {
           },
         });
 
-        if (userResponse.status === 401 || userResponse.status === 422) {
-          actions.handleLogout(null, "expired");
+        if (userResponse.status === 401) {
+          actions.handleLogout();
           return;
         }
 
         const userData = await userResponse.json();
         const profile = userData.results || userData;
+
         dispatch({
           type: "LOGIN_SUCCESS",
-          payload: { token, user: profile.user || profile },
+          payload: { token, user: profile },
         });
+
+        if (profile && profile.id) {
+          dispatch({ type: "CLEAR_FAVORITES" }); // Limpia favoritos antes de cargar los nuevos
+          await actions.cargarFavoritosBackend(profile.id);
+        }
       } catch (error) {
         console.error("Error al sincronizar sesión con el servidor:", error);
       }
     };
 
     verificarSesionYCargarDatos();
-  }, [token, dispatch]);
+  }, [store.token, dispatch]);
 
   return (
     <StoreContext.Provider value={{ store, dispatch }}>
@@ -61,4 +66,4 @@ export function StoreProvider({ children }) {
 
 /* Al usar .Provider se activa el StoreContext y permite que los componentes hijos
  accedan al estado global y al dispatch.
- value={{ state: store, dispatch }}> los vuelve disponibles para useGlobalReducer */ 
+ value={{ state: store, dispatch }}> los vuelve disponibles para useGlobalReducer */
