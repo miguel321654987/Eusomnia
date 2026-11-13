@@ -20,5 +20,5 @@ RUN pip install pipenv \
 # Copy project files
 COPY . .
 
-EXPOSE 3000
-CMD ["sh", "-c", "flask db upgrade || true; gunicorn --chdir src wsgi:application"]
+EXPOSE 10000
+CMD gunicorn --chdir src --bind 0.0.0.0:${PORT:-10000} wsgi:application

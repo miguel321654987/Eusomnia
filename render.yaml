@@ -17,6 +17,8 @@ services:
           property: connectionString
       - key: FLASK_DEBUG
         value: "False"
+      - key: PORT
+        value: "10000"
 
   - type: web
     runtime: static
