@@ -41,7 +41,6 @@ const DEFAULT_PREFERENCES = {
   timezone: "UTC",
   ai_provider: "openrouter",
   selected_model: "openai/gpt-4o-mini",
-                          "nvidia/nemotron-3.5-lightning:free",
   has_custom_key: false,
   interpretation_framework: "jungian",
   report_depth: "standard",
