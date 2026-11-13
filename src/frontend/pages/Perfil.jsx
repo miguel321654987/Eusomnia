@@ -24,9 +24,17 @@ const CHRONOTYPES = [
 const TIMEZONES = [
   "UTC",
   "Europe/Madrid",
+  "Europe/London",
+  "Europe/Paris",
+  "America/New_York",
+  "America/Chicago",
+  "America/Denver",
+  "America/Los_Angeles",
   "America/Mexico_City",
   "America/Bogota",
   "America/Argentina/Buenos_Aires",
+  "Asia/Tokyo",
+  "Australia/Sydney",
 ];
 
 const DEFAULT_PREFERENCES = {
@@ -430,23 +438,20 @@ export const Perfil = () => {
                     </label>
                     <label className="profile-field">
                       <span>Zona horaria (IANA)</span>
-                      <input
-                        className="form-control"
-                        type="text"
-                        list="profile-timezones"
+                      <select
+                        className="form-select"
                         value={preferences.timezone}
                         onChange={(event) =>
                           updatePreference("timezone", event.target.value)
                         }
                         required
-                      />
-                      <datalist id="profile-timezones">
+                      >
                         {TIMEZONES.map((timezone) => (
                           <option key={timezone} value={timezone}>
                             {timezone}
                           </option>
                         ))}
-                      </datalist>
+                      </select>
                     </label>
                   </div>
                   <div className="profile-form-actions">
