@@ -79,7 +79,13 @@ export const RoutineReminderScheduler = () => {
           console.error("Could not persist reminder state:", error);
         }
         shownReminders.add(key);
-        toast.info(reminder.message, { toastId: key });
+        toast.info(reminder.message, {
+          toastId: key,
+          autoClose: false,
+          closeOnClick: false,
+          draggable: false,
+          closeButton: true,
+        });
       });
     };
 
