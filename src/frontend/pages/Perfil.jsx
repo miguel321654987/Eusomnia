@@ -40,7 +40,8 @@ const TIMEZONES = [
 const DEFAULT_PREFERENCES = {
   timezone: "UTC",
   ai_provider: "openrouter",
-  selected_model: "nvidia/nemotron-3.5-lightning:free",
+  selected_model: "openai/gpt-4o-mini",
+                          "nvidia/nemotron-3.5-lightning:free",
   has_custom_key: false,
   interpretation_framework: "jungian",
   report_depth: "standard",
@@ -659,6 +660,9 @@ export const Perfil = () => {
                             {preferences.selected_model}
                           </option>
                         )}
+                        <option value="openai/gpt-4o-mini">
+                          GPT-4o Mini (OpenAI)
+                        </option>
                         <option value="nvidia/nemotron-3.5-lightning:free">
                           Nemotron 3.5 Super VL (free)
                         </option>
