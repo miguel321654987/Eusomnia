@@ -73,3 +73,27 @@ _(ninguna – todas las tareas de la Semana 3 están completadas)_
 
 _(ninguna – todas las tareas de la Semana 4 están completadas)_
 
+
+## Semana 5 — Despliegue en Producción (Render)
+
+**Objetivo semanal:** desplegar la aplicación completa en Render con arquitectura desacoplada y dejarla operativa en producción.
+
+### ✅ Completado
+
+- ✅ Diseño de arquitectura de despliegue: Static Site (frontend) + Web Service Docker (backend) + PostgreSQL 18 gestionado en Render (commits 4865c42, 8194c87)
+- ✅ Creación de `Dockerfile.render` con `python:3.13-slim`, `pipenv`, `psycopg[binary]` y gunicorn en puerto `${PORT:-10000}` (commits 4865c42, c1f48d9, 9a8a5ed)
+- ✅ `render.yaml` Blueprint definitivo con los tres servicios (`eusomnia-db`, `eusomnia-backend`, `eusomnia-frontend`) (commits b62c9ef, a506622, 231006b, 70a8809)
+- ✅ Corrección de `app.py`: health check en `/`, sitemap en `/sitemap`, CORS universal (commit 2ba6a1b)
+- ✅ Fix `api.js`: `normalizeBackendUrl()` para anteponer `https://` al host inyectado por Render (commit 8194c87)
+- ✅ Fix `main.jsx`: eliminado componente `<BackendURL />` bloqueante (commit 8194c87)
+- ✅ Instalación explícita de `psycopg[binary]` en Dockerfile para SQLAlchemy 2.0 + Python 3.13 (commit 2b3d06e)
+- ✅ Ajustes de UX en Perfil: modelo por defecto `openai/gpt-4o-mini`, selector de zona horaria, toasts persistentes (commits 3e79b34, 65c739d, d855fe9)
+- ✅ Servicios en producción verificados:
+  - 🌐 Frontend: https://eusomnia-frontend.onrender.com (Static Site, global CDN)
+  - 🔧 Backend: https://eusomnia-backend.onrender.com (Docker, Oregon)
+  - 🗄️ Base de datos: `eusomnia-db` (PostgreSQL 18, Oregon)
+- ✅ Documentación actualizada: README.md con URLs de producción, guía de despliegue y Roadmap; CHANGE-LOG.md con todas las entradas de Nov 12–13
+
+### ⬜ Pendiente
+
+_(ninguna – todas las tareas de la Semana 5 están completadas)_
