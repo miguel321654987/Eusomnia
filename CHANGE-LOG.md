@@ -1,5 +1,54 @@
 # CHANGE LOG
 
+### 2026-11-13
+
+**fix(front): Correcciones en Perfil.jsx y mejoras de UX**
+(commits ae1527f, d855fe9, 3e79b34, 65c739d)
+- Corrección de error de sintaxis en el objeto `DEFAULT_PREFERENCES` de `Perfil.jsx`.
+- Los toasts de recordatorio de rutina ahora son persistentes y requieren click explícito del usuario para cerrarse.
+- Modelo por defecto en Perfil cambiado a `openai/gpt-4o-mini`; se añaden 3 opciones de modelo seleccionables.
+- Input de texto de zona horaria reemplazado por un `<select>` estándar con zonas IANA en la configuración del perfil.
+
+**fix(backend): Ajustes de Dockerfile.render y gunicorn**
+(commits c1f48d9, 9a8a5ed)
+- Timeout de gunicorn aumentado a 120 s en `Dockerfile.render` para evitar timeouts de worker en arranque.
+- Puerto de gunicorn y del scanner de Render alineados en `10000`; comando de migración redundante eliminado de CMD.
+
+**fix(backend): Instalación de psycopg para SQLAlchemy 2.0 en Python 3.13**
+(commit 2b3d06e)
+- Se añade `pip install "psycopg[binary]"` explícito en `Dockerfile.render` para resolver `ModuleNotFoundError` al usar SQLAlchemy 2.0 con Python 3.13, que usa el driver psycopg v3 por defecto.
+
+**fix(deploy): Configuración definitiva del Blueprint de Render**
+(commits 70a8809, 231006b, a506622, b62c9ef, 2ba6a1b, 31b6565)
+- `SKIP_INSTALL_DEPS=true` añadido al Static Site para evitar que Render ejecute `pipenv install` en el proyecto Node.js.
+- Campo `plan` eliminado del servicio Static Site en `render.yaml` (no soportado en sites estáticos).
+- `preDeployCommand` y `region` eliminados del servicio Static Site (no permitidos en plan free ni en sites estáticos).
+- Tipo de servicio frontend corregido a `type: web` + `runtime: static` en el Blueprint.
+- `app.py` corregido: ruta raíz `/` devuelve health check JSON; ruta `/sitemap` separada; `CORS(app)` universal.
+- Histórico del branch `Deploy` sincronizado con `develop` preservando los archivos de configuración de despliegue.
+
+### 2026-11-12
+
+**fix(back): Rediseño completo de la arquitectura de despliegue en Render**
+(commits 4865c42, 8194c87, d164d26, d6d52af, db4dd95, 2aa6d1b, 00c92ea)
+- Arquitectura migrada de monolito Flask+React a **Static Site separado** (frontend) + **Web Service Docker** (backend) + **PostgreSQL 18 gestionado**.
+- `Dockerfile.render` creado con imagen `python:3.13-slim`, instalación de dependencias con `pipenv` y arranque con gunicorn en puerto `${PORT:-10000}`.
+- `render.yaml` Blueprint actualizado con los tres servicios: `eusomnia-db` (PostgreSQL free), `eusomnia-backend` (Docker, oregon), `eusomnia-frontend` (Static, global).
+- `api.js` actualizado con `normalizeBackendUrl()` para anteponer `https://` cuando Render inyecta el host sin protocolo.
+- `main.jsx` actualizado: eliminado el componente `<BackendURL />` bloqueante; la app renderiza directamente.
+- `render_build.sh` simplificado: `pipenv install --deploy --system && pipenv run upgrade`.
+- Dependencia `psycopg2-binary` añadida a Pipfile para compatibilidad con PostgreSQL en producción.
+- `db.create_all()` en arranque para creación idempotente de tablas en el primer deploy.
+
+**docs: Actualización de README.md con información de producción**
+(incluido en rama Deploy)
+- URL de producción añadida de forma prominente: `https://eusomnia-frontend.onrender.com` / `https://eusomnia-backend.onrender.com`.
+- Sección «Despliegue en Render» añadida con diagrama de arquitectura, instrucciones de Blueprint y notas de deploy.
+- Badges actualizados: PostgreSQL 16 → 18, Vite 5 → 8, Node.js 18+ → 20+.
+- Sección «API Endpoints – Nutrición» desincronizada eliminada.
+- Estructura del proyecto actualizada a la arquitectura real de Blueprints.
+- Roadmap v1.0 MVP: todos los ítems marcados como ✅ completados.
+
 ### 2026-11-11
 
 **docs(roadmap): Actualización de ROADMAP.md**  
